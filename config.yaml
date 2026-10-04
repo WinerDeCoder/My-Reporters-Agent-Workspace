@@ -1,0 +1,36 @@
+# Tech Radar settings. Secrets go in .env, not here.
+
+timezone: Asia/Ho_Chi_Minh   # UTC+7
+brief_time: "07:00"
+weekly_leaderboard_day: mon
+
+brief:
+  top_repos: 5
+  top_news: 3
+  leaderboard_size: 10
+  repeat_cooldown_days: 7     # lower score if already in a brief this recently
+
+interests:
+  keywords:
+    - agents
+    - mcp
+    - claude
+    - coding assistant
+    - small models
+    - llm
+
+sources:
+  github_trending:
+    every_hours: 6
+    languages: ["", python, typescript]   # "" = all languages
+    ranges: [daily, weekly]
+  github_api:
+    every_hours: 6
+    track_days: 30            # snapshot candidates for this long
+  hacker_news:
+    every_hours: 1
+
+llm:
+  model: claude-opus-5-5
+  effort: low
+  monthly_budget_usd: 15

@@ -6,6 +6,15 @@ Each entry names the spec it belongs to.
 
 ## [Unreleased]
 
+### Added
+
+- QA area `docs/qa/`: Q&A log (`Q-NNN`, linked to specs, REQ-IDs and modules), test strategy, per-feature test cases with last results (`TC-NNN-NN`), generated traceability matrix; `STATUS.md` gains Tests and Quality sections; new `/qa` command.
+- GitHub collectors (spec 001, in progress): Trending scraper and GitHub API star snapshots, scheduled every 6 h and ~1 min after startup, rate-limit aware; `app/momentum.py` (stars/day); CLI `python -m app.cli collect trending|github` and `momentum --top N`.
+
+### Changed
+
+- `selectolax` pinned to `>=1.0` and switched to its `lexbor` backend (the old backend was removed in 1.0).
+
 ## [0.1.0] - 2026-10-10
 
 ### Added

@@ -64,8 +64,13 @@ flowchart TB
 | `app/main.py` | App factory, lifespan (starts/stops scheduler), mounts frontend |
 | `app/config.py` | Loads `.env` (secrets) and `config.yaml` (settings) into typed models |
 | `app/db.py`, `app/models.py` | Async engine/session; ORM models (schema source of truth) |
-| `app/scheduler.py` | Registers jobs and their intervals |
-| `app/collectors/` | One module per source; each is an independent job *(spec 001, 002)* |
+| `app/scheduler.py` | Registers jobs and their intervals; `run_job()` logs each run and isolates failures |
+| `app/collectors/__init__.py` | Shared HTTP client (`make_client`) and retry policy (`transient_retry`) |
+| `app/collectors/github_trending.py` | Scrapes GitHub Trending pages → upserts candidate repos *(spec 001, built)* |
+| `app/collectors/github_api.py` | Tracked repos → metadata, README hash, star snapshot; rate-limit aware *(spec 001, built)* |
+| `app/collectors/hacker_news.py` | HN stories and GitHub-link candidates *(spec 002)* |
+| `app/momentum.py` | Pure stars/day and stars-gained functions over snapshots *(spec 001, built)* |
+| `app/cli.py` | Run a collector once / print momentum: `python -m app.cli ...` |
 | `app/scoring.py` | Pure scoring functions *(spec 003)* |
 | `app/llm.py` | The only place that calls the LLM |
 | `app/cards.py` | Card prompt, cache and budget check *(spec 004)* |
@@ -74,7 +79,23 @@ flowchart TB
 
 ## 5. Runtime flows
 
-**Collection (every few hours, per source):** job fetches → normalizes → upserts into Postgres → logs counts. Errors are retried with backoff and logged; other jobs are unaffected.
+**Collection (every few hours, per source):** job fetches → normalizes → upserts into Postgres → logs counts. Errors are retried with backoff and logged; other jobs are unaffected. Each job also runs shortly after startup (Trending at +60 s, GitHub API at +120 s) so a laptop that was off catches up.
+
+```mermaid
+sequenceDiagram
+    participant S as Scheduler
+    participant T as github_trending
+    participant A as github_api
+    participant GH as GitHub
+    participant DB as Postgres
+    S->>T: every 6 h (first at +60 s)
+    T->>GH: GET /trending[/lang]?since=daily|weekly (6 pages)
+    T->>DB: upsert repos, last_seen = now()
+    S->>A: every 6 h (first at +120 s)
+    A->>DB: repos with last_seen within track_days
+    A->>GH: GET /repos/{name}, /repos/{name}/readme (5 in parallel, rate-limit aware)
+    A->>DB: update repo metadata, insert repo_snapshots row
+```
 
 **Morning brief (07:00, or on startup if missed):**
 
@@ -102,6 +123,7 @@ sequenceDiagram
 
 - **Dev:** `docker compose up -d db`; `uv run fastapi dev app/main.py` (:8000); `npm run dev` (:5173, proxies `/api`).
 - **Daily use:** `npm run build`, then `uv run fastapi run app/main.py`; one URL, `http://localhost:8000`.
+- **One-off runs:** `uv run python -m app.cli collect trending|github`, `uv run python -m app.cli momentum --top 20`.
 - **Later:** same containers on a small server; add a Dockerfile for the backend then.
 
 ## 7. Cross-cutting concepts

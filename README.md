@@ -15,6 +15,8 @@ The first project here is **Tech Radar**: a local web app that collects rising G
 | How it's built | [docs/architecture/overview.md](docs/architecture/overview.md), [data-model.md](docs/architecture/data-model.md), [api.md](docs/architecture/api.md) |
 | Why it's built that way | [docs/architecture/decisions/](docs/architecture/decisions/) (ADRs) |
 | A feature's spec, plan and tasks | [specs/](specs/) |
+| Questions asked and answered (Q&A) | [docs/qa/questions.md](docs/qa/questions.md) |
+| How we test, test cases and results | [docs/qa/](docs/qa/) (strategy, per-feature test cases, [traceability](docs/qa/traceability.md)) |
 | What changed in each version | [CHANGELOG.md](CHANGELOG.md) |
 | How we work (spec → plan → tasks → done) | [CLAUDE.md](CLAUDE.md) |
 
@@ -38,7 +40,8 @@ The first project here is **Tech Radar**: a local web app that collects rising G
 ├── CHANGELOG.md           # release history (Keep a Changelog + SemVer)
 ├── docs/
 │   ├── product/           # prd.md, requirements.md, roadmap.md, v1-requirements.md
-│   └── architecture/      # overview.md, data-model.md, api.md, decisions/ (ADRs)
+│   ├── architecture/      # overview.md, data-model.md, api.md, decisions/ (ADRs)
+│   └── qa/                # questions.md (Q&A), test-strategy.md, test-cases/, traceability.md
 ├── specs/                 # one folder per feature: spec.md, plan.md, tasks.md
 ├── scripts/               # status.py (STATUS.md), check_tracking.py (Stop hook)
 ├── .claude/               # Claude Code: settings.json (hook), commands/ (/spec, /plan, /done, ...)
@@ -114,6 +117,9 @@ When `frontend/dist` exists, FastAPI serves it alongside the API.
 # Backend (from backend/)
 uv run pytest                                    # tests
 uv run ruff check . ; uv run ruff format .       # lint + format
+uv run python -m app.cli collect trending        # run the Trending collector once
+uv run python -m app.cli collect github          # snapshot tracked repos once (needs GITHUB_TOKEN)
+uv run python -m app.cli momentum --top 20       # top repos by stars/day
 uv run alembic revision --autogenerate -m "..."  # new migration after editing models.py
 uv add <package>                                 # add a dependency, then refresh requirements.txt:
 uv export --no-hashes --no-dev -o requirements.txt
@@ -140,6 +146,7 @@ With Claude Code opened **in this folder**, these slash commands drive the workf
 | `/spec <feature>` | Draft a new spec for review |
 | `/plan <NNN>` | Approve the spec, write plan.md and tasks.md |
 | `/tasks <NNN>` | Write or refresh the task checklist |
+| `/qa <NNN>` | Run the spec's tests and record results in its test-case file |
 | `/change <what>` | Record a requirement/spec/decision change with version bumps |
 | `/done <NNN>` | Definition of Done: verify, update statuses, CHANGELOG, commit |
 | `/release [X.Y.Z]` | Move Unreleased to a version, bump versions, tag |

@@ -28,7 +28,7 @@ CODE_PREFIXES = (
     "config.yaml",
     "docker-compose.yml",
 )
-TRACKING_PREFIXES = ("CHANGELOG.md", "STATUS.md", "specs/")
+TRACKING_PREFIXES = ("CHANGELOG.md", "STATUS.md", "specs/", "docs/qa/")
 
 
 def changed_files() -> list[str]:
@@ -87,7 +87,9 @@ def main() -> int:
         encoding="utf-8",
     )
     if status.returncode != 0:
-        problems.append("STATUS.md is out of date: run `python scripts/status.py`.")
+        problems.append(
+            "STATUS.md or docs/qa/traceability.md is out of date: run `python scripts/status.py`."
+        )
 
     if problems:
         print("Tracking check failed:\n- " + "\n- ".join(problems), file=sys.stderr)

@@ -1,6 +1,6 @@
 # 001 — Plan
 
-Spec: [spec.md](spec.md) · Plan version 0.1 (draft, not yet approved)
+Spec: [spec.md](spec.md) · Plan version 1.0 (approved with spec 1.0) · Test cases: [docs/qa/test-cases/001-github-collectors.md](../../docs/qa/test-cases/001-github-collectors.md)
 
 ## Approach
 
@@ -10,15 +10,16 @@ Two async collector functions in `app/collectors/`, each taking a DB session and
 
 | Area | File / module | Change |
 | --- | --- | --- |
-| Backend | `app/collectors/__init__.py` | Shared `http_client()` (timeouts, User-Agent, GitHub token header) and `retrying` helper (tenacity) |
-| Backend | `app/collectors/github_trending.py` | Fetch + parse trending pages; upsert repos |
-| Backend | `app/collectors/github_api.py` | Select tracked repos; fetch repo + README; update repo; insert snapshot; rate-limit handling |
-| Backend | `app/momentum.py` | `stars_per_day(snapshots, now)` and `stars_gained(snapshots, since)`; pure functions |
-| Backend | `app/scheduler.py` | Register both jobs with `max_instances=1`, `coalesce=True`, first run shortly after startup |
+| Backend | `app/collectors/__init__.py` | `make_client(github_api)` (timeouts, User-Agent, GitHub token + API-version headers) and `transient_retry` (tenacity: transport errors and 5xx, 3 attempts, exponential backoff) |
+| Backend | `app/collectors/github_trending.py` | `trending_urls(cfg)`, pure `parse_trending(html)`, `collect_trending()`: fetch pages, upsert repos |
+| Backend | `app/collectors/github_api.py` | `tracked_repos()`, pure `parse_repo_payload()` and `rate_limit_wait()`, `fetch_repo()` (404 → `None`), `collect_github()`: update repos, insert snapshots, count requests |
+| Backend | `app/momentum.py` | `Snapshot`, `stars_per_day(snapshots)`, `stars_gained(snapshots, since)`; pure functions |
+| Backend | `app/scheduler.py` | `run_job()` wrapper (log + isolate failures); both jobs with `max_instances=1`, `coalesce=True`, `misfire_grace_time=3600`, first run at startup + 60 s (trending) / + 120 s (API) |
 | Backend | `app/cli.py` | `collect trending`, `collect github`, `momentum --top N` (argparse + `asyncio.run`) |
 | DB | — | No schema change; tables exist from 000 |
 | Config | `config.yaml` | None (uses existing `sources.*`) |
-| Tests | `tests/fixtures/trending.html`, `tests/test_trending_parse.py`, `tests/test_momentum.py` | Parser and momentum unit tests |
+| Dev deps | `backend/pyproject.toml` | `pytest-asyncio` (auto mode) for async tests |
+| Tests | `tests/fixtures/trending.html`, `tests/test_trending_parse.py`, `tests/test_momentum.py`, `tests/test_github_api.py`, `tests/test_scheduler.py` | Unit tests per [test cases](../../docs/qa/test-cases/001-github-collectors.md); HTTP faked with `httpx.MockTransport` |
 
 ## Details
 
@@ -26,7 +27,9 @@ Two async collector functions in `app/collectors/`, each taking a DB session and
 
 **Upsert:** `INSERT ... ON CONFLICT (full_name) DO UPDATE SET last_seen = now()` via SQLAlchemy's PostgreSQL `insert`. Store `full_name` lowercased to dedupe case variants.
 
-**Tracked set:** repos with `last_seen >= now() - track_days`.
+**Tracked set:** repos with `last_seen >= now() - track_days` (window counted from last seen, Q-001).
+
+**Scheduling:** the API job's first run is one minute after the Trending job's, so a fresh install has candidates before the first snapshot run (Q-003).
 
 **GitHub API, per repo (2 requests):**
 - `GET /repos/{full_name}`: `stargazers_count`, `forks_count`, `description`, `topics`, `language`, `license.spdx_id`. If `full_name` changed (redirect/rename), update the row's name when it doesn't collide.
@@ -42,8 +45,10 @@ Two async collector functions in `app/collectors/`, each taking a DB session and
 
 ## Testing
 
-- Unit: trending parser on a saved fixture (expected 25 names); momentum on synthetic snapshots (normal, gap, too-short history, star loss).
-- Integration (manual, needs DB + token): AC-1…AC-4 via the CLI.
+Full list with IDs and results: [docs/qa/test-cases/001-github-collectors.md](../../docs/qa/test-cases/001-github-collectors.md).
+
+- Unit: trending parser on a saved fixture; momentum on synthetic snapshots (normal, gap, too-short history, star loss); repo payload parsing; 404 and rate-limit handling via `httpx.MockTransport`; job isolation and registration.
+- Integration (needs DB + token): AC-1, AC-2, AC-4 via the CLI.
 - Soak: leave the app running ~24 h, then AC-6.
 
 ## Risks
@@ -53,6 +58,7 @@ Two async collector functions in `app/collectors/`, each taking a DB session and
 
 ## Docs to update when done
 
-- [ ] `docs/architecture/overview.md`: collectors marked as built; CLI mentioned under Deployment.
-- [ ] `README.md`: CLI commands under Common tasks.
+- [x] `docs/architecture/overview.md`: collectors marked as built; CLI mentioned under Deployment.
+- [x] `README.md`: CLI commands under Common tasks.
+- [ ] `docs/qa/test-cases/001-github-collectors.md`: results for every test case.
 - [ ] ADR needed? No (no hard-to-reverse choice).

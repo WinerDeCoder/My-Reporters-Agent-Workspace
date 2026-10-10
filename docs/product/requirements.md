@@ -11,11 +11,11 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 
 | ID | Requirement | Acceptance criteria | Status | Spec | Notes |
 | --- | --- | --- | --- | --- | --- |
-| REQ-COL-001 | Scrape GitHub Trending (daily and weekly ranges) for the languages in `config.yaml`, on the configured interval. | Each run upserts every listed repo into `repos` and updates `last_seen`; a run with N trending pages logs how many repos it found. | planned | 001 | |
-| REQ-COL-002 | For every candidate repo seen in the last `track_days`, fetch stars, forks, description, topics, language, license and README hash from the GitHub REST API, and store one star snapshot per run. | After two runs, each tracked repo has two `repo_snapshots` rows; metadata columns are filled; README changes update `readme_hash`. | planned | 001 | |
+| REQ-COL-001 | Scrape GitHub Trending (daily and weekly ranges) for the languages in `config.yaml`, on the configured interval. | Each run upserts every listed repo into `repos` and updates `last_seen`; a run with N trending pages logs how many repos it found. | in-progress | 001 | 2026-10-10: languages confirmed as all + Python + TypeScript (Q-002). |
+| REQ-COL-002 | For every candidate repo whose `last_seen` is within `track_days`, fetch stars, forks, description, topics, language, license and README hash from the GitHub REST API, and store one star snapshot per run. | After two runs, each tracked repo has two `repo_snapshots` rows; metadata columns are filled; README changes update `readme_hash`. | in-progress | 001 | 2026-10-10: window counted from `last_seen`, not `first_seen` (Q-001). |
 | REQ-COL-003 | Collect Hacker News top stories (title, URL, points, comments, posted time) hourly from the Algolia HN API. | Stories are upserted by `hn_id`; points and comments update on later runs. | planned | 002 | |
 | REQ-COL-004 | GitHub repo links in HN stories become repo candidates. | A story linking `github.com/owner/repo` creates or updates that repo and sets `news_items.linked_repo_id`. | planned | 002 | |
-| REQ-COL-005 | Each collector runs on its own schedule and retries transient errors; one failing never stops the others. | Simulated failure in one collector is logged and the others still complete their runs. | planned | 001 | |
+| REQ-COL-005 | Each collector runs on its own schedule and retries transient errors; one failing never stops the others. | Simulated failure in one collector is logged and the others still complete their runs. | in-progress | 001 | 2026-10-10: collectors also run ~1 min after startup (Q-003). |
 | REQ-COL-006 | Prune weekly: raw HN items older than 30 days, and snapshots of repos that never reached a brief. | After the prune job, no HN item older than 30 days remains unless it is referenced by a brief. | planned | 002 | |
 
 ## Scoring (SCO)
@@ -65,6 +65,6 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 | REQ-NFR-001 | Runs locally: one backend process (API + scheduler + built frontend); only Postgres runs in Docker. | README setup works on a fresh Windows machine. | done | 000 | |
 | REQ-NFR-002 | Secrets live only in `.env`, never in code or git. | `.env` is git-ignored; `.env.example` lists every secret. | done | 000 | |
 | REQ-NFR-003 | All schedules use the timezone in `config.yaml` (Asia/Ho_Chi_Minh). | Scheduler is created with the configured timezone. | done | 000 | |
-| REQ-NFR-004 | Stay within API rate limits (GitHub 5,000 req/h with token) and back off on 403/429. | A full GitHub run stays under 10% of the hourly limit; rate-limit responses trigger backoff, not failure. | planned | 001 | |
+| REQ-NFR-004 | Stay within API rate limits (GitHub 5,000 req/h with token) and back off on 403/429. | A full GitHub run stays under 10% of the hourly limit; rate-limit responses trigger backoff, not failure. | in-progress | 001 | |
 | REQ-NFR-005 | LLM token usage is logged per call and monthly spend is tracked. | Each call logs model and input/output tokens; spend is queryable per month. | in-progress | 004 | Per-call logging done in v0.1.0; spend tracking pending. |
 | REQ-NFR-006 | Non-secret settings live in one `config.yaml`, validated at startup. | Invalid config fails fast with a clear error. | done | 000 | |

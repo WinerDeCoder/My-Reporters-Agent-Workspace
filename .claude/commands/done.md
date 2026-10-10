@@ -8,6 +8,7 @@ Close out spec $ARGUMENTS using the Definition of Done in `CLAUDE.md`.
 1. Check `tasks.md`: every task ticked or struck with a reason. If any are open, stop and tell me which.
 2. Check every acceptance criterion in `spec.md`. Tick only those actually verified; for any you can't verify (e.g. needs a 24 h soak), stop and tell me.
 3. Run the checks: `cd backend; uv run ruff check . ; uv run ruff format --check . ; uv run pytest`, plus `cd frontend; npm run typecheck` if the frontend changed. Stop on failure and show the output.
+3b. Update `docs/qa/test-cases/NNN-*.md`: dated result for every test case. If any is `fail`, stop. If any is `not run`/`blocked`, ask me for sign-off and record it in the spec change log. Check no open `Q-NNN` points at this spec.
 4. Update the spec front matter: `status: done`, `updated:` today; add a change-log line.
 5. Set the linked REQ-IDs in `docs/product/requirements.md` to `done`.
 6. Update the docs listed in the plan's "Docs to update when done".

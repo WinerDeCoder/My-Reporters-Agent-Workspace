@@ -52,6 +52,8 @@ Everything in the "Waits for v1" column above, plus multi-user accounts, hosting
 
 ## Open questions
 
-- [ ] Starting interest keywords (current draft in `config.yaml`: agents, MCP, Claude, coding assistants, small models, LLM).
-- [ ] Brief time: 07:00 UTC+7, or another time?
-- [ ] Which OpenAI model for cards (`gpt-5-mini` is a placeholder).
+Tracked in the [Q&A log](../qa/questions.md):
+
+- [ ] Q-005: Starting interest keywords
+- [ ] Q-006: Brief time
+- [ ] Q-007: OpenAI model for cards

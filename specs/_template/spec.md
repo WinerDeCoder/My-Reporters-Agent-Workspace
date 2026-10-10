@@ -32,7 +32,13 @@ Each AC must be checkable by running something (test, CLI command, page).
 
 ## Open questions
 
-- [ ] …
+Logged in [docs/qa/questions.md](../../docs/qa/questions.md); list them here as links.
+
+- [ ] Q-NNN: …
+
+## QA
+
+Test cases: [docs/qa/test-cases/NNN-name.md](../../docs/qa/test-cases/NNN-name.md)
 
 ## Change log
 

@@ -12,7 +12,7 @@ dependencies = [
     "pyyaml>=6.0",
     "httpx>=0.28",
     "tenacity>=9.0",
-    "selectolax>=0.3",
+    "selectolax>=1.0",
     "apscheduler>=3.11,<4",
     "openai>=3.28",
 ]
@@ -20,6 +20,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=8.3",
+    "pytest-asyncio>=1.4.0",
     "ruff>=0.8",
 ]
 
@@ -33,3 +34,5 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

@@ -117,11 +117,11 @@ Runs locally on my own machine. One backend process runs the scheduler and the A
 | Scheduler | APScheduler inside the FastAPI process, plus a catch-up on startup |
 | HTTP + scraping | httpx + tenacity + selectolax |
 | Database | PostgreSQL 17 (pgvector image) via Docker Compose; SQLAlchemy 2.0 async + asyncpg; Alembic migrations |
-| LLM | Claude (`claude-opus-5-5`, effort low) via the official `anthropic` SDK, structured output into a `Card` model; prompt in `backend/prompts/card.md` |
+| LLM | OpenAI (default `gpt-5-mini`, reasoning effort low) via the official `openai` SDK, Responses API with structured output into a `Card` model; all model settings in `config.yaml` -> `llm`; prompt in `backend/prompts/card.md` |
 | Frontend | React + Vite + TypeScript, Tailwind CSS, TanStack Query, React Router |
 | Run modes | Dev: Vite on :5173 proxying to FastAPI on :8000. Daily: FastAPI serves `frontend/dist` on :8000 |
 
-Config lives in one `config.yaml`: interest keywords, brief time, top-N counts, trending languages, Claude model and budget. Secrets (GitHub token, Anthropic API key, database URL) live in `.env`.
+Config lives in one `config.yaml`: interest keywords, brief time, top-N counts, trending languages, LLM model and budget. Secrets (GitHub token, OpenAI API key, database URL) live in `.env`.
 
 Cost stays small: about 8 card calls a day, with a monthly budget cap in config. The GitHub token allows 5,000 API requests per hour, far above what 6-hourly snapshots need.
 
@@ -133,7 +133,7 @@ Each step ends with something I can run and check.
 - [ ] **GitHub collectors:** Trending scraper + API snapshots; check that stars-per-day looks right after a day of runs.
 - [ ] **HN collector:** top stories, keyword filter, GitHub links added as repo candidates.
 - [ ] **Scoring:** repo and news scores; print today's top list to the terminal and sanity-check it by eye.
-- [ ] **Cards:** Claude prompt, structured output, cache, Card page.
+- [ ] **Cards:** LLM prompt, structured output, cache, Card page.
 - [ ] **Today page:** daily brief built at 07:00 (catch-up on startup), with links and 👍/👎 buttons.
 - [ ] **Weekly leaderboard:** Leaderboard page from 7 days of snapshots.
 - [ ] **Stats:** Stats page.
@@ -142,7 +142,7 @@ Each step ends with something I can run and check.
 ## Open questions
 
 - [x] Stack: Python backend (FastAPI) + React frontend.
-- [x] LLM: Claude via the `anthropic` SDK. Budget cap: start at $15/month in config.
+- [x] LLM: OpenAI via the `openai` SDK (switched from Claude on Oct 10). Budget cap: start at $15/month in config.
 - [x] Runs locally on my own machine.
 - [ ] My starting interest keywords (for example: agents, MCP, Claude, coding assistants, small models).
 - [ ] Brief time: 07:00 UTC+7, or another time?

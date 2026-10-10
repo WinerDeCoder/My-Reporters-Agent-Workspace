@@ -2,6 +2,7 @@
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 import yaml
 from pydantic import BaseModel
@@ -16,7 +17,7 @@ class Secrets(BaseSettings):
 
     database_url: str = "postgresql+asyncpg://radar:radar@localhost:5432/radar"
     github_token: str = ""
-    anthropic_api_key: str = ""
+    openai_api_key: str = ""
 
 
 class BriefConfig(BaseModel):
@@ -52,9 +53,17 @@ class SourcesConfig(BaseModel):
 
 
 class LlmConfig(BaseModel):
-    model: str = "claude-opus-5-5"
-    effort: str = "low"
+    model: str = "gpt-5-mini"
+    reasoning_effort: Literal["minimal", "low", "medium", "high"] | None = "low"
+    max_output_tokens: int = 2000
+    timeout_seconds: float = 60
+    base_url: str | None = None
+    prompt_file: str = "backend/prompts/card.md"
     monthly_budget_usd: float = 15
+
+    @property
+    def prompt_path(self) -> Path:
+        return ROOT_DIR / self.prompt_file
 
 
 class AppConfig(BaseModel):

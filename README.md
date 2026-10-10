@@ -2,7 +2,7 @@
 
 A platform to manage, control and view agents that report on news and repos.
 
-The first project here is **Tech Radar**: a local web app that collects rising GitHub repos and AI news, scores them, writes short cards with Claude, and shows a daily brief you can rate with 👍/👎.
+The first project here is **Tech Radar**: a local web app that collects rising GitHub repos and AI news, scores them, writes short cards with an OpenAI model, and shows a daily brief you can rate with 👍/👎.
 
 - MVP scope: [requirements/Tech Radar — MVP.md](requirements/Tech%20Radar%20—%20MVP.md)
 - Full v1 roadmap: [requirements/Tech Radar — v1 Requirements.md](requirements/Tech%20Radar%20—%20v1%20Requirements.md)
@@ -14,7 +14,7 @@ The first project here is **Tech Radar**: a local web app that collects rising G
 | Backend | Python 3.12+, FastAPI, APScheduler (in-process jobs) |
 | Database | PostgreSQL 17 (pgvector image) in Docker, SQLAlchemy 2.0 async + asyncpg, Alembic |
 | Collectors | httpx, tenacity, selectolax |
-| LLM | Claude via the official `anthropic` SDK |
+| LLM | OpenAI (Responses API, structured output) via the official `openai` SDK; settings in `config.yaml` -> `llm` |
 | Frontend | React 19, Vite, TypeScript, Tailwind CSS, TanStack Query, React Router |
 | Tooling | uv, ruff, pytest |
 
@@ -33,6 +33,7 @@ The first project here is **Tech Radar**: a local web app that collects rising G
 │   ├── app/
 │   │   ├── main.py        # FastAPI app, scheduler start/stop, serves frontend/dist
 │   │   ├── config.py      # loads .env + config.yaml
+│   │   ├── llm.py         # OpenAI client + structured-output helper
 │   │   ├── db.py  models.py  scheduler.py
 │   │   └── api/           # /api/* routes
 │   └── tests/
@@ -51,7 +52,7 @@ The first project here is **Tech Radar**: a local web app that collects rising G
 
 ```powershell
 # 1. Secrets
-Copy-Item .env.example .env      # then fill in GITHUB_TOKEN and ANTHROPIC_API_KEY
+Copy-Item .env.example .env      # then fill in GITHUB_TOKEN and OPENAI_API_KEY
 
 # 2. Database
 docker compose up -d db
@@ -105,8 +106,8 @@ npm run gen:api      # regenerate TS types from the backend's OpenAPI (backend m
 
 ## Configuration
 
-- **`.env`**: `DATABASE_URL`, `GITHUB_TOKEN`, `ANTHROPIC_API_KEY` and the Postgres credentials used by Docker Compose.
-- **`config.yaml`**: interest keywords, brief time and timezone, top-N counts, collector intervals, Claude model, effort and monthly budget cap.
+- **`.env`**: `DATABASE_URL`, `GITHUB_TOKEN`, `OPENAI_API_KEY` and the Postgres credentials used by Docker Compose.
+- **`config.yaml`**: interest keywords, brief time and timezone, top-N counts, collector intervals, and the `llm` section: OpenAI model, reasoning effort, max output tokens, timeout, optional `base_url`, card prompt file and monthly budget cap.
 
 ## Status
 
@@ -114,7 +115,7 @@ npm run gen:api      # regenerate TS types from the backend's OpenAPI (backend m
 - [ ] GitHub collectors (Trending + API star snapshots)
 - [ ] Hacker News collector
 - [ ] Scoring
-- [ ] Cards (Claude)
+- [ ] Cards (OpenAI)
 - [ ] Today page: daily brief with 👍/👎
 - [ ] Weekly leaderboard
 - [ ] Stats page

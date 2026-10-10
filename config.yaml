@@ -30,7 +30,12 @@ sources:
   hacker_news:
     every_hours: 1
 
+# LLM used to write cards (OpenAI Responses API). The API key lives in .env (OPENAI_API_KEY).
 llm:
-  model: claude-opus-5-5
-  effort: low
-  monthly_budget_usd: 15
+  model: gpt-5-mini              # any OpenAI model id your key can use
+  reasoning_effort: low          # minimal | low | medium | high (reasoning models only; null to omit)
+  max_output_tokens: 2000        # includes reasoning tokens on reasoning models
+  timeout_seconds: 60
+  base_url: null                 # null = api.openai.com; set for Azure/proxy/OpenAI-compatible servers
+  prompt_file: backend/prompts/card.md   # relative to the repo root
+  monthly_budget_usd: 15         # hard stop for card generation once reached

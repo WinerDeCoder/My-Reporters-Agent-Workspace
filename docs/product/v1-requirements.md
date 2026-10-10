@@ -2,6 +2,8 @@
 
 Oct 4, 2026 · @Nguyen Phuoc Nguyen Phuo
 
+> **Status: backlog for after the MVP.** Kept as written on Oct 4. Later decisions override parts of it: delivery is a local web UI, not Telegram ([ADR-0001](../architecture/decisions/0001-local-web-ui-instead-of-telegram.md)); PostgreSQL ([ADR-0002](../architecture/decisions/0002-postgresql.md)); FastAPI + React ([ADR-0003](../architecture/decisions/0003-fastapi-react-single-process.md)); OpenAI for cards ([ADR-0004](../architecture/decisions/0004-openai-for-cards.md)). Revisit this doc when planning v1.
+
 ## Vision and v1 goal
 
 Tech Radar is a personal analyst: it reads GitHub, AI research and tech news every day, keeps only what matters to me, and explains each item in plain words. v1 has one job to prove: a daily brief I actually want to read every morning.

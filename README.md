@@ -106,10 +106,10 @@ The Vite dev server proxies `/api` to the backend.
 
 ```powershell
 cd frontend; npm run build; cd ..
-cd backend;  uv run fastapi run app/main.py      # http://localhost:8000
+cd backend;  uv run fastapi run app/main.py --host 127.0.0.1   # http://localhost:8000
 ```
 
-When `frontend/dist` exists, FastAPI serves it alongside the API.
+When `frontend/dist` exists, FastAPI serves it alongside the API. Keep `--host 127.0.0.1`: without it `fastapi run` listens on every network interface, and the app has no login (Q-018). `fastapi dev` already defaults to 127.0.0.1.
 
 ## Common tasks
 

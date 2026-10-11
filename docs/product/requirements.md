@@ -23,7 +23,7 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 
 | ID | Requirement | Acceptance criteria | Status | Spec | Notes |
 | --- | --- | --- | --- | --- | --- |
-| REQ-SCO-001 | Repo score = stars gained per day (from the two nearest snapshots ~24 h apart), boosted on interest-keyword match, lowered if the repo was in a brief in the last `repeat_cooldown_days`. | A CLI command prints today's top repos with their score components; values match a hand calculation on test data. | in-progress | 003 | 2026-10-11: interests = topics with term lists, weak terms need another topic (Q-005, Q-015); boost 1.5/topic, cap 3.0. |
+| REQ-SCO-001 | Repo score = stars gained per day (from the two nearest snapshots ~24 h apart), boosted on interest-keyword match, lowered if the repo was in a brief in the last `repeat_cooldown_days`. | A CLI command prints today's top repos with their score components; values match a hand calculation on test data. | in-progress | 003 | 2026-10-11: interests = topics with term lists, weak terms need another topic (Q-005, Q-015); boost 1.5/topic, cap 3.0. 2026-10-11: boost 2.0/topic, cap 5.0 (Q-019). |
 | REQ-SCO-002 | News score = HN points per hour since posting, boosted on keyword match; only AI/dev stories pass the keyword filter. | Off-topic stories never appear in the top list; ordering matches points/hour on test data. | in-progress | 003 | 2026-10-11: AI/dev eligibility from a broad term list; interests boost (Q-016). |
 | REQ-SCO-003 | A 👎 lowers future scores for items sharing its keywords (simple rule, tuned by hand). | After a 👎 on an item tagged "x", a new item tagged "x" scores lower than it would without the rating. | in-progress | 003 | 2026-10-11: ×0.7 per shared topic, floor ×0.2, last 30 days; live once feedback exists (spec 005). |
 
@@ -72,7 +72,7 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 
 | ID | Requirement | Acceptance criteria | Status | Spec | Notes |
 | --- | --- | --- | --- | --- | --- |
-| REQ-NFR-001 | Runs locally: one backend process (API + scheduler + built frontend); only Postgres runs in Docker. | README setup works on a fresh Windows machine. | done | 000 | |
+| REQ-NFR-001 | Runs locally: one backend process (API + scheduler + built frontend); only Postgres runs in Docker. | README setup works on a fresh Windows machine; backend and Postgres listen on 127.0.0.1 only. | done | 000 | 2026-10-11: localhost-only binding added (Q-018). |
 | REQ-NFR-002 | Secrets live only in `.env`, never in code or git. | `.env` is git-ignored; `.env.example` lists every secret. | done | 000 | |
 | REQ-NFR-003 | All schedules use the timezone in `config.yaml` (Asia/Ho_Chi_Minh). | Scheduler is created with the configured timezone. | done | 000 | |
 | REQ-NFR-004 | Stay within API rate limits (GitHub 5,000 req/h with token) and back off on 403/429. | A full GitHub run stays under 10% of the hourly limit; rate-limit responses trigger backoff, not failure. | in-progress | 001 | |

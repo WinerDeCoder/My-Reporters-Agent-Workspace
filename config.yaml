@@ -14,8 +14,8 @@ brief:
 # "-", "/" and "_" count as spaces. A term starting with "~" is weak: it only counts when another
 # topic also matched (so "skills" alone doesn't match "improve your coding skills").
 interests:
-  topic_boost: 1.5      # score × 1.5 per matched topic…
-  max_boost: 3.0        # …capped here
+  topic_boost: 2.0      # score × 2.0 per matched topic… (Q-019)
+  max_boost: 5.0        # …capped here
   topics:
     agents: [agent, agents, agentic, multi agent, ai agent, agent framework]
     mcp: [mcp, model context protocol, mcp server]
@@ -62,7 +62,7 @@ sources:
 
 # LLM used to write cards (OpenAI Responses API). The API key lives in .env (OPENAI_API_KEY).
 llm:
-  model: gpt-5-mini              # any OpenAI model id your key can use
+  model: gpt-6-luna              # chosen 2026-10-11 (Q-007); any OpenAI model id your key can use
   reasoning_effort: low          # minimal | low | medium | high (reasoning models only; null to omit)
   max_output_tokens: 2000        # includes reasoning tokens on reasoning models
   timeout_seconds: 60

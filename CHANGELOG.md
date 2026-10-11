@@ -19,6 +19,8 @@ Each entry names the spec it belongs to.
 
 ### Changed
 
+- Backend and Postgres bind to 127.0.0.1 only (`fastapi run --host 127.0.0.1`, Compose `127.0.0.1:5432`); before, both were reachable from the local network (Q-018).
+- Interest boost raised to 2.0 per topic, cap 5.0 (Q-019); `config.yaml` model set to `gpt-6-luna` (Q-007).
 - Collectors run once a day at fixed times from `config.yaml` (`run_at`: HN 07:00, Trending 07:10, snapshots 07:20; prune Mondays 07:40) instead of every 6 h / hourly; on startup a job runs only if its last success is older than 20 h (`catch_up_after_hours`), so restarts no longer trigger every collector (Q-014).
 - Scheduler jobs defined in one table (`JOBS`, `job_specs`, `CATCH_UP_DELAY`); status panel labels and units per job.
 - `config.yaml`: `interests.keywords` replaced by `interests.topics` + `ai_dev_terms`; new `scoring` section. Momentum looks back 72 h (was 48 h) so a missed daily snapshot doesn't hide stars/day.

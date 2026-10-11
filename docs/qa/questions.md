@@ -64,13 +64,13 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 
 ### Q-007 — OpenAI model for cards
 
-- **Status:** open
+- **Status:** answered
 - **Asked:** 2026-10-10
 - **Context:** spec 004 (cards) · REQ-CRD-001, REQ-CRD-002 · `config.yaml` → `llm.model`, `app/llm.py`
 - **Question:** Which OpenAI model should write the cards?
 - **Suggestion:** Start with a small, cheap model (`gpt-5-mini` is the placeholder) and judge card quality during the 2-week trial; confirm the exact id your key can use.
-- **Answer:** —
-- **Recorded in:** —
+- **Answer:** gpt-6-luna. (2026-10-11) Verified available for the configured key via the models API; structured output and reasoning effort to be confirmed in spec 004.
+- **Recorded in:** `config.yaml` → `llm.model`.
 
 ### Q-008 — What the frontend should show before scoring and cards exist
 
@@ -171,3 +171,28 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 - **Suggestion:** Yes: default sort "For you" on both pages, topic badges on each item, and an "AI/dev only" toggle on News; it's the easiest way to judge the ranking before the brief uses it. Alternative: CLI only.
 - **Answer:** Yes: "For you" sort, topic badges, "AI/dev only" toggle on News. (2026-10-11)
 - **Recorded in:** spec 003; new REQ-UI-004.
+
+### Q-018 — Improvements raised by Claude (2026-10-11)
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** process + ops · REQ-NFR-001, REQ-NFR-002 · `docker-compose.yml`, `README.md`, `docs/architecture/api.md`, `.gitattributes`, `frontend/src/api/`
+- **Question:** Which of these should be done now?
+  1. **Network exposure (bug vs docs):** `fastapi run` listens on all interfaces (0.0.0.0) and Compose publishes Postgres 5432 on all interfaces with password `radar`, so both are reachable from the local network; `api.md` says "only listens on localhost". Fix: `--host 127.0.0.1` and `127.0.0.1:5432:5432`.
+  2. **Auto-start for the 2-week trial:** collection and the brief only happen while the backend runs. Add `start.ps1` + a Windows Task Scheduler task at logon (and Docker Desktop autostart).
+  3. **Close-out and release:** specs 001/008/002/003 are effectively done but not closed; `morluto/rea` momentum verified against GitHub (79,356 stars now), so the soak check can close with 3 repos; then tag `v0.2.0`.
+  4. **Dev hygiene:** `.gitattributes` (LF) to stop CRLF warnings; generate frontend types from OpenAPI (`npm run gen:api`) instead of hand-written ones; DB-backed integration tests against a separate test database.
+- **Suggestion:** 1, 2 and 3 now (small, high value); 4 later.
+- **Answer:** Do 1 (localhost only) now. 2 (auto-start), 3 (close-out + v0.2.0) and 4 (dev hygiene) not now; raise again later. (2026-10-11)
+- **Recorded in:** `docker-compose.yml`, README, CLAUDE.md, `docs/architecture/overview.md`; REQ-NFR-001 note.
+
+### Q-019 — Balance between momentum and interests
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [003](../../specs/003-scoring/spec.md) · REQ-SCO-001 · `app/scoring.py`, `config.yaml` → `interests`
+- **Question:** Raw stars/day dominates: one viral repo (+22,000/day) is 6× the next, and a repo with none of your topics (+3,600/day) ranks 2nd ahead of topic matches. Should momentum be damped so your topics matter more?
+- **Suggestion:** Score = log(1 + stars/day) × topic boost: 22,000/day vs 1,500/day becomes ~10 vs ~7.3, so a 2-topic match (×2.25) beats an off-topic repo with 10× the stars/day. Same for news with points/hour. Alternatives: keep linear and raise the boost (e.g. 2.0/topic, cap 5), or keep as is.
+- **Answer:** Stronger boost, linear: 2.0 per topic, cap 5.0. (2026-10-11)
+- **Recorded in:** `config.yaml` → `interests.topic_boost` / `max_boost`; spec 003 v1.1; REQ-SCO-001 note.
+

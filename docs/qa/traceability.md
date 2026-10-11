@@ -15,8 +15,8 @@
 | REQ-SCO-001 | in-progress | [003](../../specs/003-scoring/spec.md) | TC-003-01 (pass), TC-003-02 (pass), TC-003-03 (pass), TC-003-06 (pass) | `app/cli.py`, `app/scoring.py` | — |
 | REQ-SCO-002 | in-progress | [003](../../specs/003-scoring/spec.md) | TC-003-01 (pass), TC-003-03 (pass), TC-003-05 (pass), TC-003-06 (pass) | `app/cli.py`, `app/scoring.py` | — |
 | REQ-SCO-003 | in-progress | [003](../../specs/003-scoring/spec.md) | TC-003-04 (pass) | `app/scoring.py` | — |
-| REQ-CRD-001 | planned | 004 | — | — | Q-007 |
-| REQ-CRD-002 | planned | 004 | TC-000-03 (pass) | `app/config.py` | Q-007 |
+| REQ-CRD-001 | planned | 004 | — | — | — |
+| REQ-CRD-002 | planned | 004 | TC-000-03 (pass) | `app/config.py` | — |
 | REQ-CRD-003 | planned | 004 | — | — | — |
 | REQ-CRD-004 | planned | 004 | — | — | — |
 | REQ-CRD-005 | planned | 004 | — | — | — |

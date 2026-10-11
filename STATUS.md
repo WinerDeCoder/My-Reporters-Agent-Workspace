@@ -4,10 +4,10 @@
 > `docs/product/requirements.md`, the roadmap, `docs/qa/` and `CHANGELOG.md`.
 > Do not edit by hand, except inside the Notes section at the bottom.
 
-- **Released version:** 0.1.0 · 10 unreleased change(s) in CHANGELOG
+- **Released version:** 0.1.0 · 12 unreleased change(s) in CHANGELOG
 - **Milestone:** MVP
 - **Active spec:** [001 — GitHub collectors](specs/001-github-collectors/spec.md) · status **in-progress** · tasks 12/14 · tests 12/13 pass (1 not run)
-- **Open questions:** 2 (see below)
+- **Open questions:** 1 (see below)
 
 ## Features
 
@@ -17,7 +17,7 @@
 | [001](specs/001-github-collectors/spec.md) | GitHub collectors | in-progress | 2.0 | 12/14 | 12/13 pass (1 not run) | 0.2.0 | 2026-10-11 |
 | [008](specs/008-rising-repos-page/spec.md) | Rising repos page | in-progress | 1.0 | 10/11 | 10/10 pass | 0.2.0 | 2026-10-11 |
 | [002](specs/002-hn-collector/spec.md) | HN collector | in-progress | 2.0 | 12/13 | 13/13 pass | 0.3.0 | 2026-10-11 |
-| [003](specs/003-scoring/spec.md) | Scoring | in-progress | 1.0 | 11/12 | 9/9 pass | 0.4.0 | 2026-10-11 |
+| [003](specs/003-scoring/spec.md) | Scoring | in-progress | 1.1 | 11/12 | 9/9 pass | 0.4.0 | 2026-10-11 |
 | 004 | Cards | not started | — | — | — | 0.5.0 | — |
 | 005 | Daily brief | not started | — | — | — | 0.6.0 | — |
 | 006 | Weekly leaderboard | not started | — | — | — | 0.7.0 | — |
@@ -35,7 +35,6 @@ Test cases: 50/51 pass (1 not run). Details per spec in `docs/qa/test-cases/`; R
 ### Open questions ([docs/qa/questions.md](docs/qa/questions.md))
 
 - **Q-006** Brief time (spec 005, REQ-BRF-001)
-- **Q-007** OpenAI model for cards (spec 004, REQ-CRD-001, REQ-CRD-002)
 
 ## Notes and blockers
 

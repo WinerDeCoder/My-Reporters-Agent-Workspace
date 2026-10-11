@@ -30,8 +30,8 @@ class BriefConfig(BaseModel):
 class InterestsConfig(BaseModel):
     """Interest topics and match terms (Q-005, Q-015); `~term` = weak, needs another topic."""
 
-    topic_boost: float = 1.5
-    max_boost: float = 3.0
+    topic_boost: float = 2.0  # Q-019
+    max_boost: float = 5.0
     topics: dict[str, list[str]] = {}
     ai_dev_terms: list[str] = []  # news eligibility (Q-016)
 

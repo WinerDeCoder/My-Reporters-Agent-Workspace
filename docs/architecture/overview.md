@@ -127,7 +127,7 @@ sequenceDiagram
 
 **Hacker News (daily 07:00, spec 002):** two Algolia queries (front page; stories > 100 points from the last 26 h) → merged by HN id → GitHub-linked stories upsert repo candidates (`last_seen = now`, so the API job snapshots them) → stories upserted by `hn_id`. **Prune** (Mondays 07:40): deletes stories older than 30 days and snapshots of repos not seen for `track_days`.
 
-**Scoring (spec 003, on every read):** repo score = stars/day × topic boost × penalties; news score = points/hour × topic boost × penalties for AI/dev stories only. Topic boost = 1.5 per matched interest topic (cap 3.0); penalties: ×0.3 if briefed within the cooldown, ×0.7 per topic shared with a recent 👎 (floor 0.2); both read from `briefs`/`feedback` and are no-ops until spec 005. All weights and term lists live in `config.yaml` (`interests`, `scoring`).
+**Scoring (spec 003, on every read):** repo score = stars/day × topic boost × penalties; news score = points/hour × topic boost × penalties for AI/dev stories only. Topic boost = 2.0 per matched interest topic (cap 5.0, Q-019); penalties: ×0.3 if briefed within the cooldown, ×0.7 per topic shared with a recent 👎 (floor 0.2); both read from `briefs`/`feedback` and are no-ops until spec 005. All weights and term lists live in `config.yaml` (`interests`, `scoring`).
 
 **Browsing news (spec 002):** News page → `GET /api/news?days=7` (stories + linked repo name, points/hour via `news_stats.py`).
 
@@ -138,7 +138,8 @@ sequenceDiagram
 ## 6. Deployment
 
 - **Dev:** `docker compose up -d db`; `uv run fastapi dev app/main.py` (:8000); `npm run dev` (:5173, proxies `/api`).
-- **Daily use:** `npm run build`, then `uv run fastapi run app/main.py`; one URL, `http://localhost:8000`.
+- **Daily use:** `npm run build`, then `uv run fastapi run app/main.py --host 127.0.0.1`; one URL, `http://localhost:8000`.
+- **Network:** everything binds to 127.0.0.1 only (backend `--host`, Postgres `127.0.0.1:5432` in Compose); there is no auth, so nothing may listen on the LAN (Q-018).
 - **One-off runs:** `uv run python -m app.cli collect trending|github|hn`, `prune`, `momentum --top 20`.
 - **Later:** same containers on a small server; add a Dockerfile for the backend then.
 

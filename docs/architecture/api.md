@@ -8,7 +8,7 @@
 - JSON in and out; responses are Pydantic models (typed in OpenAPI).
 - Dates are ISO 8601; timestamps include the timezone offset.
 - Errors use FastAPI's default shape: `{"detail": "..."}` with a 4xx/5xx status.
-- No auth: the app only listens on localhost.
+- No auth: the app only listens on localhost (`fastapi run --host 127.0.0.1`, Q-018).
 
 ## Endpoints
 

@@ -5,7 +5,7 @@ Spec: [003](../../../specs/003-scoring/spec.md) · Plan: [plan.md](../../../spec
 | TC | Title | Covers | Module | Type | Automated test / Steps | Last result |
 | --- | --- | --- | --- | --- | --- | --- |
 | TC-003-01 | Topic matching: whole word, case, multi-word, hyphen/slash, weak terms need another topic | AC-1, REQ-SCO-001, REQ-SCO-002 | app/scoring.py | unit | `backend/tests/test_scoring.py::test_matcher_*` | pass 2026-10-11 |
-| TC-003-02 | Boost 1.5 per topic, capped at 3.0 | AC-2, REQ-SCO-001 | app/scoring.py | unit | `backend/tests/test_scoring.py::test_boost` | pass 2026-10-11 |
+| TC-003-02 | Boost per topic, capped (formula; config 2.0 / 5.0 since Q-019) | AC-2, REQ-SCO-001 | app/scoring.py | unit | `backend/tests/test_scoring.py::test_boost` | pass 2026-10-11 |
 | TC-003-03 | Repo and news scores: formula, unscored without stars/day, news only when AI/dev | AC-2, AC-3, REQ-SCO-001, REQ-SCO-002 | app/scoring.py | unit | `backend/tests/test_scoring.py::test_score_*` | pass 2026-10-11 |
 | TC-003-04 | Repeat penalty ×0.3; 👎 penalty ×0.7 per shared topic, floor ×0.2 | AC-4, REQ-SCO-003 | app/scoring.py | unit | `backend/tests/test_scoring.py::test_penalties` | pass 2026-10-11 |
 | TC-003-05 | Saved HN front page: AI/dev stories found, obvious off-topic stories excluded | AC-3, AC-7, REQ-SCO-002 | app/scoring.py | unit | `backend/tests/test_scoring.py::test_saved_front_page_ai_dev` | pass 2026-10-11 (agent/MCP stories matched; vegetables, food, city-game excluded; after removing plain "model" from the AI/dev list) |

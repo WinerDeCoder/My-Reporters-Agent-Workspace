@@ -29,6 +29,9 @@ sources:
     track_days: 30            # snapshot candidates for this long
   hacker_news:
     every_hours: 1
+    popular_min_points: 100   # besides the front page, stories above this many points…
+    popular_window_hours: 24  # …posted within the last N hours
+    retention_days: 30        # weekly prune deletes older stories
 
 # LLM used to write cards (OpenAI Responses API). The API key lives in .env (OPENAI_API_KEY).
 llm:

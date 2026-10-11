@@ -91,9 +91,11 @@ erDiagram
 
 ## Retention
 
-- HN items older than 30 days are pruned weekly unless a brief references them (REQ-COL-006).
-- Snapshots of repos that never reached a brief are pruned after `track_days`.
-- Cards, briefs and feedback are kept.
+Weekly `prune` job (`app/collectors/prune.py`, REQ-COL-006):
+
+- HN stories posted more than `retention_days` (30) ago are deleted. Spec 005 adds "unless a brief references them".
+- Snapshots of repos no longer tracked (`last_seen` older than `track_days`) are deleted; repo rows stay. Spec 005 adds "and never reached a brief" (Q-013).
+- Cards, briefs, feedback and `collector_runs` are kept.
 
 ## Changing the schema
 

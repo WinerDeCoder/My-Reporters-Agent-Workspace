@@ -2,9 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { type CollectorStatus as Status, getJson, relativeTime } from "../api/client";
 
-const JOB_LABELS: Record<string, string> = {
-  github_trending: "GitHub Trending",
-  github_api: "GitHub star snapshots",
+const JOBS: Record<string, { label: string; unit: string }> = {
+  github_trending: { label: "GitHub Trending", unit: "repos" },
+  github_api: { label: "GitHub star snapshots", unit: "repos" },
+  hacker_news: { label: "Hacker News", unit: "stories" },
+  prune: { label: "Weekly cleanup", unit: "rows deleted" },
 };
 
 function Dot({ tone }: { tone: "ok" | "fail" | "idle" }) {
@@ -31,13 +33,13 @@ export default function CollectorStatus() {
         return (
           <li key={s.job} className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
             <Dot tone={tone} />
-            <span className="font-medium">{JOB_LABELS[s.job] ?? s.job}</span>
+            <span className="font-medium">{JOBS[s.job]?.label ?? s.job}</span>
             <span className="text-stone-500">
               {!run && "not run yet"}
               {run && (
                 <span title={new Date(run.finished_at).toLocaleString()}>
                   {run.ok ? "ran" : "failed"} {relativeTime(run.finished_at)}
-                  {run.ok && run.result !== null && ` · ${run.result} repos`}
+                  {run.ok && run.result !== null && ` · ${run.result} ${JOBS[s.job]?.unit ?? "items"}`}
                 </span>
               )}
               {s.next_run && (

@@ -2,6 +2,8 @@
 
 uv run python -m app.cli collect trending
 uv run python -m app.cli collect github
+uv run python -m app.cli collect hn
+uv run python -m app.cli prune
 uv run python -m app.cli momentum --top 20
 """
 
@@ -17,7 +19,7 @@ from app.repo_stats import RepoRow, load_repo_rows
 from app.scheduler import JOBS, run_job
 
 # CLI name -> scheduler job name (CLI runs are recorded under the same job name)
-COLLECTORS = {"trending": "github_trending", "github": "github_api"}
+COLLECTORS = {"trending": "github_trending", "github": "github_api", "hn": "hacker_news"}
 
 
 async def _run(fn: Callable[[], Awaitable[Any]]) -> Any:
@@ -51,6 +53,7 @@ def main(argv: list[str] | None = None) -> None:
         "collect", help="run one collector once (recorded like a scheduled run)"
     )
     collect.add_argument("source", choices=sorted(COLLECTORS))
+    sub.add_parser("prune", help="delete old HN stories and untracked repos' snapshots now")
     mom = sub.add_parser("momentum", help="print top repos by stars/day")
     mom.add_argument("--top", type=int, default=20)
     args = parser.parse_args(argv)
@@ -62,6 +65,9 @@ def main(argv: list[str] | None = None) -> None:
         job = COLLECTORS[args.source]
         result = asyncio.run(_run(lambda: run_job(job, JOBS[job])))
         print(f"{args.source}: {result}")
+    elif args.command == "prune":
+        result = asyncio.run(_run(lambda: run_job("prune", JOBS["prune"])))
+        print(f"prune: {result} rows deleted")
     else:
         asyncio.run(print_momentum(args.top))
 

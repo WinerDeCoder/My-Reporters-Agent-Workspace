@@ -73,10 +73,14 @@ def test_jobs_registered():
     now = datetime(2026, 10, 10, 8, 0, tzinfo=UTC)
     jobs = {job.id: job for job in create_scheduler(now=now).get_jobs()}
 
-    assert set(jobs) == {"github_trending", "github_api"}
-    trending, api = jobs["github_trending"], jobs["github_api"]
-    assert trending.trigger.interval == timedelta(hours=cfg.github_trending.every_hours)
-    assert api.trigger.interval == timedelta(hours=cfg.github_api.every_hours)
-    assert trending.next_run_time == now + timedelta(seconds=60)
-    assert api.next_run_time == now + timedelta(seconds=120)
-    assert trending.max_instances == 1 and trending.coalesce
+    assert set(jobs) == {"github_trending", "github_api", "hacker_news", "prune"}
+    expected = {
+        "github_trending": (timedelta(hours=cfg.github_trending.every_hours), 60),
+        "github_api": (timedelta(hours=cfg.github_api.every_hours), 120),
+        "hacker_news": (timedelta(hours=cfg.hacker_news.every_hours), 90),
+        "prune": (timedelta(days=7), 300),
+    }
+    for name, (interval, first_run_s) in expected.items():
+        assert jobs[name].trigger.interval == interval, name
+        assert jobs[name].next_run_time == now + timedelta(seconds=first_run_s), name
+        assert jobs[name].max_instances == 1 and jobs[name].coalesce, name

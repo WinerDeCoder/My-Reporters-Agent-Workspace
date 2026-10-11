@@ -2,6 +2,7 @@ import { NavLink, Route, Routes } from "react-router";
 
 import Card from "./pages/Card";
 import Leaderboard from "./pages/Leaderboard";
+import News from "./pages/News";
 import Repos from "./pages/Repos";
 import Stats from "./pages/Stats";
 import Today from "./pages/Today";
@@ -9,6 +10,7 @@ import Today from "./pages/Today";
 const links = [
   { to: "/", label: "Today" },
   { to: "/repos", label: "Rising repos" },
+  { to: "/news", label: "News" },
   { to: "/leaderboard", label: "Leaderboard" },
   { to: "/stats", label: "Stats" },
 ];
@@ -37,6 +39,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Today />} />
           <Route path="/repos" element={<Repos />} />
+          <Route path="/news" element={<News />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/cards/:itemType/:itemId" element={<Card />} />

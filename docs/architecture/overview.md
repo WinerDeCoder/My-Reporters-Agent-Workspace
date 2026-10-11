@@ -52,7 +52,7 @@ flowchart TB
 
 | Container | Tech | Responsibility |
 | --- | --- | --- |
-| Frontend | React, Vite, TypeScript, Tailwind, TanStack Query, React Router | Today (status + brief), Rising repos, Leaderboard, Card, Stats pages; rating buttons |
+| Frontend | React, Vite, TypeScript, Tailwind, TanStack Query, React Router | Today (status + brief), Rising repos, News, Leaderboard, Card, Stats pages; rating buttons |
 | Backend | Python 3.12+, FastAPI, APScheduler, SQLAlchemy async, httpx | API, scheduled collectors, scoring, card generation, brief building; serves the built frontend |
 | Database | PostgreSQL 17 (pgvector image), Alembic migrations | All state; see [data-model.md](data-model.md) |
 | LLM | OpenAI Responses API via `openai` SDK | Writes structured cards; settings in `config.yaml` → `llm` |
@@ -68,13 +68,15 @@ flowchart TB
 | `app/collectors/__init__.py` | Shared HTTP client (`make_client`) and retry policy (`transient_retry`) |
 | `app/collectors/github_trending.py` | Scrapes GitHub Trending pages → upserts candidate repos *(spec 001, built)* |
 | `app/collectors/github_api.py` | Tracked repos → metadata, README hash, star snapshot; rate-limit aware *(spec 001, built)* |
-| `app/collectors/hacker_news.py` | HN stories and GitHub-link candidates *(spec 002)* |
+| `app/collectors/hacker_news.py` | HN front page + popular stories (Algolia) → `news_items`; GitHub-linked stories become repo candidates *(spec 002, built)* |
+| `app/collectors/prune.py` | Weekly prune: stories > 30 days, snapshots of untracked repos *(spec 002, built)* |
+| `app/news_stats.py` | Pure points/hour (age floored at 1 h) *(spec 002, built)* |
 | `app/momentum.py` | Pure stars/day and stars-gained functions over snapshots *(spec 001, built)* |
 | `app/cli.py` | Run a collector once (recorded like a scheduled run) / print momentum: `python -m app.cli ...` |
 | `app/runs.py` | Collector run log: `record_run()`, `last_runs()` *(spec 008, built)* |
 | `app/repo_stats.py` | Tracked repos + latest stars + stars/day, shared by API and CLI *(spec 008, built)* |
 
-Frontend: `src/pages/` (Today, Repos, Leaderboard, Stats, Card), `src/components/CollectorStatus.tsx` (job status panel), `src/api/client.ts` (fetch helper + types).
+Frontend: `src/pages/` (Today, Repos, News, Leaderboard, Stats, Card), `src/components/CollectorStatus.tsx` (job status panel), `src/api/client.ts` (fetch helper + types).
 | `app/scoring.py` | Pure scoring functions *(spec 003)* |
 | `app/llm.py` | The only place that calls the LLM |
 | `app/cards.py` | Card prompt, cache and budget check *(spec 004)* |
@@ -121,6 +123,10 @@ sequenceDiagram
     B->>DB: insert briefs row (items in order)
 ```
 
+**Hacker News (hourly, first at +90 s, spec 002):** two Algolia queries (front page; stories > 100 points from the last 24 h) → merged by HN id → GitHub-linked stories upsert repo candidates (`last_seen = now`, so the API job snapshots them) → stories upserted by `hn_id`. **Prune** (every 7 days, first at +5 min): deletes stories older than 30 days and snapshots of repos not seen for `track_days`.
+
+**Browsing news (spec 002):** News page → `GET /api/news?days=7` (stories + linked repo name, points/hour via `news_stats.py`).
+
 **Browsing repos (spec 008):** Rising repos page → `GET /api/repos` (tracked repos + last 48 h of snapshots → stars/day via `momentum.py`) and `GET /api/collectors/status` (latest `collector_runs` row per job + scheduler's next run); both refetch every minute; search/filter/sort run in the browser.
 
 **Reading:** browser loads the SPA → `GET /api/briefs/today` → first view sets `opened_at` → 👍/👎 posts to `/api/feedback`.
@@ -129,7 +135,7 @@ sequenceDiagram
 
 - **Dev:** `docker compose up -d db`; `uv run fastapi dev app/main.py` (:8000); `npm run dev` (:5173, proxies `/api`).
 - **Daily use:** `npm run build`, then `uv run fastapi run app/main.py`; one URL, `http://localhost:8000`.
-- **One-off runs:** `uv run python -m app.cli collect trending|github`, `uv run python -m app.cli momentum --top 20`.
+- **One-off runs:** `uv run python -m app.cli collect trending|github|hn`, `prune`, `momentum --top 20`.
 - **Later:** same containers on a small server; add a Dockerfile for the backend then.
 
 ## 7. Cross-cutting concepts

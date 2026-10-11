@@ -1,0 +1,443 @@
+{
+ "hits": [
+  {
+   "objectID": "49991852",
+   "title": "2D Vehicles",
+   "url": "https://patkerr.co.uk/2d-vehicles/",
+   "points": 398,
+   "num_comments": 88,
+   "created_at_i": 1791376240,
+   "author": "Michelangelo11",
+   "_tags": [
+    "story",
+    "author_Michelangelo11",
+    "story_49991852",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "49980880",
+   "title": "Grieving the loss of details",
+   "url": "https://purplesyringa.moe/blog/grieving-the-loss-of-details/",
+   "points": 380,
+   "num_comments": 295,
+   "created_at_i": 1791304641,
+   "author": "signa11",
+   "_tags": [
+    "story",
+    "author_signa11",
+    "story_49980880",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50029487",
+   "title": "The Lightbulb Computer",
+   "url": "https://lightbulbcomputer.com/",
+   "points": 313,
+   "num_comments": 46,
+   "created_at_i": 1791605546,
+   "author": "oskarth",
+   "_tags": [
+    "story",
+    "author_oskarth",
+    "story_50029487",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50031614",
+   "title": "Talorys \u2013 A self-hosted personal AI agent on Cloudflare's free tier",
+   "url": "https://github.com/rociiu/talorys",
+   "points": 269,
+   "num_comments": 123,
+   "created_at_i": 1791629529,
+   "author": "rociiu",
+   "_tags": [
+    "story",
+    "author_rociiu",
+    "story_50031614",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50036864",
+   "title": "A city-building game in which the city would prefer you didn't",
+   "url": "https://housing.over.pizza/",
+   "points": 245,
+   "num_comments": 85,
+   "created_at_i": 1791664310,
+   "author": "JumpCrisscross",
+   "_tags": [
+    "story",
+    "author_JumpCrisscross",
+    "story_50036864",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50038634",
+   "title": "WallHop \u2013 12ft.io is gone, so I built a replacement",
+   "url": "https://wallhop.io/",
+   "points": 181,
+   "num_comments": 79,
+   "created_at_i": 1791679608,
+   "author": "TheWaffleHax",
+   "_tags": [
+    "story",
+    "author_TheWaffleHax",
+    "story_50038634",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50034081",
+   "title": "Knuth reward check",
+   "url": "https://www.thomas-huehn.com/knuth-reward-check/",
+   "points": 173,
+   "num_comments": 63,
+   "created_at_i": 1791647221,
+   "author": "Curiositry",
+   "_tags": [
+    "story",
+    "author_Curiositry",
+    "story_50034081",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50016956",
+   "title": "Mxc: Microsoft Execution Containers version 1.0.0",
+   "url": "https://blogs.windows.com/windowsdeveloper/2026/10/07/microsoft-execution-containers-policy-driven-containment-for-ai-agents/",
+   "points": 173,
+   "num_comments": 40,
+   "created_at_i": 1791528769,
+   "author": "smokel",
+   "_tags": [
+    "story",
+    "author_smokel",
+    "story_50016956",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50037949",
+   "title": "Build your own decision model",
+   "url": "https://nishtahir.com/build-your-own-decision-model/",
+   "points": 173,
+   "num_comments": 34,
+   "created_at_i": 1791672610,
+   "author": "softwaredoug",
+   "_tags": [
+    "story",
+    "author_softwaredoug",
+    "story_50037949",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50035530",
+   "title": "Why DuckDB 2.0 is faster",
+   "url": "https://motherduck.com/blog/why-duckdb-20-is-faster/",
+   "points": 171,
+   "num_comments": 52,
+   "created_at_i": 1791655729,
+   "author": "tosh",
+   "_tags": [
+    "story",
+    "author_tosh",
+    "story_50035530",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50017247",
+   "title": "Nix wrote half of my debugger",
+   "url": "https://fzakaria.com/2026/10/07/nix-wrote-half-of-my-debugger",
+   "points": 159,
+   "num_comments": 30,
+   "created_at_i": 1791530948,
+   "author": "ingve",
+   "_tags": [
+    "story",
+    "author_ingve",
+    "story_50017247",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50005743",
+   "title": "C for Rust programmers",
+   "url": "https://bd103.dev/blog/2026-10-07-c-for-rust-programmers/",
+   "points": 128,
+   "num_comments": 111,
+   "created_at_i": 1791467076,
+   "author": "xyproto",
+   "_tags": [
+    "story",
+    "author_xyproto",
+    "story_50005743",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50029830",
+   "title": "Food processing influences metabolism and brain activity",
+   "url": "https://news.vt.edu/articles/2026/10/research_fralinbiomed_upfhutelin.html",
+   "points": 125,
+   "num_comments": 92,
+   "created_at_i": 1791609750,
+   "author": "gmays",
+   "_tags": [
+    "story",
+    "author_gmays",
+    "story_50029830",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "49984349",
+   "title": "OpenSCAD the Programmers Solid 3D CAD Modeller",
+   "url": "https://openscad.org/",
+   "points": 120,
+   "num_comments": 99,
+   "created_at_i": 1791321764,
+   "author": "b-man",
+   "_tags": [
+    "story",
+    "author_b-man",
+    "story_49984349",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50033357",
+   "title": "Unikernels were hard. key word: were",
+   "url": "https://ghuntley.com/unikernels/",
+   "points": 120,
+   "num_comments": 51,
+   "created_at_i": 1791642429,
+   "author": "ghuntley",
+   "_tags": [
+    "story",
+    "author_ghuntley",
+    "story_50033357",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50021899",
+   "title": "Five months treating bugs like patients and coding agents like a medical team",
+   "url": "https://www.cockroachlabs.com/blog/experiment-running-hospital-code/",
+   "points": 96,
+   "num_comments": 42,
+   "created_at_i": 1791559593,
+   "author": "rafiss",
+   "_tags": [
+    "story",
+    "author_rafiss",
+    "story_50021899",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50039092",
+   "title": "500B Tokens Later: Letting AI Agents Decompile a First-Person Shooter",
+   "url": "https://momo5502.com/posts/2026-10-09-game-decompilation/",
+   "points": 62,
+   "num_comments": 45,
+   "created_at_i": 1791684158,
+   "author": "davikr",
+   "_tags": [
+    "story",
+    "author_davikr",
+    "story_50039092",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50020901",
+   "title": "Getting old Macromedia Director Games to run on modern Hardware",
+   "url": "https://werwolv.net/posts/macromedia_copy_protection/",
+   "points": 54,
+   "num_comments": 8,
+   "created_at_i": 1791555483,
+   "author": "speckx",
+   "_tags": [
+    "story",
+    "author_speckx",
+    "story_50020901",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50038623",
+   "title": "PSPi 6 \u2013 Raspberry Pi in a PSP",
+   "url": "https://github.com/othermod/PSPi-Version-6",
+   "points": 38,
+   "num_comments": 5,
+   "created_at_i": 1791679549,
+   "author": "therepanic",
+   "_tags": [
+    "story",
+    "author_therepanic",
+    "story_50038623",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50038473",
+   "title": "Veda: The First Agentic Hobby Operating System",
+   "url": "https://github.com/vahmoh25/Veda",
+   "points": 37,
+   "num_comments": 9,
+   "created_at_i": 1791678153,
+   "author": "vahmohh",
+   "_tags": [
+    "story",
+    "author_vahmohh",
+    "story_50038473",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50001234",
+   "title": "Retrofitting language models to operate over bytes",
+   "url": "https://www.nature.com/articles/s41586-026-11111-4",
+   "points": 31,
+   "num_comments": 0,
+   "created_at_i": 1791425716,
+   "author": "theanonymousone",
+   "_tags": [
+    "story",
+    "author_theanonymousone",
+    "story_50001234",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50039627",
+   "title": "Satya Nadella says we should assume all AI models are 'compromised'",
+   "url": "https://www.theverge.com/ai-artificial-intelligence/1009337/satya-nadella-says-we-should-assume-all-ai-models-are-compromised",
+   "points": 23,
+   "num_comments": 22,
+   "created_at_i": 1791690113,
+   "author": "jonbaer",
+   "_tags": [
+    "story",
+    "author_jonbaer",
+    "story_50039627",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50006930",
+   "title": "Show HN: Diffle, a keyboard-centric diff viewer with LSP support",
+   "url": "https://github.com/moritzwilksch/diffle",
+   "points": 19,
+   "num_comments": 1,
+   "created_at_i": 1791472999,
+   "author": "mwil1000",
+   "_tags": [
+    "story",
+    "author_mwil1000",
+    "story_50006930",
+    "show_hn",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50015833",
+   "title": "Show HN: Happy Hangul Day! An RNN for Generating Korean Handwriting Strokes",
+   "url": "https://hangul.ink/blog/hangul-day",
+   "points": 18,
+   "num_comments": 2,
+   "created_at_i": 1791518296,
+   "author": "jbaudanza",
+   "_tags": [
+    "story",
+    "author_jbaudanza",
+    "story_50015833",
+    "show_hn",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50039504",
+   "title": "CIA World Facebook Is Dead \u2013 Here Is an Attempt at Recreation",
+   "url": "https://worldfacts.app",
+   "points": 17,
+   "num_comments": 15,
+   "created_at_i": 1791688426,
+   "author": "yegortk",
+   "_tags": [
+    "story",
+    "author_yegortk",
+    "story_50039504",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50039536",
+   "title": "GameBoy on E-Paper ESP32 at 30FPS [video]",
+   "url": "https://www.youtube.com/watch?v=XiZmM6hwwAU",
+   "points": 7,
+   "num_comments": 0,
+   "created_at_i": 1791688867,
+   "author": "pizzaiolo",
+   "_tags": [
+    "story",
+    "author_pizzaiolo",
+    "story_50039536",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50039715",
+   "title": "Vegetables half as nutritious as they were in the 1960s",
+   "url": "https://www.telegraph.co.uk/business/2026/10/07/vegetable-nutrition-halved-since-60s/",
+   "points": 6,
+   "num_comments": 3,
+   "created_at_i": 1791691652,
+   "author": "WarOnPrivacy",
+   "_tags": [
+    "story",
+    "author_WarOnPrivacy",
+    "story_50039715",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50039633",
+   "title": "Show HN: GSD Task Manager \u2013 an MCP server that gives your AI agent a task list",
+   "url": "https://github.com/vscarpenter/gsd-task-manager",
+   "points": 5,
+   "num_comments": 2,
+   "created_at_i": 1791690176,
+   "author": "vscarpenter",
+   "_tags": [
+    "story",
+    "author_vscarpenter",
+    "story_50039633",
+    "show_hn",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50024805",
+   "title": "Deterministic Simulation Testing in Celld",
+   "url": "https://celld.dev/docs/engineering/deterministic-simulation-testing/",
+   "points": 4,
+   "num_comments": 0,
+   "created_at_i": 1791570710,
+   "author": "handfuloflight",
+   "_tags": [
+    "story",
+    "author_handfuloflight",
+    "story_50024805",
+    "front_page"
+   ]
+  }
+ ],
+ "nbHits": 29
+}

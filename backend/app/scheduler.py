@@ -11,16 +11,37 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from app.collectors.github_api import collect_github
 from app.collectors.github_trending import collect_trending
-from app.config import get_config
+from app.collectors.hacker_news import collect_hacker_news
+from app.collectors.prune import prune_old_data
+from app.config import AppConfig, get_config
 from app.runs import Recorder, record_run
 
 log = logging.getLogger(__name__)
 
-JOBS = {"github_trending": collect_trending, "github_api": collect_github}
+JOBS = {
+    "github_trending": collect_trending,
+    "github_api": collect_github,
+    "hacker_news": collect_hacker_news,
+    "prune": prune_old_data,
+}
 
-# First runs shortly after startup (Q-003); the API job waits for Trending to add candidates.
-TRENDING_FIRST_RUN = timedelta(seconds=60)
-GITHUB_API_FIRST_RUN = timedelta(seconds=120)
+# First runs shortly after startup (Q-003): Trending, then the API job once candidates exist,
+# then HN; prune last, after the morning's collection.
+FIRST_RUN = {
+    "github_trending": timedelta(seconds=60),
+    "github_api": timedelta(seconds=120),
+    "hacker_news": timedelta(seconds=90),
+    "prune": timedelta(minutes=5),
+}
+
+
+def job_intervals(cfg: AppConfig) -> dict[str, timedelta]:
+    return {
+        "github_trending": timedelta(hours=cfg.sources.github_trending.every_hours),
+        "github_api": timedelta(hours=cfg.sources.github_api.every_hours),
+        "hacker_news": timedelta(hours=cfg.sources.hacker_news.every_hours),
+        "prune": timedelta(days=7),
+    }
 
 
 async def run_job(
@@ -55,23 +76,15 @@ def create_scheduler(now: datetime | None = None) -> AsyncIOScheduler:
     scheduler = AsyncIOScheduler(timezone=tz)
     common: dict[str, Any] = {"max_instances": 1, "coalesce": True, "misfire_grace_time": 3600}
 
-    scheduler.add_job(
-        run_job,
-        "interval",
-        hours=cfg.sources.github_trending.every_hours,
-        args=["github_trending", collect_trending],
-        id="github_trending",
-        next_run_time=now + TRENDING_FIRST_RUN,
-        **common,
-    )
-    scheduler.add_job(
-        run_job,
-        "interval",
-        hours=cfg.sources.github_api.every_hours,
-        args=["github_api", collect_github],
-        id="github_api",
-        next_run_time=now + GITHUB_API_FIRST_RUN,
-        **common,
-    )
-    # Later specs add: hacker_news hourly, daily brief at brief_time (+ catch-up), leaderboard.
+    for name, interval in job_intervals(cfg).items():
+        scheduler.add_job(
+            run_job,
+            "interval",
+            seconds=interval.total_seconds(),
+            args=[name, JOBS[name]],
+            id=name,
+            next_run_time=now + FIRST_RUN[name],
+            **common,
+        )
+    # Later specs add: daily brief at brief_time (+ catch-up), weekly leaderboard.
     return scheduler

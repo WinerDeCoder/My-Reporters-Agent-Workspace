@@ -1,0 +1,279 @@
+{
+ "hits": [
+  {
+   "objectID": "50032556",
+   "title": "Lobbying is corruption",
+   "url": "https://carette.xyz/posts/lobbying_and_corruption/",
+   "points": 474,
+   "num_comments": 269,
+   "created_at_i": 1791637558,
+   "author": "LucidLynx",
+   "_tags": [
+    "story",
+    "author_LucidLynx",
+    "story_50032556"
+   ]
+  },
+  {
+   "objectID": "50031269",
+   "title": "`123456' password used in Danish CPR data breach",
+   "url": "https://cphpost.dk/2026-10-10/news/round-up/123456-password-used-in-massive-danish-cpr-data-breach/",
+   "points": 382,
+   "num_comments": 194,
+   "created_at_i": 1791625909,
+   "author": "baal80spam",
+   "_tags": [
+    "story",
+    "author_baal80spam",
+    "story_50031269"
+   ]
+  },
+  {
+   "objectID": "50033407",
+   "title": "Bitwarden Dual License Model",
+   "url": "https://community.bitwarden.com/t/published-version-update-in-app-stores/102750",
+   "points": 363,
+   "num_comments": 262,
+   "created_at_i": 1791642770,
+   "author": "Cider9986",
+   "_tags": [
+    "story",
+    "author_Cider9986",
+    "story_50033407"
+   ]
+  },
+  {
+   "objectID": "50031614",
+   "title": "Talorys \u2013 A self-hosted personal AI agent on Cloudflare's free tier",
+   "url": "https://github.com/rociiu/talorys",
+   "points": 269,
+   "num_comments": 123,
+   "created_at_i": 1791629529,
+   "author": "rociiu",
+   "_tags": [
+    "story",
+    "author_rociiu",
+    "story_50031614",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50031653",
+   "title": "Apple/macOS removed from official Unix registry",
+   "url": "https://www.opengroup.org//openbrand/register/",
+   "points": 268,
+   "num_comments": 224,
+   "created_at_i": 1791629851,
+   "author": "john_alan",
+   "_tags": [
+    "story",
+    "author_john_alan",
+    "story_50031653"
+   ]
+  },
+  {
+   "objectID": "50036864",
+   "title": "A city-building game in which the city would prefer you didn't",
+   "url": "https://housing.over.pizza/",
+   "points": 245,
+   "num_comments": 85,
+   "created_at_i": 1791664310,
+   "author": "JumpCrisscross",
+   "_tags": [
+    "story",
+    "author_JumpCrisscross",
+    "story_50036864",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50032758",
+   "title": "I would like the value of my home to rise, while my property taxes fall",
+   "url": "https://conversableeconomist.com/2026/09/28/i-would-like-the-value-of-my-home-to-rise-while-my-property-taxes-fall/",
+   "points": 236,
+   "num_comments": 536,
+   "created_at_i": 1791638943,
+   "author": "colinprince",
+   "_tags": [
+    "story",
+    "author_colinprince",
+    "story_50032758"
+   ]
+  },
+  {
+   "objectID": "50029982",
+   "title": "Computers Cannot Make Decisions",
+   "url": "https://wiki.cateat.fish/art:computers_cannot_make_decisions",
+   "points": 196,
+   "num_comments": 179,
+   "created_at_i": 1791611266,
+   "author": "heavensteeth",
+   "_tags": [
+    "story",
+    "author_heavensteeth",
+    "story_50029982"
+   ]
+  },
+  {
+   "objectID": "50038634",
+   "title": "WallHop \u2013 12ft.io is gone, so I built a replacement",
+   "url": "https://wallhop.io/",
+   "points": 181,
+   "num_comments": 80,
+   "created_at_i": 1791679608,
+   "author": "TheWaffleHax",
+   "_tags": [
+    "story",
+    "author_TheWaffleHax",
+    "story_50038634",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50033638",
+   "title": "FDA may allow some toxic chemicals to be added to food without safety review",
+   "url": "https://www.theguardian.com/us-news/2026/oct/10/fda-toxic-chemicals-food-analysis",
+   "points": 180,
+   "num_comments": 85,
+   "created_at_i": 1791644436,
+   "author": "NewJazz",
+   "_tags": [
+    "story",
+    "author_NewJazz",
+    "story_50033638"
+   ]
+  },
+  {
+   "objectID": "50034081",
+   "title": "Knuth reward check",
+   "url": "https://www.thomas-huehn.com/knuth-reward-check/",
+   "points": 174,
+   "num_comments": 63,
+   "created_at_i": 1791647221,
+   "author": "Curiositry",
+   "_tags": [
+    "story",
+    "author_Curiositry",
+    "story_50034081",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50037949",
+   "title": "Build your own decision model",
+   "url": "https://nishtahir.com/build-your-own-decision-model/",
+   "points": 173,
+   "num_comments": 34,
+   "created_at_i": 1791672610,
+   "author": "softwaredoug",
+   "_tags": [
+    "story",
+    "author_softwaredoug",
+    "story_50037949",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50035530",
+   "title": "Why DuckDB 2.0 is faster",
+   "url": "https://motherduck.com/blog/why-duckdb-20-is-faster/",
+   "points": 171,
+   "num_comments": 52,
+   "created_at_i": 1791655729,
+   "author": "tosh",
+   "_tags": [
+    "story",
+    "author_tosh",
+    "story_50035530",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50035886",
+   "title": "Nvidia in talks to acquire US 'open' model startup Reflection AI",
+   "url": "https://www.ft.com/content/052610c5-22b4-4dd4-932e-b7f9f0628b6a",
+   "points": 142,
+   "num_comments": 95,
+   "created_at_i": 1791658115,
+   "author": "arkj",
+   "_tags": [
+    "story",
+    "author_arkj",
+    "story_50035886"
+   ]
+  },
+  {
+   "objectID": "50033678",
+   "title": "Tom Brown used GOP ties to broker a $1.25B/month SpaceX compute deal",
+   "url": "https://wsj.com/tech/ai/tom-brown-athropic-669005ad",
+   "points": 131,
+   "num_comments": 56,
+   "created_at_i": 1791644678,
+   "author": "utiiiD",
+   "_tags": [
+    "story",
+    "author_utiiiD",
+    "story_50033678"
+   ]
+  },
+  {
+   "objectID": "50029830",
+   "title": "Food processing influences metabolism and brain activity",
+   "url": "https://news.vt.edu/articles/2026/10/research_fralinbiomed_upfhutelin.html",
+   "points": 125,
+   "num_comments": 92,
+   "created_at_i": 1791609750,
+   "author": "gmays",
+   "_tags": [
+    "story",
+    "author_gmays",
+    "story_50029830",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50033721",
+   "title": "PVX-001: open-source Covid-19 vaccine starts Phase 1 trial",
+   "url": "https://chronicles.popvax.com/p/popvax-goes-clinical",
+   "points": 123,
+   "num_comments": 29,
+   "created_at_i": 1791645024,
+   "author": "jajoosam",
+   "_tags": [
+    "story",
+    "author_jajoosam",
+    "story_50033721"
+   ]
+  },
+  {
+   "objectID": "50033357",
+   "title": "Unikernels were hard. key word: were",
+   "url": "https://ghuntley.com/unikernels/",
+   "points": 120,
+   "num_comments": 51,
+   "created_at_i": 1791642429,
+   "author": "ghuntley",
+   "_tags": [
+    "story",
+    "author_ghuntley",
+    "story_50033357",
+    "front_page"
+   ]
+  },
+  {
+   "objectID": "50036119",
+   "title": "Takeshi's Castle",
+   "url": "https://en.wikipedia.org/wiki/Takeshi%27s_Castle",
+   "points": 107,
+   "num_comments": 37,
+   "created_at_i": 1791659575,
+   "author": "tosh",
+   "_tags": [
+    "story",
+    "author_tosh",
+    "story_50036119"
+   ]
+  }
+ ],
+ "nbHits": 19
+}

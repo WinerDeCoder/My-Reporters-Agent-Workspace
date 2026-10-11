@@ -13,8 +13,11 @@ Each entry names the spec it belongs to.
 
 - Rising repos page (spec 008): every tracked repo with stars and stars/day, search, language filter and sort; collector status panel on Today and Rising repos; `collector_runs` table (migration 0002) recording every job run; `GET /api/repos`, `GET /api/collectors/status`; favicon.
 
+- Hacker News collector (spec 002): front page + stories > 100 points from the last 24 h, hourly; GitHub-linked stories become tracked repos; weekly prune of old stories and untracked repos' snapshots; News page (search, sort by points/hour); `GET /api/news`; CLI `collect hn`, `prune`.
+
 ### Changed
 
+- Scheduler jobs defined in one table (`JOBS`, `FIRST_RUN`, `job_intervals`); status panel labels and units per job.
 - CLI `collect` runs are now recorded in `collector_runs` like scheduled runs; `momentum` shares its query with the API (`app/repo_stats.py`).
 - `selectolax` pinned to `>=1.0` and switched to its `lexbor` backend (the old backend was removed in 1.0).
 

@@ -119,6 +119,8 @@ uv run pytest                                    # tests
 uv run ruff check . ; uv run ruff format .       # lint + format
 uv run python -m app.cli collect trending        # run the Trending collector once
 uv run python -m app.cli collect github          # snapshot tracked repos once (needs GITHUB_TOKEN)
+uv run python -m app.cli collect hn              # fetch Hacker News stories once
+uv run python -m app.cli prune                   # delete old stories / untracked snapshots now
 uv run python -m app.cli momentum --top 20       # top repos by stars/day
 uv run alembic revision --autogenerate -m "..."  # new migration after editing models.py
 uv add <package>                                 # add a dependency, then refresh requirements.txt:

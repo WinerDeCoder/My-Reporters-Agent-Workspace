@@ -25,6 +25,22 @@ export type RepoRow = {
   last_seen: string;
 };
 
+export type NewsItem = {
+  id: number;
+  hn_id: number;
+  title: string;
+  /** null for Ask HN / text posts */
+  url: string | null;
+  domain: string | null;
+  hn_url: string;
+  points: number;
+  comments: number;
+  posted_at: string;
+  points_per_hour: number;
+  /** owner/repo when the story links a GitHub repo */
+  linked_repo: string | null;
+};
+
 export type LastRun = {
   started_at: string;
   finished_at: string;

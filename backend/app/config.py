@@ -44,6 +44,9 @@ class GithubApiConfig(BaseModel):
 
 class HackerNewsConfig(BaseModel):
     every_hours: int = 1
+    popular_min_points: int = 100  # also fetch stories above this many points…
+    popular_window_hours: int = 24  # …posted within this window (Q-010)
+    retention_days: int = 30  # prune stories older than this (REQ-COL-006)
 
 
 class SourcesConfig(BaseModel):

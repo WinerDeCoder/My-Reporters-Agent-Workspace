@@ -120,7 +120,9 @@ async def load_signals(session: AsyncSession, cfg: AppConfig, now: datetime) -> 
     Convention: each `briefs.items` entry has `item_type` and `item_id`."""
     since_day: date = now.date() - timedelta(days=cfg.brief.repeat_cooldown_days)
     briefed: set[tuple[str, int]] = set()
-    for items in await session.scalars(select(Brief.items).where(Brief.date >= since_day)):
+    # daily briefs only: the weekly leaderboard (spec 006) must not cause repeat penalties
+    daily = select(Brief.items).where(Brief.type == "daily", Brief.date >= since_day)
+    for items in await session.scalars(daily):
         for it in items or []:
             if isinstance(it, dict) and "item_type" in it and "item_id" in it:
                 briefed.add((str(it["item_type"]), int(it["item_id"])))

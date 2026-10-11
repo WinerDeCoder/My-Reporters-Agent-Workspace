@@ -62,6 +62,65 @@ export type Brief = {
 
 export type Today = { brief: Brief | null; brief_time: string };
 
+export type LeaderboardEntry = {
+  rank: number;
+  item_type: "repo";
+  item_id: number;
+  title: string;
+  url: string | null;
+  description: string | null;
+  language: string | null;
+  stars: number;
+  stars_gained: number;
+  /** set when the repo was tracked for less than 7 days */
+  since: string | null;
+  matched_topics: string[];
+  what_it_is: string | null;
+  has_card: boolean;
+};
+
+export type LeaderboardLatest = {
+  leaderboard: { week_of: string; created_at: string; entries: LeaderboardEntry[] } | null;
+  run_at: string;
+};
+
+export type CheckState = "pass" | "fail" | "not yet" | "on track" | "below" | "no data";
+
+export type StatsDay = {
+  day: string;
+  built: boolean;
+  opened_at: string | null;
+  items: number;
+  rated: number;
+  up: number;
+  down: number;
+};
+
+export type Stats = {
+  view: "trial" | "rolling";
+  start: string;
+  end: string;
+  today: string;
+  days: number;
+  day_number: number;
+  not_started: boolean;
+  finished: boolean;
+  briefs_built: number;
+  opened_days: number;
+  items: number;
+  rated: number;
+  up: number;
+  down: number;
+  up_share: number | null;
+  rated_share: number | null;
+  checks: Record<
+    "opened_days" | "thumbs_up_share" | "rated_share",
+    { label: string; value: number | null; target: number; state: CheckState }
+  >;
+  verdict: string | null;
+  rows: StatsDay[];
+};
+
 export type ItemType = "repo" | "news";
 
 export type CardItem = {

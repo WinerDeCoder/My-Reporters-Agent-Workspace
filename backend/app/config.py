@@ -1,5 +1,6 @@
 """Settings: secrets from .env, everything else from config.yaml (both at the repo root)."""
 
+from datetime import date
 from functools import lru_cache
 from pathlib import Path
 from typing import Annotated, Literal
@@ -99,6 +100,20 @@ class CardsConfig(BaseModel):
     max_source_chars: int = 12_000
 
 
+class LeaderboardConfig(BaseModel):
+    run_at: RunAt = "07:35"  # Mondays (spec 006)
+
+
+class TrialConfig(BaseModel):
+    """The MVP's 2-week trial (spec 007, Q-028, Q-029)."""
+
+    start_date: date = date(2026, 10, 12)
+    days: int = 14
+    min_opened_days: int = 10
+    min_thumbs_up_share: float = 0.6
+    min_rated_share: float = 0.5
+
+
 class AppConfig(BaseModel):
     timezone: str = "Asia/Ho_Chi_Minh"
     brief_time: str = "07:00"
@@ -109,6 +124,8 @@ class AppConfig(BaseModel):
     sources: SourcesConfig = SourcesConfig()
     llm: LlmConfig = LlmConfig()
     cards: CardsConfig = CardsConfig()
+    leaderboard: LeaderboardConfig = LeaderboardConfig()
+    trial: TrialConfig = TrialConfig()
 
 
 LlmConfig.model_rebuild()

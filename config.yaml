@@ -13,6 +13,18 @@ brief:
 # What I care about (Q-005, Q-015). Each topic lists match terms: case-insensitive, whole words,
 # "-", "/" and "_" count as spaces. A term starting with "~" is weak: it only counts when another
 # topic also matched (so "skills" alone doesn't match "improve your coding skills").
+# Weekly leaderboard (spec 006): Mondays, after the brief. Ranked by raw stars gained (Q-026).
+leaderboard:
+  run_at: "07:35"
+
+# The MVP's 2-week trial (spec 007, Q-028, Q-029): pass if all three thresholds are met.
+trial:
+  start_date: "2026-10-12"
+  days: 14
+  min_opened_days: 10        # brief opened on at least this many days
+  min_thumbs_up_share: 0.6   # of rated items
+  min_rated_share: 0.5       # of brief items, so the 👍 share means something
+
 interests:
   topic_boost: 2.0      # score × 2.0 per matched topic… (Q-019)
   max_boost: 5.0        # …capped here

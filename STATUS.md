@@ -4,7 +4,7 @@
 > `docs/product/requirements.md`, the roadmap, `docs/qa/` and `CHANGELOG.md`.
 > Do not edit by hand, except inside the Notes section at the bottom.
 
-- **Released version:** 0.1.0 · 15 unreleased change(s) in CHANGELOG
+- **Released version:** 0.1.0 · 18 unreleased change(s) in CHANGELOG
 - **Milestone:** MVP
 - **Active spec:** [001 — GitHub collectors](specs/001-github-collectors/spec.md) · status **in-progress** · tasks 12/14 · tests 12/13 pass (1 not run)
 - **Open questions:** 0 (see below)
@@ -20,17 +20,17 @@
 | [003](specs/003-scoring/spec.md) | Scoring | in-progress | 1.1 | 11/12 | 9/9 pass | 0.4.0 | 2026-10-11 |
 | [004](specs/004-cards/spec.md) | Cards | in-progress | 1.0 | 13/14 | 10/10 pass | 0.5.0 | 2026-10-11 |
 | [005](specs/005-daily-brief/spec.md) | Daily brief | in-progress | 1.0 | 10/11 | 9/9 pass | 0.6.0 | 2026-10-11 |
-| 006 | Weekly leaderboard | not started | — | — | — | 0.7.0 | — |
-| 007 | Stats | not started | — | — | — | 0.8.0 | — |
+| [006](specs/006-weekly-leaderboard/spec.md) | Weekly leaderboard | done | 1.0 | 8/8 | 6/6 pass | 0.7.0 | 2026-10-11 |
+| [007](specs/007-stats/spec.md) | Stats | done | 1.0 | 8/8 | 5/5 pass | 0.8.0 | 2026-10-11 |
 
 ## Requirements
 
-33 total: 4 done, 23 in-progress, 4 changed, 2 planned.
+33 total: 6 done, 23 in-progress, 4 changed.
 In flight: REQ-COL-001 (in-progress), REQ-COL-002 (in-progress), REQ-COL-003 (in-progress), REQ-COL-004 (in-progress), REQ-COL-005 (changed), REQ-COL-006 (changed), REQ-COL-007 (in-progress), REQ-SCO-001 (in-progress), REQ-SCO-002 (in-progress), REQ-SCO-003 (in-progress), REQ-CRD-001 (in-progress), REQ-CRD-002 (in-progress), REQ-CRD-003 (in-progress), REQ-CRD-004 (changed), REQ-CRD-005 (in-progress), REQ-BRF-001 (in-progress), REQ-BRF-002 (changed), REQ-BRF-003 (in-progress), REQ-BRF-004 (in-progress), REQ-FBK-001 (in-progress), REQ-UI-001 (in-progress), REQ-UI-003 (in-progress), REQ-UI-004 (in-progress), REQ-UI-005 (in-progress), REQ-UI-002 (in-progress), REQ-NFR-004 (in-progress), REQ-NFR-005 (in-progress).
 
 ## Quality
 
-Test cases: 69/70 pass (1 not run). Details per spec in `docs/qa/test-cases/`; REQ → test → module map in [docs/qa/traceability.md](docs/qa/traceability.md).
+Test cases: 80/81 pass (1 not run). Details per spec in `docs/qa/test-cases/`; REQ → test → module map in [docs/qa/traceability.md](docs/qa/traceability.md).
 
 ### Open questions ([docs/qa/questions.md](docs/qa/questions.md))
 
@@ -40,8 +40,9 @@ Test cases: 69/70 pass (1 not run). Details per spec in `docs/qa/test-cases/`; R
 
 <!-- NOTES:START (hand-written, kept by scripts/status.py) -->
 - **Database:** the **Reporters** DB on the local PostgreSQL 18 (:5432, ADR-0005); all data there, migration 0003 applied. Docker Postgres is optional and stopped. It listens on 0.0.0.0:5432; accepted by the user (private network).
-- **Restart the backend** with `cd backend; uv run fastapi run app/main.py --host 127.0.0.1`. Daily: HN 07:00, Trending 07:10, snapshots 07:20, cards 07:25, **brief 07:30** (prune Mondays 07:40).
-- **The 2-week trial can start:** the first real brief exists (2026-10-11; `opened_at` reset after testing, no test ratings left). Open Today each morning and rate items; spec 007 (Stats) will report the success check.
+- **Restart the backend** with `cd backend; uv run fastapi run app/main.py --host 127.0.0.1`. Daily: HN 07:00, Trending 07:10, snapshots 07:20, cards 07:25, **brief 07:30**; Mondays: leaderboard 07:35, prune 07:40.
+- **2-week trial: 2026-10-12 → 2026-10-25** (`config.yaml` → `trial`). Open Today each morning and rate items; the Stats page shows the checks and, after Oct 25, the verdict.
+- **Leaderboard:** the first one (week of 2026-10-05) only covers data since 2026-10-10; Monday's 07:35 build is the first full-ish week.
 - **Soak (TC-001-12):** `morluto/rea` momentum already verified against GitHub (79,356 stars); finish with 2 more repos via `uv run python -m app.cli momentum --top 20`.
 - **Ready to close:** specs 008, 002, 003, 004, 005 (all test cases pass) → `/done`. Spec 001 after the soak check. Then one release (Q-018 #3, deferred by the user).
 - **Next features:** spec 006 (weekly leaderboard, Mondays) and spec 007 (Stats page for the success check).

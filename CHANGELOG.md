@@ -21,6 +21,10 @@ Each entry names the spec it belongs to.
 
 - Daily brief (spec 005): built at 07:30 (Q-006) with a top story (#1 repo, Q-025), rising repos #2–#5 and the top 3 AI/dev stories, each with its card line; Today page with 👍/👎 (save, switch, clear) and `opened_at` on first view; "Build today's brief now"; repeat and 👎 penalties now live; prune keeps items referenced by a brief; `GET /api/briefs/today`, `POST /api/briefs/today/build`, `POST /api/feedback`; CLI `brief`.
 
+- Weekly leaderboard (spec 006): top 10 repos by stars gained over 7 days (Q-026), built Mondays 07:35 and caught up on startup; Leaderboard page with card links (Q-027); `GET /api/leaderboard/latest`, `POST /api/leaderboard/build`; CLI `leaderboard`.
+
+- Stats (spec 007): 2-week trial view (from 2026-10-12) and a rolling 14-day view; per-day table, three success checks (opened ≥ 10/14 days, ≥ 60 % 👍, ≥ 50 % rated; Q-028) and a verdict after the trial (Q-029); `config.yaml` → `trial`; `GET /api/stats?view=trial|rolling`.
+
 ### Changed
 
 - `llm.generate()` returns token usage with the parsed result; `monthly_budget_usd` replaced by `monthly_token_cap` (Q-023).
@@ -29,6 +33,7 @@ Each entry names the spec it belongs to.
 - Collectors run once a day at fixed times from `config.yaml` (`run_at`: HN 07:00, Trending 07:10, snapshots 07:20; prune Mondays 07:40) instead of every 6 h / hourly; on startup a job runs only if its last success is older than 20 h (`catch_up_after_hours`), so restarts no longer trigger every collector (Q-014).
 - Scheduler jobs defined in one table (`JOBS`, `job_specs`, `CATCH_UP_DELAY`); status panel labels and units per job.
 - `config.yaml`: `interests.keywords` replaced by `interests.topics` + `ai_dev_terms`; new `scoring` section. Momentum looks back 72 h (was 48 h) so a missed daily snapshot doesn't hide stars/day.
+- Repeat penalty now reads daily briefs only, so leaderboard entries don't push repos out of the daily brief.
 - CLI `collect` runs are now recorded in `collector_runs` like scheduled runs; `momentum` shares its query with the API (`app/repo_stats.py`).
 - `selectolax` pinned to `>=1.0` and switched to its `lexbor` backend (the old backend was removed in 1.0).
 

@@ -23,6 +23,7 @@ from app.collectors.github_trending import collect_trending
 from app.collectors.hacker_news import collect_hacker_news
 from app.collectors.prune import prune_old_data
 from app.config import AppConfig, get_config
+from app.leaderboard import build_weekly_leaderboard
 from app.runs import Recorder, last_successes, record_run
 
 log = logging.getLogger(__name__)
@@ -33,6 +34,7 @@ JOBS = {
     "github_api": collect_github,
     "cards": write_daily_cards,
     "brief": build_daily_brief,
+    "leaderboard": build_weekly_leaderboard,
     "prune": prune_old_data,
 }
 
@@ -44,6 +46,7 @@ CATCH_UP_DELAY = {
     "github_api": timedelta(seconds=150),
     "cards": timedelta(minutes=4),
     "brief": timedelta(minutes=5),
+    "leaderboard": timedelta(minutes=5, seconds=30),
     "prune": timedelta(minutes=6),
 }
 
@@ -73,6 +76,17 @@ def job_specs(cfg: AppConfig, tz: ZoneInfo) -> dict[str, JobSpec]:
         # Always caught up on startup (max_age 0): the build itself does nothing before
         # brief_time or when today's brief exists, so an age rule could only miss a day.
         "brief": JobSpec(daily(cfg.brief_time), timedelta(0), grace),
+        # Weekly, Mondays; also always caught up (the build checks the week and the time).
+        "leaderboard": JobSpec(
+            CronTrigger(
+                day_of_week="mon",
+                hour=int(cfg.leaderboard.run_at.split(":")[0]),
+                minute=int(cfg.leaderboard.run_at.split(":")[1]),
+                timezone=tz,
+            ),
+            timedelta(0),
+            timedelta(days=3),
+        ),
         "prune": JobSpec(
             CronTrigger(**PRUNE_AT, timezone=tz), timedelta(days=7), timedelta(days=3)
         ),

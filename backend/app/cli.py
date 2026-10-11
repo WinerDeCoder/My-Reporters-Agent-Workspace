@@ -9,6 +9,7 @@ uv run python -m app.cli top
 uv run python -m app.cli cards      # write today's cards now (LLM calls; cached by source)
 uv run python -m app.cli usage      # LLM tokens used this month vs the cap
 uv run python -m app.cli brief      # build today's brief now (once per day)
+uv run python -m app.cli leaderboard  # build this week's leaderboard now (once per week)
 """
 
 import argparse
@@ -22,6 +23,7 @@ from app.brief import build_daily_brief
 from app.cards import usage_summary
 from app.config import get_config
 from app.db import SessionLocal, engine
+from app.leaderboard import build_weekly_leaderboard
 from app.news_feed import NewsRow, load_news_rows
 from app.repo_stats import RepoRow, load_repo_rows, rank_by_score
 from app.scheduler import JOBS, run_job
@@ -126,6 +128,7 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("cards", help="write today's cards now (recorded like the 07:25 job)")
     sub.add_parser("usage", help="LLM tokens used this month vs the cap")
     sub.add_parser("brief", help="build today's brief now (no-op if it exists)")
+    sub.add_parser("leaderboard", help="build this week's leaderboard now (no-op if it exists)")
     args = parser.parse_args(argv)
 
     logging.basicConfig(
@@ -148,6 +151,10 @@ def main(argv: list[str] | None = None) -> None:
     elif args.command == "brief":
         result = asyncio.run(_run(lambda: run_job("brief", lambda: build_daily_brief(force=True))))
         print(f"brief: {result} items" if result else "brief: today's brief already exists")
+    elif args.command == "leaderboard":
+        build = lambda: build_weekly_leaderboard(force=True)  # noqa: E731
+        result = asyncio.run(_run(lambda: run_job("leaderboard", build)))
+        print(f"leaderboard: {result} entries" if result else "leaderboard: this week's exists")
     else:
         asyncio.run(print_momentum(args.top))
 

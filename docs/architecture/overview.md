@@ -80,7 +80,9 @@ Frontend: `src/pages/` (Today, Repos, News, Leaderboard, Stats, Card), `src/comp
 | `app/scoring.py` | Pure scoring functions *(spec 003)* |
 | `app/llm.py` | The only place that calls the LLM; returns parsed output + token usage |
 | `app/cards.py` | Card sources (README / article via trafilatura / title fallback), cache by source hash, monthly token cap, `get_or_write_card()`, daily `write_daily_cards()` *(spec 004, built)* |
-| `app/brief.py` | Daily brief: item selection (top story = #1 repo, repos #2–#5, top 3 AI/dev stories), once-a-day build at 07:30, `opened_at`, 👍/👎 ratings *(spec 005, built; leaderboard: spec 006)* |
+| `app/brief.py` | Daily brief: item selection (top story = #1 repo, repos #2–#5, top 3 AI/dev stories), once-a-day build at 07:30, `opened_at`, 👍/👎 ratings *(spec 005, built)* |
+| `app/leaderboard.py` | Weekly leaderboard: top 10 by stars gained over 7 days, built Mondays 07:35 *(spec 006, built)* |
+| `app/stats.py` | Trial / rolling stats: per-day rows, success checks, verdict *(spec 007, built)* |
 | `app/api/` | Route modules under `/api` |
 
 ## 5. Runtime flows
@@ -133,6 +135,10 @@ sequenceDiagram
 
 **Browsing repos (spec 008):** Rising repos page → `GET /api/repos` (tracked repos + last 48 h of snapshots → stars/day via `momentum.py`) and `GET /api/collectors/status` (latest `collector_runs` row per job + scheduler's next run); both refetch every minute; search/filter/sort run in the browser.
 
+**Weekly leaderboard (Mondays 07:35, spec 006):** snapshots of the last 7 days → stars gained per repo (repos tracked less than a week count from their first snapshot and show `since`) → top 10 stored as a `weekly` brief dated the Monday. Caught up on startup if missing.
+
+**Stats (spec 007, on every read):** daily briefs + `feedback` per day in the trial window (or the last 14 days) → opened days, 👍 share, rated share vs `config.yaml` → `trial` thresholds; verdict after the last day.
+
 **Reading:** browser loads the SPA → `GET /api/briefs/today` → first view sets `opened_at` → 👍/👎 posts to `/api/feedback`.
 
 ## 6. Deployment
@@ -140,8 +146,8 @@ sequenceDiagram
 - **Database:** the **Reporters** database on the local PostgreSQL 18 (port 5432, ADR-0005); Docker Compose Postgres optional (port 5433).
 - **Dev:** `uv run fastapi dev app/main.py` (:8000); `npm run dev` (:5173, proxies `/api`).
 - **Daily use:** `npm run build`, then `uv run fastapi run app/main.py --host 127.0.0.1`; one URL, `http://localhost:8000`.
-- **Network:** everything binds to 127.0.0.1 only (backend `--host`, Postgres `127.0.0.1:5432` in Compose); there is no auth, so nothing may listen on the LAN (Q-018).
-- **One-off runs:** `uv run python -m app.cli collect trending|github|hn`, `prune`, `momentum --top 20`.
+- **Network:** everything binds to 127.0.0.1 only (backend `--host`, Compose Postgres on `127.0.0.1:5433`; the local PostgreSQL 18 is reachable on the private network, accepted in ADR-0005); there is no auth, so nothing may listen on the LAN (Q-018).
+- **One-off runs:** `uv run python -m app.cli collect trending|github|hn`, `prune`, `momentum --top 20`, `top`, `cards`, `usage`, `brief`, `leaderboard`.
 - **Later:** same containers on a small server; add a Dockerfile for the backend then.
 
 ## 7. Cross-cutting concepts

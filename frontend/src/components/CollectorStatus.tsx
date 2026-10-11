@@ -8,6 +8,7 @@ const JOBS: Record<string, { label: string; unit: string }> = {
   hacker_news: { label: "Hacker News", unit: "stories" },
   cards: { label: "Cards (LLM)", unit: "new cards" },
   brief: { label: "Daily brief", unit: "items" },
+  leaderboard: { label: "Weekly leaderboard", unit: "entries" },
   prune: { label: "Weekly cleanup", unit: "rows deleted" },
 };
 

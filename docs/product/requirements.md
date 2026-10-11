@@ -50,14 +50,14 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 
 | ID | Requirement | Acceptance criteria | Status | Spec | Notes |
 | --- | --- | --- | --- | --- | --- |
-| REQ-LDB-001 | Every Monday at `brief_time`, build the weekly leaderboard: top 10 repos by stars gained over 7 days, each with stars gained, total stars and a one-line description; show it on the Leaderboard page. | One `briefs` row of type `weekly` per Monday; the page renders it. | planned | 006 | |
+| REQ-LDB-001 | Every Monday at `brief_time`, build the weekly leaderboard: top 10 repos by stars gained over 7 days, each with stars gained, total stars and a one-line description; show it on the Leaderboard page. | One `briefs` row of type `weekly` per Monday; the page renders it. | done | 006 | 2026-10-11: built Mondays 07:35 (after the brief); raw stars gained, topic badges, card links, no ratings (Q-026, Q-027); repos tracked < 7 days count from their first snapshot. |
 
 ## Feedback and stats (FBK)
 
 | ID | Requirement | Acceptance criteria | Status | Spec | Notes |
 | --- | --- | --- | --- | --- | --- |
 | REQ-FBK-001 | Every brief item has 👍 and 👎 buttons; a click is saved with the item, brief and time. | Clicking stores a `feedback` row; the button shows the saved state. | in-progress | 005 | 2026-10-11: a click can change or clear a rating; the latest one counts. |
-| REQ-FBK-002 | A Stats page shows the last 14 days: briefs built, briefs opened, items rated, share of thumbs up. | Numbers match a direct SQL count. | planned | 007 | |
+| REQ-FBK-002 | A Stats page shows the last 14 days: briefs built, briefs opened, items rated, share of thumbs up. | Numbers match a direct SQL count. | done | 007 | 2026-10-11: fixed trial from 2026-10-12 for 14 days plus rolling view; pass = opened ≥ 10/14 days, ≥ 60 % 👍 of rated, ≥ 50 % of items rated (Q-028, Q-029). |
 
 ## Interface (UI)
 

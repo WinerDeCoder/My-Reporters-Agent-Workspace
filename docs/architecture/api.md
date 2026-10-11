@@ -21,9 +21,10 @@
 | GET | `/api/briefs/today` | `{brief, brief_time}`: latest daily brief with items, live card summary (`what_it_is`), `has_card` and current `rating`; sets `opened_at` on first view; `brief` null if none yet | 005 | done |
 | POST | `/api/briefs/today/build` | Build today's brief now (even before `brief_time`; no-op if it exists) | 005 | done |
 | GET | `/api/briefs/{date}` | Daily brief for a date | later | planned |
-| GET | `/api/leaderboard/latest` | Latest weekly leaderboard | 006 | planned |
+| GET | `/api/leaderboard/latest` | `{leaderboard, run_at}`: latest weekly leaderboard (`week_of`, entries with rank, stars gained, `since`, topics, card summary, `has_card`); null if none yet | 006 | done |
+| POST | `/api/leaderboard/build` | Build this week's leaderboard now (no-op if it exists) | 006 | done |
 | GET | `/api/cards/{item_type}/{item_id}` | `{item, card}`: the item with live signals, and its latest card or null (`item_type` = repo / news) | 004 | done |
 | POST | `/api/cards/{item_type}/{item_id}` | Write the card now (cached if the source is unchanged); 429 when the monthly token cap is reached, 502 if the model call fails | 004 | done |
 | GET | `/api/llm/usage` | This month's LLM calls and tokens vs `monthly_token_cap`, optional USD estimate | 004 | done |
 | POST | `/api/feedback` | Save / switch / clear a rating (`{brief_id, item_type, item_id, rating: 1 / -1 / 0}`); 404 if the item isn't in that brief | 005 | done |
-| GET | `/api/stats?days=14` | Success-check numbers | 007 | planned |
+| GET | `/api/stats?view=trial\|rolling` | Trial window (`config.yaml` → `trial`) or last 14 days: per-day rows (built, opened, items, rated, 👍/👎), totals, the three success checks with state, verdict after the trial ends | 007 | done |

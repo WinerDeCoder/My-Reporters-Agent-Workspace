@@ -18,6 +18,8 @@ The MVP answers one question: **do I actually read and value a daily brief of ri
 
 If not, fix scoring and cards before building anything else.
 
+The **Stats** page (spec 007) measures these: brief opened on ≥ 10 of 14 days, ≥ 60 % of rated items 👍, ≥ 50 % of brief items rated (Q-028; thresholds and trial dates in `config.yaml` → `trial`).
+
 ## User
 
 Just me: one developer, on my own machine, reading the brief once each morning.

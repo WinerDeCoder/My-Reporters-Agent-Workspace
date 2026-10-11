@@ -83,7 +83,9 @@ def test_jobs_registered_daily_at_run_at():
     )
     assert (cfg.cards.run_at, cfg.brief_time) == ("07:25", "07:30")
     jobs = {job.id: job for job in create_scheduler().get_jobs()}
-    assert set(jobs) == {"hacker_news", "github_trending", "github_api", "cards", "brief", "prune"}
+    assert set(jobs) == {
+        "hacker_news", "github_trending", "github_api", "cards", "brief", "leaderboard", "prune",
+    }  # fmt: skip
 
     sunday_6am = datetime(2026, 10, 11, 6, 0, tzinfo=TZ)
     expected = {
@@ -92,13 +94,14 @@ def test_jobs_registered_daily_at_run_at():
         "github_api": datetime(2026, 10, 11, 7, 20, tzinfo=TZ),
         "cards": datetime(2026, 10, 11, 7, 25, tzinfo=TZ),
         "brief": datetime(2026, 10, 11, 7, 30, tzinfo=TZ),
+        "leaderboard": datetime(2026, 10, 12, 7, 35, tzinfo=TZ),  # next Monday
         "prune": datetime(2026, 10, 12, 7, 40, tzinfo=TZ),  # next Monday
     }
     for name, first in expected.items():
         trigger = jobs[name].trigger
         assert trigger.get_next_fire_time(None, sunday_6am) == first, name
         # and again a day (or a week) later, at the same time
-        step = timedelta(days=7 if name == "prune" else 1)
+        step = timedelta(days=7 if name in ("prune", "leaderboard") else 1)
         assert trigger.get_next_fire_time(first, first + timedelta(minutes=1)) == first + step
         assert jobs[name].max_instances == 1 and jobs[name].coalesce, name
         assert jobs[name].misfire_grace_time >= 12 * 3600, name  # laptop asleep at 07:00
@@ -133,7 +136,7 @@ async def test_schedule_catch_up_adds_ordered_one_off_runs():
         }
 
     due = await schedule_catch_up(scheduler, now=now, load_last_success=last_success)
-    assert due == ["hacker_news", "github_api", "brief", "prune"]
+    assert due == ["hacker_news", "github_api", "brief", "leaderboard", "prune"]
     runs = {
         job.id: job.trigger.run_date for job in scheduler.get_jobs() if job.id.endswith(":catch_up")
     }
@@ -141,6 +144,7 @@ async def test_schedule_catch_up_adds_ordered_one_off_runs():
         "hacker_news:catch_up": now + timedelta(seconds=60),
         "github_api:catch_up": now + timedelta(seconds=150),
         "brief:catch_up": now + timedelta(minutes=5),
+        "leaderboard:catch_up": now + timedelta(minutes=5, seconds=30),
         "prune:catch_up": now + timedelta(minutes=6),
     }
 

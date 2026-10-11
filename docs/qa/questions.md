@@ -256,3 +256,43 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 - **Answer:** Always the #1 repo. (2026-10-11)
 - **Recorded in:** spec 005; REQ-BRF-001 note.
 
+### Q-026 — Weekly leaderboard ranking
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [006](../../specs/006-weekly-leaderboard/spec.md) · REQ-LDB-001 · `app/leaderboard.py`
+- **Question:** Rank the weekly top 10 by raw stars gained over 7 days, or apply your topic boost like the daily brief?
+- **Suggestion:** Raw stars gained (what was hottest overall this week), with your topic badges shown; the daily brief already does the personal ranking. Repos tracked for less than 7 days count from their first snapshot and are labelled "since <day>". Alternative: stars gained × topic boost.
+- **Answer:** Raw stars gained over 7 days; topic badges shown; newer repos count from their first snapshot. (2026-10-11)
+- **Recorded in:** spec 006; REQ-LDB-001 note.
+
+### Q-027 — Ratings on the leaderboard
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [006](../../specs/006-weekly-leaderboard/spec.md) · REQ-LDB-001, REQ-FBK-001 · `frontend/src/pages/Leaderboard.tsx`
+- **Question:** Should leaderboard entries also get 👍/👎 (feeding the same 👎 penalty), and card links?
+- **Suggestion:** Card links yes; ratings no: keep ratings on the daily brief only, so the trial's "share of 👍" measures the brief. Alternative: ratings on both.
+- **Answer:** Card links only; ratings stay on the daily brief. (2026-10-11)
+- **Recorded in:** spec 006.
+
+### Q-028 — Success thresholds for the 2-week trial
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [007](../../specs/007-stats/spec.md) · REQ-FBK-002, PRD success criteria · `app/stats.py`, `frontend/src/pages/Stats.tsx`
+- **Question:** The PRD says "open the brief on most days" and "most items get a thumbs up". What numbers count as a pass?
+- **Suggestion:** Opened on ≥ 10 of 14 days; ≥ 60 % of rated items 👍; and at least half of the brief items rated (so the 👍 share means something). The Stats page shows each as pass/not yet. Alternatives: looser (≥ 8/14 days, > 50 % 👍) or stricter (≥ 12/14, ≥ 70 %).
+- **Answer:** Opened on ≥ 10 of 14 days; ≥ 60 % of rated items 👍; at least half of brief items rated. (2026-10-11)
+- **Recorded in:** `config.yaml` → `trial`; spec 007; REQ-FBK-002 note.
+
+### Q-029 — Trial window
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [007](../../specs/007-stats/spec.md) · REQ-FBK-002 · `config.yaml`, `app/stats.py`
+- **Question:** Should Stats show a rolling "last 14 days", or a fixed trial from a start date?
+- **Suggestion:** Fixed trial: `trial.start_date` in `config.yaml` (default 2026-10-12, the first full day), 14 days, with a "day N of 14" counter and the verdict at the end; plus a rolling last-14-days view after the trial. Alternative: rolling last 14 days only.
+- **Answer:** Fixed trial from `trial.start_date` (2026-10-12, 14 days) plus a rolling last-14-days view. (2026-10-11)
+- **Recorded in:** `config.yaml` → `trial`; spec 007.
+

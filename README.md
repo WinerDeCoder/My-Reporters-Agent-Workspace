@@ -68,7 +68,7 @@ The first project here is **Tech Radar**: a local web app that collects rising G
 
 - [uv](https://docs.astral.sh/uv/) (installs Python for you)
 - [Node.js](https://nodejs.org/) 20.19+ or 22 LTS
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for Postgres)
+- PostgreSQL 15+: a local install (this project uses the **Reporters** database on a local PostgreSQL 18, see ADR-0005) or the optional Docker Compose service (host port 5433)
 
 ## First-time setup
 
@@ -76,8 +76,8 @@ The first project here is **Tech Radar**: a local web app that collects rising G
 # 1. Secrets
 Copy-Item .env.example .env      # then fill in GITHUB_TOKEN and OPENAI_API_KEY
 
-# 2. Database
-docker compose up -d db
+# 2. Database: create a database (here: Reporters) on your PostgreSQL and put its URL in .env as DATABASE_URL
+#    (or use Docker: docker compose up -d db, then DATABASE_URL=...@localhost:5433/radar)
 
 # 3. Backend
 cd backend
@@ -123,6 +123,8 @@ uv run python -m app.cli collect hn              # fetch Hacker News stories onc
 uv run python -m app.cli prune                   # delete old stories / untracked snapshots now
 uv run python -m app.cli momentum --top 20       # top repos by stars/day
 uv run python -m app.cli top                     # today's top repos + stories by score (spec 003)
+uv run python -m app.cli cards                   # write today's cards now (LLM; cached by source)
+uv run python -m app.cli usage                   # LLM tokens used this month vs the cap
 uv run alembic revision --autogenerate -m "..."  # new migration after editing models.py
 uv add <package>                                 # add a dependency, then refresh requirements.txt:
 uv export --no-hashes --no-dev -o requirements.txt
@@ -134,7 +136,7 @@ npm run gen:api      # regenerate TS types from the backend's OpenAPI (backend m
 
 ## Configuration
 
-- **`.env`**: `DATABASE_URL`, `GITHUB_TOKEN`, `OPENAI_API_KEY` and the Postgres credentials used by Docker Compose.
+- **`.env`**: `DATABASE_URL`, `GITHUB_TOKEN`, `OPENAI_API_KEY` (cards, spec 004) and the Postgres credentials used by Docker Compose.
 - **`config.yaml`**: interest topics and their match terms (`interests.topics`, `~term` = needs another topic), the AI/dev word list, scoring weights, brief time and timezone, top-N counts, collector intervals, and the `llm` section: OpenAI model, reasoning effort, max output tokens, timeout, optional `base_url`, card prompt file and monthly budget cap.
 
 ## Workflow and progress tracking

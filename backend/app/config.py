@@ -15,7 +15,7 @@ CONFIG_PATH = ROOT_DIR / "config.yaml"
 class Secrets(BaseSettings):
     model_config = SettingsConfigDict(env_file=ROOT_DIR / ".env", extra="ignore")
 
-    database_url: str = "postgresql+asyncpg://radar:radar@localhost:5432/radar"
+    database_url: str = "postgresql+asyncpg://radar:radar@localhost:5433/radar"
     github_token: str = ""
     openai_api_key: str = ""
 
@@ -79,11 +79,24 @@ class LlmConfig(BaseModel):
     timeout_seconds: float = 60
     base_url: str | None = None
     prompt_file: str = "backend/prompts/card.md"
-    monthly_budget_usd: float = 15
+    monthly_token_cap: int = 3_000_000  # input + output tokens per month (Q-023)
+    price_per_million: "TokenPrices" = Field(default_factory=lambda: TokenPrices())
 
     @property
     def prompt_path(self) -> Path:
         return ROOT_DIR / self.prompt_file
+
+
+class TokenPrices(BaseModel):
+    """Optional USD per 1M tokens, only for an estimate in `usage`."""
+
+    input: float | None = None
+    output: float | None = None
+
+
+class CardsConfig(BaseModel):
+    run_at: RunAt = "07:25"
+    max_source_chars: int = 12_000
 
 
 class AppConfig(BaseModel):
@@ -95,6 +108,10 @@ class AppConfig(BaseModel):
     scoring: ScoringConfig = ScoringConfig()
     sources: SourcesConfig = SourcesConfig()
     llm: LlmConfig = LlmConfig()
+    cards: CardsConfig = CardsConfig()
+
+
+LlmConfig.model_rebuild()
 
 
 @lru_cache

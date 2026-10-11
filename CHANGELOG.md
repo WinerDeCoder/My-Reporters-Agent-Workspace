@@ -17,9 +17,12 @@ Each entry names the spec it belongs to.
 
 - Scoring (spec 003): interest topics with editable term lists (agents, mcp, claude, skills, new llm models), repo score = stars/day × topic boost, news score = points/hour × topic boost for AI/dev stories only, repeat and 👎 penalties (active once briefs/feedback exist); "For you" sort and topic badges on Rising repos and News, "AI/dev only" toggle; CLI `top`.
 
+- Cards (spec 004): gpt-6-luna writes what it is / problem / what's special / worth trying for the top 5 repos and top 3 AI/dev stories daily at 07:25, from the README or article text (title fallback marked limited); cached by source hash; "Write card" on any item; `llm_usage` table (migration 0003) with a 3M-token monthly cap; usage line in the status panel; CLI `cards`, `usage`; `GET/POST /api/cards/{type}/{id}`, `GET /api/llm/usage`.
+
 ### Changed
 
-- Backend and Postgres bind to 127.0.0.1 only (`fastapi run --host 127.0.0.1`, Compose `127.0.0.1:5432`); before, both were reachable from the local network (Q-018).
+- `llm.generate()` returns token usage with the parsed result; `monthly_budget_usd` replaced by `monthly_token_cap` (Q-023).
+- Backend binds to 127.0.0.1 only (`fastapi run --host 127.0.0.1`, Q-018). The database is the **Reporters** DB on the local PostgreSQL 18 (ADR-0005, supersedes ADR-0002); the optional Docker Compose Postgres now uses host port 127.0.0.1:5433 so it can't clash with a local install (Q-024).
 - Interest boost raised to 2.0 per topic, cap 5.0 (Q-019); `config.yaml` model set to `gpt-6-luna` (Q-007).
 - Collectors run once a day at fixed times from `config.yaml` (`run_at`: HN 07:00, Trending 07:10, snapshots 07:20; prune Mondays 07:40) instead of every 6 h / hourly; on startup a job runs only if its last success is older than 20 h (`catch_up_after_hours`), so restarts no longer trigger every collector (Q-014).
 - Scheduler jobs defined in one table (`JOBS`, `job_specs`, `CATCH_UP_DELAY`); status panel labels and units per job.

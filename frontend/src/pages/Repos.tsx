@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 import { getJson, relativeTime, type RepoRow } from "../api/client";
+import CardLink from "../components/CardLink";
 import CollectorStatus from "../components/CollectorStatus";
 import TopicBadges from "../components/TopicBadges";
 
@@ -77,6 +78,7 @@ function RepoItem({ repo, rank }: { repo: RepoRow; rank: number }) {
           </a>
           <Momentum value={repo.stars_per_day} />
           <TopicBadges topics={repo.matched_topics} />
+          <CardLink type="repo" id={repo.id} hasCard={repo.has_card} />
           <span className="text-xs text-stone-500 tabular-nums">
             ★ {repo.stars === null ? "—" : fmt.format(repo.stars)}
           </span>

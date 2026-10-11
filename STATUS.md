@@ -4,7 +4,7 @@
 > `docs/product/requirements.md`, the roadmap, `docs/qa/` and `CHANGELOG.md`.
 > Do not edit by hand, except inside the Notes section at the bottom.
 
-- **Released version:** 0.1.0 · 12 unreleased change(s) in CHANGELOG
+- **Released version:** 0.1.0 · 14 unreleased change(s) in CHANGELOG
 - **Milestone:** MVP
 - **Active spec:** [001 — GitHub collectors](specs/001-github-collectors/spec.md) · status **in-progress** · tasks 12/14 · tests 12/13 pass (1 not run)
 - **Open questions:** 1 (see below)
@@ -18,19 +18,19 @@
 | [008](specs/008-rising-repos-page/spec.md) | Rising repos page | in-progress | 1.0 | 10/11 | 10/10 pass | 0.2.0 | 2026-10-11 |
 | [002](specs/002-hn-collector/spec.md) | HN collector | in-progress | 2.0 | 12/13 | 13/13 pass | 0.3.0 | 2026-10-11 |
 | [003](specs/003-scoring/spec.md) | Scoring | in-progress | 1.1 | 11/12 | 9/9 pass | 0.4.0 | 2026-10-11 |
-| 004 | Cards | not started | — | — | — | 0.5.0 | — |
+| [004](specs/004-cards/spec.md) | Cards | in-progress | 1.0 | 13/14 | 10/10 pass | 0.5.0 | 2026-10-11 |
 | 005 | Daily brief | not started | — | — | — | 0.6.0 | — |
 | 006 | Weekly leaderboard | not started | — | — | — | 0.7.0 | — |
 | 007 | Stats | not started | — | — | — | 0.8.0 | — |
 
 ## Requirements
 
-32 total: 4 done, 14 in-progress, 2 changed, 12 planned.
-In flight: REQ-COL-001 (in-progress), REQ-COL-002 (in-progress), REQ-COL-003 (in-progress), REQ-COL-004 (in-progress), REQ-COL-005 (changed), REQ-COL-006 (changed), REQ-COL-007 (in-progress), REQ-SCO-001 (in-progress), REQ-SCO-002 (in-progress), REQ-SCO-003 (in-progress), REQ-UI-001 (in-progress), REQ-UI-003 (in-progress), REQ-UI-004 (in-progress), REQ-UI-002 (in-progress), REQ-NFR-004 (in-progress), REQ-NFR-005 (in-progress).
+33 total: 4 done, 19 in-progress, 3 changed, 7 planned.
+In flight: REQ-COL-001 (in-progress), REQ-COL-002 (in-progress), REQ-COL-003 (in-progress), REQ-COL-004 (in-progress), REQ-COL-005 (changed), REQ-COL-006 (changed), REQ-COL-007 (in-progress), REQ-SCO-001 (in-progress), REQ-SCO-002 (in-progress), REQ-SCO-003 (in-progress), REQ-CRD-001 (in-progress), REQ-CRD-002 (in-progress), REQ-CRD-003 (in-progress), REQ-CRD-004 (changed), REQ-CRD-005 (in-progress), REQ-UI-001 (in-progress), REQ-UI-003 (in-progress), REQ-UI-004 (in-progress), REQ-UI-005 (in-progress), REQ-UI-002 (in-progress), REQ-NFR-004 (in-progress), REQ-NFR-005 (in-progress).
 
 ## Quality
 
-Test cases: 50/51 pass (1 not run). Details per spec in `docs/qa/test-cases/`; REQ → test → module map in [docs/qa/traceability.md](docs/qa/traceability.md).
+Test cases: 60/61 pass (1 not run). Details per spec in `docs/qa/test-cases/`; REQ → test → module map in [docs/qa/traceability.md](docs/qa/traceability.md).
 
 ### Open questions ([docs/qa/questions.md](docs/qa/questions.md))
 
@@ -39,8 +39,9 @@ Test cases: 50/51 pass (1 not run). Details per spec in `docs/qa/test-cases/`; R
 ## Notes and blockers
 
 <!-- NOTES:START (hand-written, kept by scripts/status.py) -->
-- **Restart the backend** to load scoring (spec 003) and the daily schedule (Q-014): stop it, then `cd backend; uv run fastapi run app/main.py`. Collectors run daily: HN 07:00, Trending 07:10, snapshots 07:20 (prune Mondays 07:40).
-- **Soak (TC-001-12):** stars/day already exists for 60 repos (snapshots 6+ h apart). Eyeball check: `uv run python -m app.cli momentum --top 20`, compare 3 repos with GitHub; worth a look at `morluto/rea` (+22,000/day).
-- **Ready to close:** specs 008, 002, 003 (all test cases pass) → `/done`. Spec 001 after the soak check. Then one release covering 001, 008, 002, 003.
-- **Next feature:** spec 004 (cards) needs Q-007 (OpenAI model) answered and `OPENAI_API_KEY` in `.env`.
+- **Database:** the **Reporters** DB on the local PostgreSQL 18 (:5432, ADR-0005); all data there, migration 0003 applied. Docker Postgres is optional and stopped. It listens on 0.0.0.0:5432; accepted by the user (private network).
+- **Restart the backend** with `cd backend; uv run fastapi run app/main.py --host 127.0.0.1`. Daily: HN 07:00, Trending 07:10, snapshots 07:20, cards 07:25 (prune Mondays 07:40).
+- **Soak (TC-001-12):** `morluto/rea` momentum already verified against GitHub (79,356 stars); finish with 2 more repos via `uv run python -m app.cli momentum --top 20`.
+- **Ready to close:** specs 008, 002, 003, 004 (all test cases pass) → `/done`. Spec 001 after the soak check. Then one release (Q-018 #3, deferred by the user).
+- **Next feature:** spec 005 (daily brief on Today, 👍/👎, `opened_at`) needs Q-006 (brief time; suggestion 07:30).
 <!-- NOTES:END -->

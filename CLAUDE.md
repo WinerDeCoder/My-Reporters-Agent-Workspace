@@ -81,7 +81,7 @@ Small fixes that don't change behavior (typos, refactors, dependency bumps) need
 ## Commands
 
 ```powershell
-docker compose up -d db                              # Postgres
+# Database: the Reporters DB on the local PostgreSQL 18 (:5432, ADR-0005). Docker Postgres is optional: docker compose up -d db (:5433)
 cd backend; uv run alembic upgrade head              # migrations
 cd backend; uv run fastapi dev app/main.py           # API on :8000 (dev; 127.0.0.1)
 cd backend; uv run fastapi run app/main.py --host 127.0.0.1   # daily use; always localhost only

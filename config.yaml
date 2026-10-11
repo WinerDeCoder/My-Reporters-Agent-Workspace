@@ -68,4 +68,13 @@ llm:
   timeout_seconds: 60
   base_url: null                 # null = api.openai.com; set for Azure/proxy/OpenAI-compatible servers
   prompt_file: backend/prompts/card.md   # relative to the repo root
-  monthly_budget_usd: 15         # hard stop for card generation once reached
+  monthly_token_cap: 3000000     # input + output tokens per calendar month; no LLM calls beyond (Q-023)
+  price_per_million:             # optional, only for a USD estimate in `usage`; fill in if known
+    input: null
+    output: null
+
+# LLM cards (spec 004): daily for the brief's top items (brief.top_repos / brief.top_news),
+# plus on demand from the Card page. Cached until the source text changes.
+cards:
+  run_at: "07:25"                # after collection (07:00–07:20), before the brief
+  max_source_chars: 12000        # README / article text sent to the model is cut here

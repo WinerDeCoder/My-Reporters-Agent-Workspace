@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import get_config
 from app.models import NewsItem, Repo
 from app.news_stats import points_per_hour
+from app.repo_stats import items_with_cards
 from app.scoring import ai_dev_matcher, load_signals, news_text, score_item, topic_matcher
 
 
@@ -29,6 +30,7 @@ class NewsRow:
     matched_topics: list[str]
     ai_dev: bool
     score: float | None
+    has_card: bool = False  # spec 004
 
 
 def domain_of(url: str | None) -> str | None:
@@ -73,4 +75,7 @@ async def load_news_rows(session: AsyncSession, days: int = 7) -> list[NewsRow]:
                 score=scored.score if scored else None,
             )
         )
+    carded = await items_with_cards(session, "news", [r.id for r in rows])
+    for row in rows:
+        row.has_card = row.id in carded
     return sorted(rows, key=lambda r: (r.score is None, -(r.score or 0), -r.points_per_hour))

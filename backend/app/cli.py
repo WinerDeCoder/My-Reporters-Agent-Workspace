@@ -6,14 +6,18 @@ uv run python -m app.cli collect hn
 uv run python -m app.cli prune
 uv run python -m app.cli momentum --top 20
 uv run python -m app.cli top
+uv run python -m app.cli cards      # write today's cards now (LLM calls; cached by source)
+uv run python -m app.cli usage      # LLM tokens used this month vs the cap
 """
 
 import argparse
 import asyncio
 import logging
 from collections.abc import Awaitable, Callable
+from datetime import UTC, datetime
 from typing import Any
 
+from app.cards import usage_summary
 from app.config import get_config
 from app.db import SessionLocal, engine
 from app.news_feed import NewsRow, load_news_rows
@@ -30,6 +34,22 @@ async def _run(fn: Callable[[], Awaitable[Any]]) -> Any:
         return await fn()
     finally:
         await engine.dispose()
+
+
+async def print_usage() -> None:
+    async def load() -> dict[str, Any]:
+        async with SessionLocal() as session:
+            return await usage_summary(session, get_config(), datetime.now(UTC))
+
+    u = await _run(load)
+    pct = u["tokens"] / u["cap"] * 100 if u["cap"] else 100.0
+    print(
+        f"LLM usage since {u['month_start']:%Y-%m-%d}: {u['calls']} calls, "
+        f"{u['input_tokens']:,} in + {u['output_tokens']:,} out = {u['tokens']:,} tokens "
+        f"({pct:.1f}% of the {u['cap']:,} cap)"
+    )
+    if u["estimated_usd"] is not None:
+        print(f"Estimated cost: ${u['estimated_usd']:.2f}")
 
 
 async def momentum(top: int) -> list[RepoRow]:
@@ -101,6 +121,8 @@ def main(argv: list[str] | None = None) -> None:
     top = sub.add_parser("top", help="print today's top repos and stories by score")
     top.add_argument("--repos", type=int, default=10)
     top.add_argument("--news", type=int, default=10)
+    sub.add_parser("cards", help="write today's cards now (recorded like the 07:25 job)")
+    sub.add_parser("usage", help="LLM tokens used this month vs the cap")
     args = parser.parse_args(argv)
 
     logging.basicConfig(
@@ -115,6 +137,11 @@ def main(argv: list[str] | None = None) -> None:
         print(f"prune: {result} rows deleted")
     elif args.command == "top":
         asyncio.run(print_top(args.repos, args.news))
+    elif args.command == "cards":
+        result = asyncio.run(_run(lambda: run_job("cards", JOBS["cards"])))
+        print(f"cards: {result} written")
+    elif args.command == "usage":
+        asyncio.run(print_usage())
     else:
         asyncio.run(print_momentum(args.top))
 

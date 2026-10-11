@@ -26,6 +26,7 @@ class NewsOut(BaseModel):
     matched_topics: list[str]  # interest topics matched (spec 003)
     ai_dev: bool  # eligible for the brief's news section (Q-016)
     score: float | None  # points/hour x topic boost x penalties; null when not AI/dev
+    has_card: bool  # spec 004
 
 
 @router.get("/news")

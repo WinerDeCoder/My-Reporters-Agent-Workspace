@@ -31,11 +31,11 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 
 | ID | Requirement | Acceptance criteria | Status | Spec | Notes |
 | --- | --- | --- | --- | --- | --- |
-| REQ-CRD-001 | Each morning the top ~5 repos and ~3 news items get a card: what it is, problem it solves, what's special, worth trying, plus signals. | Cards are stored in `cards` as structured JSON with all fields filled (or "unclear"). | planned | 004 | |
-| REQ-CRD-002 | The card prompt lives in one file and all model settings in `config.yaml` → `llm`. | Changing the model or prompt needs no code change. | planned | 004 | `llm.py` and config added in v0.1.0. |
-| REQ-CRD-003 | Cards are cached; a new card is generated only when the source text hash changes. | Re-running card generation on unchanged items makes zero LLM calls. | planned | 004 | |
-| REQ-CRD-004 | Card generation stops once the month's spend reaches `monthly_budget_usd`. | With the cap set to 0, no LLM call is made and the brief still builds (without new cards). | planned | 004 | |
-| REQ-CRD-005 | A Card page shows the full card and links for any item. | `/cards/repo/<id>` and `/cards/news/<id>` render the stored card. | planned | 004 | |
+| REQ-CRD-001 | Each morning the top ~5 repos and ~3 news items get a card: what it is, problem it solves, what's special, worth trying, plus signals. | Cards are stored in `cards` as structured JSON with all fields filled (or "unclear"). | in-progress | 004 | 2026-10-11: daily for top 5 repos + 3 AI/dev stories at 07:25, plus on demand (Q-020); news from article text (Q-021); English (Q-022); model gpt-6-luna (Q-007). |
+| REQ-CRD-002 | The card prompt lives in one file and all model settings in `config.yaml` → `llm`. | Changing the model or prompt needs no code change. | in-progress | 004 | `llm.py` and config added in v0.1.0. |
+| REQ-CRD-003 | Cards are cached; a new card is generated only when the source text hash changes. | Re-running card generation on unchanged items makes zero LLM calls. | in-progress | 004 | |
+| REQ-CRD-004 | Card generation stops once the month's LLM token usage reaches `llm.monthly_token_cap`. | With the cap set to 0, no LLM call is made and the brief still builds (without new cards). | changed | 004 | 2026-10-11: cap measured in tokens (`monthly_token_cap`), not USD, since the model price can't be verified (Q-023). |
+| REQ-CRD-005 | A Card page shows the full card and links for any item. | `/cards/repo/<id>` and `/cards/news/<id>` render the stored card. | in-progress | 004 | |
 
 ## Brief (BRF)
 
@@ -66,15 +66,16 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 | REQ-UI-001 | A Rising repos page lists every tracked repo with stars, stars/day (or "collecting" until 6 h of history), description, language, topics and a GitHub link; it can be searched, filtered by language and sorted by stars/day, stars or newest. | With the collectors' data loaded, the page shows every tracked repo; search, filter and each sort order change the list correctly. | in-progress | 008 | 2026-10-11: pulled forward from the v1 dashboard (Q-008). |
 | REQ-UI-003 | A News page lists collected HN stories with title (link), points, comments, age, points/hour, HN discussion link and a badge for linked tracked repos; searchable and sortable by points/hour, points or newest. | With the HN collector's data loaded, the page shows every stored story from the last 7 days; search and each sort order work. | in-progress | 002 | 2026-10-11: added (Q-012). |
 | REQ-UI-004 | Rising repos and News default to a "For you" order by score, show matched interest topics as badges, and News can hide non-AI/dev stories. | With scored data, both pages open sorted by score with badges; the AI/dev toggle changes the News list. | in-progress | 003 | 2026-10-11: added (Q-017). |
+| REQ-UI-005 | Any repo or story can get a card on demand from its Card page ("Write card"); lists show which items already have one. | Clicking Write card on an item without a card creates and shows it; a second click on unchanged source makes no LLM call. | in-progress | 004 | 2026-10-11: added (Q-020). |
 | REQ-UI-002 | The UI shows collector status: per job, the last run time, outcome, count and next scheduled run. | After a run, Today and Rising repos show its time and count; a failed run shows as failed with its error. | in-progress | 008 | 2026-10-11: added (Q-009). |
 
 ## Non-functional (NFR)
 
 | ID | Requirement | Acceptance criteria | Status | Spec | Notes |
 | --- | --- | --- | --- | --- | --- |
-| REQ-NFR-001 | Runs locally: one backend process (API + scheduler + built frontend); only Postgres runs in Docker. | README setup works on a fresh Windows machine; backend and Postgres listen on 127.0.0.1 only. | done | 000 | 2026-10-11: localhost-only binding added (Q-018). |
+| REQ-NFR-001 | Runs locally: one backend process (API + scheduler + built frontend) and a PostgreSQL database (local install or Docker). | README setup works on a fresh Windows machine; backend and Postgres listen on 127.0.0.1 only. | done | 000 | 2026-10-11: localhost-only binding added (Q-018). 2026-10-11: database is Reporters on the local PostgreSQL 18, Docker optional (Q-024, ADR-0005). |
 | REQ-NFR-002 | Secrets live only in `.env`, never in code or git. | `.env` is git-ignored; `.env.example` lists every secret. | done | 000 | |
 | REQ-NFR-003 | All schedules use the timezone in `config.yaml` (Asia/Ho_Chi_Minh). | Scheduler is created with the configured timezone. | done | 000 | |
 | REQ-NFR-004 | Stay within API rate limits (GitHub 5,000 req/h with token) and back off on 403/429. | A full GitHub run stays under 10% of the hourly limit; rate-limit responses trigger backoff, not failure. | in-progress | 001 | |
-| REQ-NFR-005 | LLM token usage is logged per call and monthly spend is tracked. | Each call logs model and input/output tokens; spend is queryable per month. | in-progress | 004 | Per-call logging done in v0.1.0; spend tracking pending. |
+| REQ-NFR-005 | LLM token usage is logged per call and monthly spend is tracked. | Each call logs model and input/output tokens; spend is queryable per month. | in-progress | 004 | Per-call logging done in v0.1.0. 2026-10-11: usage stored per call in `llm_usage`; monthly total checked against the token cap (Q-023). |
 | REQ-NFR-006 | Non-secret settings live in one `config.yaml`, validated at startup. | Invalid config fails fast with a clear error. | done | 000 | |

@@ -7,8 +7,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-radar}
       POSTGRES_DB: ${POSTGRES_DB:-radar}
     ports:
-      # localhost only (Q-018): not reachable from the local network
-      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+      # localhost only (Q-018); host port 5433 so it never clashes with a
+      # PostgreSQL installed on the machine itself, which usually owns 5432 (Q-024)
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:

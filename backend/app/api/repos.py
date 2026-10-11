@@ -27,6 +27,7 @@ class RepoOut(BaseModel):
     last_seen: datetime
     score: float | None  # spec 003: stars/day x topic boost x penalties; null until stars/day
     matched_topics: list[str]  # interest topics matched (config.yaml -> interests.topics)
+    has_card: bool  # spec 004
 
 
 @router.get("/repos")

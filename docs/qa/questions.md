@@ -196,3 +196,52 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 - **Answer:** Stronger boost, linear: 2.0 per topic, cap 5.0. (2026-10-11)
 - **Recorded in:** `config.yaml` → `interests.topic_boost` / `max_boost`; spec 003 v1.1; REQ-SCO-001 note.
 
+### Q-020 — When cards are generated
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [004](../../specs/004-cards/spec.md) · REQ-CRD-001, REQ-CRD-003, REQ-NFR-005 · `app/cards.py`, `app/scheduler.py`, `frontend/src/pages/`
+- **Question:** Generate cards only for the daily top items, on demand for any item, or both?
+- **Suggestion:** Both: a daily job at 07:25 (after collection, before the brief) writes cards for the top 5 repos + top 3 AI/dev stories; plus a "Write card" button on any item in Rising repos / News for one-off cards. Cached by source hash either way. Alternatives: daily top items only (cheapest); or automatically for every item opened (unpredictable cost).
+- **Answer:** Daily top items at 07:25 + a "Write card" button on any item. (2026-10-11)
+- **Recorded in:** spec 004; REQ-CRD-001 note; new REQ-UI-005.
+
+### Q-021 — Source text for news cards
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [004](../../specs/004-cards/spec.md) · REQ-CRD-001 · `app/cards.py`, `backend/pyproject.toml`
+- **Question:** What should a news card be written from?
+- **Suggestion:** Fetch the article and extract its main text (the `trafilatura` library), capped at ~12k characters; for stories linking a GitHub repo use the README; if the fetch fails (paywall, PDF), write a short card from the title and mark it "limited source". Alternative: title + domain only (cheap, but cards would be guesses).
+- **Answer:** Article text via trafilatura (cap ~12k chars); README for GitHub-linked stories; title fallback marked limited. (2026-10-11)
+- **Recorded in:** spec 004; REQ-CRD-001 note.
+
+### Q-022 — Card language
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [004](../../specs/004-cards/spec.md) · REQ-CRD-001 · `backend/prompts/card.md`, `config.yaml` → `llm`
+- **Question:** Which language should cards be written in?
+- **Suggestion:** English (sources are English, terms stay exact). Alternatives: Vietnamese; or a `card_language` setting in `config.yaml`.
+- **Answer:** English. (2026-10-11)
+- **Recorded in:** `backend/prompts/card.md`; spec 004.
+
+### Q-023 — How the monthly LLM cap is measured
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [004](../../specs/004-cards/spec.md) · REQ-CRD-004, REQ-NFR-005 · `config.yaml` → `llm`, `app/llm.py`
+- **Question:** The cap is `monthly_budget_usd: 15`, but I can't verify gpt-6-luna's price. Cap by tokens, or by USD with prices you provide?
+- **Suggestion:** Cap by tokens (e.g. 3M tokens/month, input + output), logged per call in a new `llm_usage` table; optional `price_per_million` in config adds a USD estimate if you fill it in. Alternative: USD cap only, with input/output prices you enter.
+- **Answer:** Token cap (3M tokens/month) with an `llm_usage` table; optional prices for a USD estimate. (2026-10-11)
+- **Recorded in:** `config.yaml` → `llm.monthly_token_cap`; REQ-CRD-004 changed; REQ-NFR-005 note.
+
+### Q-024 — Which PostgreSQL the project uses (port 5432 clash)
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** setup · REQ-NFR-001 · `.env`, `docker-compose.yml`, ADR-0005
+- **Question:** After Q-018, `docker compose up -d db` failed: PostgreSQL 18 installed on Windows (service `postgresql-x64-18`) holds port 5432. Move the Docker Postgres to another port, or stop the Windows service?
+- **Suggestion:** Move the Docker Postgres to 5433. (Applied, then found to be the wrong premise: `.env` points to the database `Reporters` on the Windows PostgreSQL, which holds all the data; the Docker Postgres was never used. `.env` was pointed at 5433 for a few minutes and reverted.)
+- **Answer:** The project's database is **Reporters**, on the user's own PostgreSQL. (2026-10-11) Keep using it; the Docker Postgres stays optional (host port 5433, stopped).
+- **Recorded in:** ADR-0005 (supersedes ADR-0002); `.env` unchanged in the end (5432 / Reporters); `docker-compose.yml` + `.env.example` default 5433; README, CLAUDE.md, overview; REQ-NFR-001 note. The Windows PostgreSQL listens on 0.0.0.0:5432; the user accepts this (private network, 2026-10-11), no change.

@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.collectors.github_api import tracked_repos
 from app.config import AppConfig, get_config
-from app.models import Repo, RepoSnapshot
+from app.models import Card, Repo, RepoSnapshot
 from app.momentum import Snapshot, stars_per_day
 from app.scoring import Signals, load_signals, repo_text, score_item, topic_matcher
 
@@ -34,6 +34,7 @@ class RepoRow:
     last_seen: datetime
     score: float | None = None  # spec 003; None until stars/day exists
     matched_topics: list[str] = field(default_factory=list)
+    has_card: bool = False  # spec 004
 
 
 def apply_scores(rows: Iterable[RepoRow], signals: Signals, cfg: AppConfig) -> None:
@@ -101,7 +102,19 @@ async def load_repo_rows(session: AsyncSession, track_days: int) -> list[RepoRow
     rows = rank_by_momentum(build_repo_rows(repos, snaps))
     cfg = get_config()
     apply_scores(rows, await load_signals(session, cfg, now), cfg)
+    carded = await items_with_cards(session, "repo", ids)
+    for row in rows:
+        row.has_card = row.id in carded
     return rows
+
+
+async def items_with_cards(session: AsyncSession, item_type: str, ids: Sequence[int]) -> set[int]:
+    if not ids:
+        return set()
+    result = await session.scalars(
+        select(Card.item_id).where(Card.item_type == item_type, Card.item_id.in_(ids)).distinct()
+    )
+    return set(result)
 
 
 def rank_by_score(rows: Sequence[RepoRow]) -> list[RepoRow]:

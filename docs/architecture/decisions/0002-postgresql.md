@@ -1,6 +1,6 @@
 # 0002. PostgreSQL from day one
 
-- **Status:** Accepted
+- **Status:** Superseded by [0005](0005-local-postgresql-reporters.md) (the Docker part; PostgreSQL itself stays)
 - **Date:** 2026-10-04
 
 ## Context

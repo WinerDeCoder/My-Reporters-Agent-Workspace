@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 import { getJson, type NewsItem, relativeTime } from "../api/client";
+import CardLink from "../components/CardLink";
 import CollectorStatus from "../components/CollectorStatus";
 import TopicBadges from "../components/TopicBadges";
 
@@ -62,6 +63,7 @@ function StoryItem({ item, rank }: { item: NewsItem; rank: number }) {
           <span>·</span>
           <span title={new Date(item.posted_at).toLocaleString()}>{relativeTime(item.posted_at)}</span>
           <TopicBadges topics={item.matched_topics} />
+          <CardLink type="news" id={item.id} hasCard={item.has_card} />
           {item.linked_repo && (
             <a
               href={`https://github.com/${item.linked_repo}`}

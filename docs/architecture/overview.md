@@ -35,9 +35,7 @@ flowchart TB
             sched[APScheduler jobs<br/>collectors, brief, leaderboard]
             static[Static file server<br/>frontend/dist]
         end
-        subgraph docker[Docker]
-            db[(PostgreSQL 17<br/>pgvector image)]
-        end
+        db[(PostgreSQL 18 local install<br/>database: Reporters)]
     end
     llm[(OpenAI API)]
     ext[(GitHub, Hacker News)]
@@ -54,7 +52,7 @@ flowchart TB
 | --- | --- | --- |
 | Frontend | React, Vite, TypeScript, Tailwind, TanStack Query, React Router | Today (status + brief), Rising repos, News, Leaderboard, Card, Stats pages; rating buttons |
 | Backend | Python 3.12+, FastAPI, APScheduler, SQLAlchemy async, httpx | API, scheduled collectors, scoring, card generation, brief building; serves the built frontend |
-| Database | PostgreSQL 17 (pgvector image), Alembic migrations | All state; see [data-model.md](data-model.md) |
+| Database | PostgreSQL 18 (local install, database `Reporters`, ADR-0005), Alembic migrations | All state; see [data-model.md](data-model.md) |
 | LLM | OpenAI Responses API via `openai` SDK | Writes structured cards; settings in `config.yaml` → `llm` |
 
 ## 4. Backend components
@@ -80,8 +78,8 @@ flowchart TB
 
 Frontend: `src/pages/` (Today, Repos, News, Leaderboard, Stats, Card), `src/components/CollectorStatus.tsx` (job status panel), `src/api/client.ts` (fetch helper + types).
 | `app/scoring.py` | Pure scoring functions *(spec 003)* |
-| `app/llm.py` | The only place that calls the LLM |
-| `app/cards.py` | Card prompt, cache and budget check *(spec 004)* |
+| `app/llm.py` | The only place that calls the LLM; returns parsed output + token usage |
+| `app/cards.py` | Card sources (README / article via trafilatura / title fallback), cache by source hash, monthly token cap, `get_or_write_card()`, daily `write_daily_cards()` *(spec 004, built)* |
 | `app/brief.py` | Builds daily brief and weekly leaderboard *(spec 005, 006)* |
 | `app/api/` | Route modules under `/api` |
 
@@ -129,6 +127,8 @@ sequenceDiagram
 
 **Scoring (spec 003, on every read):** repo score = stars/day × topic boost × penalties; news score = points/hour × topic boost × penalties for AI/dev stories only. Topic boost = 2.0 per matched interest topic (cap 5.0, Q-019); penalties: ×0.3 if briefed within the cooldown, ×0.7 per topic shared with a recent 👎 (floor 0.2); both read from `briefs`/`feedback` and are no-ops until spec 005. All weights and term lists live in `config.yaml` (`interests`, `scoring`).
 
+**Cards (daily 07:25 + on demand, spec 004):** top 5 repos + top 3 AI/dev stories by score → source text (README, article, or title) → skip if a card with the same source hash exists → check this month's tokens in `llm_usage` against `llm.monthly_token_cap` → `gpt-6-luna` structured output → `cards` row + `llm_usage` row. The Card page's "Write card" calls the same function for any item.
+
 **Browsing news (spec 002):** News page → `GET /api/news?days=7` (stories + linked repo name, points/hour via `news_stats.py`).
 
 **Browsing repos (spec 008):** Rising repos page → `GET /api/repos` (tracked repos + last 48 h of snapshots → stars/day via `momentum.py`) and `GET /api/collectors/status` (latest `collector_runs` row per job + scheduler's next run); both refetch every minute; search/filter/sort run in the browser.
@@ -137,7 +137,8 @@ sequenceDiagram
 
 ## 6. Deployment
 
-- **Dev:** `docker compose up -d db`; `uv run fastapi dev app/main.py` (:8000); `npm run dev` (:5173, proxies `/api`).
+- **Database:** the **Reporters** database on the local PostgreSQL 18 (port 5432, ADR-0005); Docker Compose Postgres optional (port 5433).
+- **Dev:** `uv run fastapi dev app/main.py` (:8000); `npm run dev` (:5173, proxies `/api`).
 - **Daily use:** `npm run build`, then `uv run fastapi run app/main.py --host 127.0.0.1`; one URL, `http://localhost:8000`.
 - **Network:** everything binds to 127.0.0.1 only (backend `--host`, Postgres `127.0.0.1:5432` in Compose); there is no auth, so nothing may listen on the LAN (Q-018).
 - **One-off runs:** `uv run python -m app.cli collect trending|github|hn`, `prune`, `momentum --top 20`.

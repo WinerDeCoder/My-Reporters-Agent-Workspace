@@ -73,21 +73,24 @@ TZ = ZoneInfo(get_config().timezone)
 
 
 def test_jobs_registered_daily_at_run_at():
-    """Q-014: HN 07:00, Trending 07:10, snapshots 07:20 daily; prune Mondays 07:40."""
-    src = get_config().sources
+    """Q-014: HN 07:00, Trending 07:10, snapshots 07:20, cards 07:25 daily; prune Mon 07:40."""
+    cfg = get_config()
+    src = cfg.sources
     assert (src.hacker_news.run_at, src.github_trending.run_at, src.github_api.run_at) == (
         "07:00",
         "07:10",
         "07:20",
     )
+    assert cfg.cards.run_at == "07:25"
     jobs = {job.id: job for job in create_scheduler().get_jobs()}
-    assert set(jobs) == {"hacker_news", "github_trending", "github_api", "prune"}
+    assert set(jobs) == {"hacker_news", "github_trending", "github_api", "cards", "prune"}
 
     sunday_6am = datetime(2026, 10, 11, 6, 0, tzinfo=TZ)
     expected = {
         "hacker_news": datetime(2026, 10, 11, 7, 0, tzinfo=TZ),
         "github_trending": datetime(2026, 10, 11, 7, 10, tzinfo=TZ),
         "github_api": datetime(2026, 10, 11, 7, 20, tzinfo=TZ),
+        "cards": datetime(2026, 10, 11, 7, 25, tzinfo=TZ),
         "prune": datetime(2026, 10, 12, 7, 40, tzinfo=TZ),  # next Monday
     }
     for name, first in expected.items():
@@ -123,6 +126,7 @@ async def test_schedule_catch_up_adds_ordered_one_off_runs():
         return {
             "hacker_news": now - timedelta(hours=26),  # stale
             "github_trending": now - timedelta(hours=1),  # fresh
+            "cards": now - timedelta(hours=2),  # fresh
             # github_api never ran, prune never ran
         }
 
@@ -136,6 +140,18 @@ async def test_schedule_catch_up_adds_ordered_one_off_runs():
         "github_api:catch_up": now + timedelta(seconds=150),
         "prune:catch_up": now + timedelta(minutes=5),
     }
+
+
+async def test_cards_catch_up_runs_after_collectors():
+    now = datetime(2026, 10, 11, 9, 0, tzinfo=TZ)
+    scheduler = create_scheduler()
+
+    async def nothing_ran():
+        return {}
+
+    await schedule_catch_up(scheduler, now=now, load_last_success=nothing_ran)
+    runs = {j.id: j.trigger.run_date for j in scheduler.get_jobs() if j.id.endswith(":catch_up")}
+    assert runs["cards:catch_up"] > runs["github_api:catch_up"] > runs["github_trending:catch_up"]
 
 
 async def test_schedule_catch_up_skips_when_db_unreadable():

@@ -15,6 +15,7 @@ dependencies = [
     "selectolax>=1.0",
     "apscheduler>=3.11,<4",
     "openai>=3.28",
+    "trafilatura>=2.0",
 ]
 
 [dependency-groups]

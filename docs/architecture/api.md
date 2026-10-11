@@ -21,6 +21,8 @@
 | GET | `/api/briefs/today` | Latest daily brief; sets `opened_at` on first view | 005 | planned |
 | GET | `/api/briefs/{date}` | Daily brief for a date | 005 | planned |
 | GET | `/api/leaderboard/latest` | Latest weekly leaderboard | 006 | planned |
-| GET | `/api/cards/{item_type}/{item_id}` | Full card for a repo or news item | 004 | planned |
+| GET | `/api/cards/{item_type}/{item_id}` | `{item, card}`: the item with live signals, and its latest card or null (`item_type` = repo / news) | 004 | done |
+| POST | `/api/cards/{item_type}/{item_id}` | Write the card now (cached if the source is unchanged); 429 when the monthly token cap is reached, 502 if the model call fails | 004 | done |
+| GET | `/api/llm/usage` | This month's LLM calls and tokens vs `monthly_token_cap`, optional USD estimate | 004 | done |
 | POST | `/api/feedback` | Save a 👍/👎 (`{item_type, item_id, rating, brief_id}`) | 005 | planned |
 | GET | `/api/stats?days=14` | Success-check numbers | 007 | planned |

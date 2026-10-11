@@ -16,6 +16,7 @@ from zoneinfo import ZoneInfo
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from app.cards import write_daily_cards
 from app.collectors.github_api import collect_github
 from app.collectors.github_trending import collect_trending
 from app.collectors.hacker_news import collect_hacker_news
@@ -29,14 +30,17 @@ JOBS = {
     "hacker_news": collect_hacker_news,
     "github_trending": collect_trending,
     "github_api": collect_github,
+    "cards": write_daily_cards,
     "prune": prune_old_data,
 }
 
-# Startup catch-up order: HN and Trending add candidates before the snapshot job runs.
+# Startup catch-up order: HN and Trending add candidates before the snapshot job runs;
+# cards come after the snapshots (they need fresh scores).
 CATCH_UP_DELAY = {
     "hacker_news": timedelta(seconds=60),
     "github_trending": timedelta(seconds=90),
     "github_api": timedelta(seconds=150),
+    "cards": timedelta(minutes=4),
     "prune": timedelta(minutes=5),
 }
 
@@ -62,6 +66,7 @@ def job_specs(cfg: AppConfig, tz: ZoneInfo) -> dict[str, JobSpec]:
         "hacker_news": JobSpec(daily(src.hacker_news.run_at), stale, grace),
         "github_trending": JobSpec(daily(src.github_trending.run_at), stale, grace),
         "github_api": JobSpec(daily(src.github_api.run_at), stale, grace),
+        "cards": JobSpec(daily(cfg.cards.run_at), stale, grace),
         "prune": JobSpec(
             CronTrigger(**PRUNE_AT, timezone=tz), timedelta(days=7), timedelta(days=3)
         ),

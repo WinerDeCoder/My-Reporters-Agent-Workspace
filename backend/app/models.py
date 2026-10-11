@@ -112,6 +112,24 @@ class CollectorRun(Base):
     error: Mapped[str | None] = mapped_column(Text)
 
 
+class LlmUsage(Base):
+    """One LLM call: tokens for the monthly cap (REQ-CRD-004, REQ-NFR-005)."""
+
+    __tablename__ = "llm_usage"
+    __table_args__ = (Index("ix_llm_usage_at", "at"),)
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    model: Mapped[str] = mapped_column(Text)
+    purpose: Mapped[str] = mapped_column(Text)  # e.g. "card"
+    item_type: Mapped[str | None] = mapped_column(Text)
+    item_id: Mapped[int | None] = mapped_column(Integer)
+    input_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    output_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    ok: Mapped[bool] = mapped_column(Boolean)
+    error: Mapped[str | None] = mapped_column(Text)
+
+
 class Feedback(Base):
     __tablename__ = "feedback"
     __table_args__ = (

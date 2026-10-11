@@ -2,11 +2,11 @@
 id: 000
 title: Project skeleton
 status: done
-version: 1.2
+version: 1.3
 requirements: [REQ-NFR-001, REQ-NFR-002, REQ-NFR-003, REQ-NFR-006]
 target_release: 0.1.0
 created: 2026-10-04
-updated: 2026-10-10
+updated: 2026-10-11
 ---
 
 # 000 — Project skeleton
@@ -38,10 +38,11 @@ Collectors, scoring, cards, brief: specs 001–007.
 
 ## QA
 
-Test cases: [docs/qa/test-cases/000-skeleton.md](../../docs/qa/test-cases/000-skeleton.md). TC-000-04 (migration on a real DB) and TC-000-05 (Today page in a browser) were never run: the spec was closed before QA tracking existed. They'll be run during spec 001 setup.
+Test cases: [docs/qa/test-cases/000-skeleton.md](../../docs/qa/test-cases/000-skeleton.md). TC-000-04 (migration on a real DB) and TC-000-05 (Today page in a browser) were never run: the spec was closed before QA tracking existed. Both passed on 2026-10-11, so all 6 pass.
 
 ## Change log
 
+- 1.3 (2026-10-11): TC-000-04 and TC-000-05 run and passed.
 - 1.2 (2026-10-10): QA test cases recorded after the fact; 2 of 6 still to run (see QA).
 - 1.1 (2026-10-10): LLM switched from Anthropic to OpenAI; `llm` config section expanded; `llm.py` added ([ADR-0004](../../docs/architecture/decisions/0004-openai-for-cards.md)).
 - 1.0 (2026-10-04): Skeleton built: Compose, config, schema + migration, FastAPI, React shell.

@@ -16,6 +16,7 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 | REQ-COL-003 | Collect Hacker News top stories (title, URL, points, comments, posted time) hourly from the Algolia HN API. | Stories are upserted by `hn_id`; points and comments update on later runs. | planned | 002 | |
 | REQ-COL-004 | GitHub repo links in HN stories become repo candidates. | A story linking `github.com/owner/repo` creates or updates that repo and sets `news_items.linked_repo_id`. | planned | 002 | |
 | REQ-COL-005 | Each collector runs on its own schedule and retries transient errors; one failing never stops the others. | Simulated failure in one collector is logged and the others still complete their runs. | in-progress | 001 | 2026-10-10: collectors also run ~1 min after startup (Q-003). |
+| REQ-COL-007 | Every collector run (scheduled or CLI) is recorded: job name, start, end, success, result count, error message. | A failed and a successful run each leave one `collector_runs` row with the right outcome; a DB error while recording never breaks the job. | in-progress | 008 | 2026-10-11: added (Q-009). |
 | REQ-COL-006 | Prune weekly: raw HN items older than 30 days, and snapshots of repos that never reached a brief. | After the prune job, no HN item older than 30 days remains unless it is referenced by a brief. | planned | 002 | |
 
 ## Scoring (SCO)
@@ -57,6 +58,13 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 | --- | --- | --- | --- | --- | --- |
 | REQ-FBK-001 | Every brief item has 👍 and 👎 buttons; a click is saved with the item, brief and time. | Clicking stores a `feedback` row; the button shows the saved state. | planned | 005 | |
 | REQ-FBK-002 | A Stats page shows the last 14 days: briefs built, briefs opened, items rated, share of thumbs up. | Numbers match a direct SQL count. | planned | 007 | |
+
+## Interface (UI)
+
+| ID | Requirement | Acceptance criteria | Status | Spec | Notes |
+| --- | --- | --- | --- | --- | --- |
+| REQ-UI-001 | A Rising repos page lists every tracked repo with stars, stars/day (or "collecting" until 6 h of history), description, language, topics and a GitHub link; it can be searched, filtered by language and sorted by stars/day, stars or newest. | With the collectors' data loaded, the page shows every tracked repo; search, filter and each sort order change the list correctly. | in-progress | 008 | 2026-10-11: pulled forward from the v1 dashboard (Q-008). |
+| REQ-UI-002 | The UI shows collector status: per job, the last run time, outcome, count and next scheduled run. | After a run, Today and Rising repos show its time and count; a failed run shows as failed with its error. | in-progress | 008 | 2026-10-11: added (Q-009). |
 
 ## Non-functional (NFR)
 

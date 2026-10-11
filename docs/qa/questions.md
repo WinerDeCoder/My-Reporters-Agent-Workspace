@@ -71,3 +71,23 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 - **Suggestion:** Start with a small, cheap model (`gpt-5-mini` is the placeholder) and judge card quality during the 2-week trial; confirm the exact id your key can use.
 - **Answer:** —
 - **Recorded in:** —
+
+### Q-008 — What the frontend should show before scoring and cards exist
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** new spec (frontend) · REQ-COL-002, REQ-BRF-003 · `frontend/src/pages/`, `app/api/`, `app/momentum.py`
+- **Question:** The collectors now fill the DB (60 repos, 120 snapshots), but no page shows data: the roadmap's first content page (Today, spec 005) needs scoring (003) and cards (004). What should the frontend show now?
+- **Suggestion:** A **Rising repos** page now (pulled forward from the v1 dashboard): every tracked repo with stars, stars/day once 6 h of history exists, description, language, topics, GitHub link, sortable; plus collector status (last run, counts). Alternatives: a provisional Today brief from raw momentum, or stay in roadmap order (HN collector next) and leave the UI for spec 005.
+- **Answer:** Rising repos page. (2026-10-11)
+- **Recorded in:** spec [008](../../specs/008-rising-repos-page/spec.md); REQ-UI-001; roadmap.
+
+### Q-009 — Show collector status in the UI
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [008](../../specs/008-rising-repos-page/spec.md) · REQ-COL-007, REQ-UI-002 · `app/scheduler.py`, `app/models.py`, `frontend/src/components/CollectorStatus.tsx`
+- **Question:** Should the frontend show collector status (last run, repos found, failures), so it's visible that background jobs work?
+- **Suggestion:** Yes, a small panel; needs a `collector_runs` table (new migration) recording every job run. Alternative: rely on backend logs.
+- **Answer:** Yes, small panel. (2026-10-11)
+- **Recorded in:** spec 008; REQ-COL-007, REQ-UI-002; data model.

@@ -4,17 +4,18 @@
 > `docs/product/requirements.md`, the roadmap, `docs/qa/` and `CHANGELOG.md`.
 > Do not edit by hand, except inside the Notes section at the bottom.
 
-- **Released version:** 0.1.0 · 3 unreleased change(s) in CHANGELOG
+- **Released version:** 0.1.0 · 5 unreleased change(s) in CHANGELOG
 - **Milestone:** MVP
-- **Active spec:** [001 — GitHub collectors](specs/001-github-collectors/spec.md) · status **in-progress** · tasks 10/13 · tests 9/12 pass (2 blocked, 1 not run)
+- **Active spec:** [001 — GitHub collectors](specs/001-github-collectors/spec.md) · status **in-progress** · tasks 11/13 · tests 11/12 pass (1 not run)
 - **Open questions:** 3 (see below)
 
 ## Features
 
 | Spec | Title | Status | Version | Tasks | Tests | Target | Updated |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [000](specs/000-skeleton/spec.md) | Project skeleton | done | 1.2 | 8/8 | 4/6 pass (1 blocked, 1 not run) | 0.1.0 | 2026-10-10 |
-| [001](specs/001-github-collectors/spec.md) | GitHub collectors | in-progress | 1.0 | 10/13 | 9/12 pass (2 blocked, 1 not run) | 0.2.0 | 2026-10-10 |
+| [000](specs/000-skeleton/spec.md) | Project skeleton | done | 1.3 | 8/8 | 6/6 pass | 0.1.0 | 2026-10-11 |
+| [001](specs/001-github-collectors/spec.md) | GitHub collectors | in-progress | 1.0 | 11/13 | 11/12 pass (1 not run) | 0.2.0 | 2026-10-10 |
+| [008](specs/008-rising-repos-page/spec.md) | Rising repos page | in-progress | 1.0 | 10/11 | 10/10 pass | 0.2.0 | 2026-10-11 |
 | 002 | HN collector | not started | — | — | — | 0.3.0 | — |
 | 003 | Scoring | not started | — | — | — | 0.4.0 | — |
 | 004 | Cards | not started | — | — | — | 0.5.0 | — |
@@ -24,12 +25,12 @@
 
 ## Requirements
 
-27 total: 4 done, 5 in-progress, 18 planned.
-In flight: REQ-COL-001 (in-progress), REQ-COL-002 (in-progress), REQ-COL-005 (in-progress), REQ-NFR-004 (in-progress), REQ-NFR-005 (in-progress).
+30 total: 4 done, 8 in-progress, 18 planned.
+In flight: REQ-COL-001 (in-progress), REQ-COL-002 (in-progress), REQ-COL-005 (in-progress), REQ-COL-007 (in-progress), REQ-UI-001 (in-progress), REQ-UI-002 (in-progress), REQ-NFR-004 (in-progress), REQ-NFR-005 (in-progress).
 
 ## Quality
 
-Test cases: 13/18 pass (3 blocked, 2 not run). Details per spec in `docs/qa/test-cases/`; REQ → test → module map in [docs/qa/traceability.md](docs/qa/traceability.md).
+Test cases: 27/28 pass (1 not run). Details per spec in `docs/qa/test-cases/`; REQ → test → module map in [docs/qa/traceability.md](docs/qa/traceability.md).
 
 ### Open questions ([docs/qa/questions.md](docs/qa/questions.md))
 
@@ -40,7 +41,7 @@ Test cases: 13/18 pass (3 blocked, 2 not run). Details per spec in `docs/qa/test
 ## Notes and blockers
 
 <!-- NOTES:START (hand-written, kept by scripts/status.py) -->
-- **Blocked on local setup (needed for TC-001-10/11, TC-000-04):** create `.env` with `GITHUB_TOKEN`, start Docker Desktop, then `docker compose up -d db` and `cd backend; uv run alembic upgrade head`. After that: `uv run python -m app.cli collect trending`, then `collect github` twice.
-- **Then the 24 h soak (TC-001-12):** leave `uv run fastapi run app/main.py` running about a day, then `uv run python -m app.cli momentum --top 20`.
-- Spec 001 code is complete and unit-tested (9/12 test cases pass); it closes with `/done 001` once the live and soak checks pass, then `/release 0.2.0`.
+- **Restart the backend** to load spec 008 (the running instance predates it): stop it, then `cd backend; uv run fastapi run app/main.py`. Migration 0002 is already applied. With `frontend/dist` built, http://localhost:8000 now serves the UI too.
+- **24 h soak (TC-001-12):** keep the backend running about a day; stars/day appears on Rising repos once each repo has 6 h of history. Then `uv run python -m app.cli momentum --top 20` and compare a few repos with GitHub.
+- **Ready to close:** spec 008 (all 10 test cases pass) → `/done 008`. Spec 001 closes after the soak → `/done 001`, then `/release 0.2.0` (001 + 008).
 <!-- NOTES:END -->

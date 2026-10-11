@@ -52,7 +52,7 @@ flowchart TB
 
 | Container | Tech | Responsibility |
 | --- | --- | --- |
-| Frontend | React, Vite, TypeScript, Tailwind, TanStack Query, React Router | Today, Leaderboard, Card, Stats pages; rating buttons |
+| Frontend | React, Vite, TypeScript, Tailwind, TanStack Query, React Router | Today (status + brief), Rising repos, Leaderboard, Card, Stats pages; rating buttons |
 | Backend | Python 3.12+, FastAPI, APScheduler, SQLAlchemy async, httpx | API, scheduled collectors, scoring, card generation, brief building; serves the built frontend |
 | Database | PostgreSQL 17 (pgvector image), Alembic migrations | All state; see [data-model.md](data-model.md) |
 | LLM | OpenAI Responses API via `openai` SDK | Writes structured cards; settings in `config.yaml` → `llm` |
@@ -70,7 +70,11 @@ flowchart TB
 | `app/collectors/github_api.py` | Tracked repos → metadata, README hash, star snapshot; rate-limit aware *(spec 001, built)* |
 | `app/collectors/hacker_news.py` | HN stories and GitHub-link candidates *(spec 002)* |
 | `app/momentum.py` | Pure stars/day and stars-gained functions over snapshots *(spec 001, built)* |
-| `app/cli.py` | Run a collector once / print momentum: `python -m app.cli ...` |
+| `app/cli.py` | Run a collector once (recorded like a scheduled run) / print momentum: `python -m app.cli ...` |
+| `app/runs.py` | Collector run log: `record_run()`, `last_runs()` *(spec 008, built)* |
+| `app/repo_stats.py` | Tracked repos + latest stars + stars/day, shared by API and CLI *(spec 008, built)* |
+
+Frontend: `src/pages/` (Today, Repos, Leaderboard, Stats, Card), `src/components/CollectorStatus.tsx` (job status panel), `src/api/client.ts` (fetch helper + types).
 | `app/scoring.py` | Pure scoring functions *(spec 003)* |
 | `app/llm.py` | The only place that calls the LLM |
 | `app/cards.py` | Card prompt, cache and budget check *(spec 004)* |
@@ -116,6 +120,8 @@ sequenceDiagram
     C->>L: generate (only on cache miss, within budget)
     B->>DB: insert briefs row (items in order)
 ```
+
+**Browsing repos (spec 008):** Rising repos page → `GET /api/repos` (tracked repos + last 48 h of snapshots → stars/day via `momentum.py`) and `GET /api/collectors/status` (latest `collector_runs` row per job + scheduler's next run); both refetch every minute; search/filter/sort run in the browser.
 
 **Reading:** browser loads the SPA → `GET /api/briefs/today` → first view sets `opened_at` → 👍/👎 posts to `/api/feedback`.
 

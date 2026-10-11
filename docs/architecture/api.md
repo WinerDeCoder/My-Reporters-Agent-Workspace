@@ -15,6 +15,8 @@
 | Method | Path | Purpose | Spec | Status |
 | --- | --- | --- | --- | --- |
 | GET | `/api/health` | API up + DB reachable (`{status, db}`) | 000 | done |
+| GET | `/api/repos` | Tracked repos, highest stars/day first: name, url, description, language, topics, license, stars, `stars_per_day` (null until 6 h of history), snapshots, first/last seen | 008 | done |
+| GET | `/api/collectors/status` | Per job: `last_run` (`started_at`, `finished_at`, `ok`, `result`, `error`) and `next_run` (null if the scheduler isn't running) | 008 | done |
 | GET | `/api/briefs/today` | Latest daily brief; sets `opened_at` on first view | 005 | planned |
 | GET | `/api/briefs/{date}` | Daily brief for a date | 005 | planned |
 | GET | `/api/leaderboard/latest` | Latest weekly leaderboard | 006 | planned |

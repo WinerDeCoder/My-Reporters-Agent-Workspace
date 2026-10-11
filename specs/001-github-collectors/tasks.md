@@ -11,7 +11,7 @@ Spec: [spec.md](spec.md) · Plan: [plan.md](plan.md) · QA: [test cases](../../d
 - [x] T6: `momentum.py` + unit tests (TC-001-04)
 - [x] T7: Register both jobs in `scheduler.py` with startup offsets + isolation tests (TC-001-08, 09)
 - [x] T8: CLI: `collect trending`, `collect github`, `momentum --top N`
-- [ ] T9: Live run against real GitHub + Postgres (TC-001-10, 11). Blocked: needs Docker Desktop running and `.env` with `GITHUB_TOKEN`
+- [x] T9: Live run against real GitHub + Postgres (TC-001-10, 11)
 - [ ] T10: 24 h soak, then momentum eyeball check (TC-001-12)
 - [x] T11: Update docs listed in plan.md
 - [ ] T12: Close-out (`/done`): requirements status, CHANGELOG, STATUS.md

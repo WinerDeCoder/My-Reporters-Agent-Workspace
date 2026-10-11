@@ -23,6 +23,7 @@ FRONTEND_DIST = ROOT_DIR / "frontend" / "dist"
 async def lifespan(app: FastAPI):
     scheduler = create_scheduler()
     scheduler.start()
+    app.state.scheduler = scheduler  # read by /api/collectors/status for next run times
     log.info("Scheduler started with %d job(s)", len(scheduler.get_jobs()))
     yield
     scheduler.shutdown(wait=False)

@@ -27,10 +27,10 @@ Momentum (stars gained per day) is the core signal for rising repos, and it only
 
 ## Acceptance criteria
 
-- [ ] AC-1: Running `collect trending` with the default config stores between 25 and 150 unique repos and logs the count per page.
-- [ ] AC-2: Running `collect github` twice creates two snapshots per tracked repo, and fills description, topics, language, license and `readme_hash`.
+- [x] AC-1: Running `collect trending` with the default config stores between 25 and 150 unique repos and logs the count per page.
+- [x] AC-2: Running `collect github` twice creates two snapshots per tracked repo, and fills description, topics, language, license and `readme_hash`.
 - [x] AC-3: A repo that returns 404 (deleted or renamed) is logged and skipped; the run continues.
-- [ ] AC-4: On a 403/429 rate-limit response the collector waits until the reset time (or backs off) instead of failing; a full run uses under 500 API requests.
+- [x] AC-4: On a 403/429 rate-limit response the collector waits until the reset time (or backs off) instead of failing; a full run uses under 500 API requests.
 - [x] AC-5: If the Trending job raises, the API job still runs on schedule (and vice versa).
 - [ ] AC-6: After about 24 hours of scheduled runs, `momentum --top 20` shows plausible stars/day for well-known trending repos (eyeball check against GitHub).
 - [x] AC-7: Trending HTML parsing is covered by a unit test on a saved HTML fixture; stars/day calculation is covered by unit tests.
@@ -57,5 +57,6 @@ Test cases: [docs/qa/test-cases/001-github-collectors.md](../../docs/qa/test-cas
 
 ## Change log
 
+- 1.0 (2026-10-11): Live checks passed on the local DB (TC-001-10, 11): 60 repos, 2 snapshots each, 120 requests per run. Only the 24 h soak (AC-6) remains.
 - 1.0 (2026-10-10): Approved. Q-001: track window counted from `last_seen`. Q-002: languages unchanged. Q-003: first run ~1 min after startup (new AC-8). Implementation started.
 - 0.1 (2026-10-10): Draft.

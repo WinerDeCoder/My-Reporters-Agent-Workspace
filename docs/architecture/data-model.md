@@ -64,6 +64,15 @@ erDiagram
         int brief_id FK "nullable"
         timestamptz rated_at
     }
+    collector_runs {
+        bigint id PK
+        text job "github_trending | github_api | ..."
+        timestamptz started_at
+        timestamptz finished_at
+        bool ok
+        int result "count, nullable"
+        text error "nullable"
+    }
 ```
 
 `cards` and `feedback` point at items polymorphically (`item_type` + `item_id`), so they have no foreign key to `repos` / `news_items`.
@@ -78,6 +87,7 @@ erDiagram
 | `cards` | LLM-written card for an item | Reused while `source_hash` matches the current README/article hash. Index on `(item_type, item_id)`. |
 | `briefs` | A built daily brief or weekly leaderboard | Unique `(type, date)`. `items` holds the ordered item refs plus the signals shown. `opened_at` set once on first view. |
 | `feedback` | A 👍/👎 on an item | `rating` is -1 or 1. |
+| `collector_runs` | One run of a background job, scheduled or from the CLI (REQ-COL-007, migration 0002) | Written by `run_job()` via `app/runs.py`; a failure to write is logged and never fails the job. Index on `(job, started_at)`; `/api/collectors/status` reads the latest per job. |
 
 ## Retention
 

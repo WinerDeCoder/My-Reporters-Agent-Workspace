@@ -8,23 +8,16 @@ uv run python -m app.cli momentum --top 20
 import argparse
 import asyncio
 import logging
-from collections import defaultdict
 from collections.abc import Awaitable, Callable
-from datetime import UTC, datetime, timedelta
 from typing import Any
 
-from sqlalchemy import select
-
-from app.collectors.github_api import collect_github
-from app.collectors.github_trending import collect_trending
+from app.config import get_config
 from app.db import SessionLocal, engine
-from app.models import Repo, RepoSnapshot
-from app.momentum import Snapshot, stars_per_day
+from app.repo_stats import RepoRow, load_repo_rows
+from app.scheduler import JOBS, run_job
 
-COLLECTORS: dict[str, Callable[[], Awaitable[Any]]] = {
-    "trending": collect_trending,
-    "github": collect_github,
-}
+# CLI name -> scheduler job name (CLI runs are recorded under the same job name)
+COLLECTORS = {"trending": "github_trending", "github": "github_api"}
 
 
 async def _run(fn: Callable[[], Awaitable[Any]]) -> Any:
@@ -34,26 +27,11 @@ async def _run(fn: Callable[[], Awaitable[Any]]) -> Any:
         await engine.dispose()
 
 
-async def momentum(top: int) -> list[tuple[str, float, int]]:
-    """Top repos by stars/day over the last 48 h of snapshots: (name, stars/day, stars)."""
-    since = datetime.now(UTC) - timedelta(hours=48)
+async def momentum(top: int) -> list[RepoRow]:
+    """Top tracked repos by stars/day (repos still collecting history are skipped)."""
     async with SessionLocal() as session:
-        rows = await session.execute(
-            select(Repo.full_name, RepoSnapshot.taken_at, RepoSnapshot.stars)
-            .join(RepoSnapshot, RepoSnapshot.repo_id == Repo.id)
-            .where(RepoSnapshot.taken_at >= since)
-        )
-        by_repo: dict[str, list[Snapshot]] = defaultdict(list)
-        for name, taken_at, stars in rows:
-            by_repo[name].append(Snapshot(taken_at, stars))
-
-    ranked = []
-    for name, snaps in by_repo.items():
-        rate = stars_per_day(snaps)
-        if rate is not None:
-            ranked.append((name, rate, max(snaps, key=lambda s: s.taken_at).stars))
-    ranked.sort(key=lambda r: r[1], reverse=True)
-    return ranked[:top]
+        rows = await load_repo_rows(session, get_config().sources.github_api.track_days)
+    return [r for r in rows if r.stars_per_day is not None][:top]
 
 
 async def print_momentum(top: int) -> None:
@@ -62,14 +40,16 @@ async def print_momentum(top: int) -> None:
         print("No momentum yet: needs at least two snapshots 6+ hours apart.")
         return
     print(f"{'#':>3}  {'repo':<45} {'stars/day':>10} {'stars':>9}")
-    for i, (name, rate, stars) in enumerate(ranked, 1):
-        print(f"{i:>3}  {name:<45} {rate:>10.1f} {stars:>9,}")
+    for i, row in enumerate(ranked, 1):
+        print(f"{i:>3}  {row.full_name:<45} {row.stars_per_day:>10.1f} {row.stars or 0:>9,}")
 
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="python -m app.cli", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
-    collect = sub.add_parser("collect", help="run one collector once")
+    collect = sub.add_parser(
+        "collect", help="run one collector once (recorded like a scheduled run)"
+    )
     collect.add_argument("source", choices=sorted(COLLECTORS))
     mom = sub.add_parser("momentum", help="print top repos by stars/day")
     mom.add_argument("--top", type=int, default=20)
@@ -79,7 +59,8 @@ def main(argv: list[str] | None = None) -> None:
         level=logging.INFO, format="%(asctime)s %(levelname)-7s %(name)s: %(message)s"
     )
     if args.command == "collect":
-        result = asyncio.run(_run(COLLECTORS[args.source]))
+        job = COLLECTORS[args.source]
+        result = asyncio.run(_run(lambda: run_job(job, JOBS[job])))
         print(f"{args.source}: {result}")
     else:
         asyncio.run(print_momentum(args.top))

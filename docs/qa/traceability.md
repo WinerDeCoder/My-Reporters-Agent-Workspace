@@ -5,11 +5,12 @@
 
 | Requirement | Status | Spec | Test cases | Modules | Open questions |
 | --- | --- | --- | --- | --- | --- |
-| REQ-COL-001 | in-progress | [001](../../specs/001-github-collectors/spec.md) | TC-001-01 (pass), TC-001-02 (pass), TC-001-03 (pass), TC-001-10 (blocked) | `app/cli.py`, `app/collectors/github_trending.py` | — |
-| REQ-COL-002 | in-progress | [001](../../specs/001-github-collectors/spec.md) | TC-001-04 (pass), TC-001-05 (pass), TC-001-06 (pass), TC-001-11 (blocked), TC-001-12 (not run) | `app/cli.py`, `app/collectors/__init__.py`, `app/collectors/github_api.py`, `app/momentum.py` | — |
+| REQ-COL-001 | in-progress | [001](../../specs/001-github-collectors/spec.md) | TC-001-01 (pass), TC-001-02 (pass), TC-001-03 (pass), TC-001-10 (pass) | `app/cli.py`, `app/collectors/github_trending.py` | — |
+| REQ-COL-002 | in-progress | [001](../../specs/001-github-collectors/spec.md) | TC-001-04 (pass), TC-001-05 (pass), TC-001-06 (pass), TC-001-11 (pass), TC-001-12 (not run) | `app/cli.py`, `app/collectors/__init__.py`, `app/collectors/github_api.py`, `app/momentum.py` | — |
 | REQ-COL-003 | planned | 002 | — | — | — |
 | REQ-COL-004 | planned | 002 | — | — | — |
 | REQ-COL-005 | in-progress | [001](../../specs/001-github-collectors/spec.md) | TC-001-08 (pass), TC-001-09 (pass) | `app/scheduler.py` | — |
+| REQ-COL-007 | in-progress | [008](../../specs/008-rising-repos-page/spec.md) | TC-008-04 (pass), TC-008-05 (pass), TC-008-06 (pass) | `app/api/collectors.py`, `app/runs.py`, `app/scheduler.py` | — |
 | REQ-COL-006 | planned | 002 | — | — | — |
 | REQ-SCO-001 | planned | 003 | — | — | Q-005 |
 | REQ-SCO-002 | planned | 003 | — | — | Q-005 |
@@ -26,10 +27,12 @@
 | REQ-LDB-001 | planned | 006 | — | — | — |
 | REQ-FBK-001 | planned | 005 | — | — | — |
 | REQ-FBK-002 | planned | 007 | — | — | — |
+| REQ-UI-001 | in-progress | [008](../../specs/008-rising-repos-page/spec.md) | TC-008-01 (pass), TC-008-02 (pass), TC-008-03 (pass), TC-008-07 (pass), TC-008-08 (pass), TC-008-10 (pass) | `app/api/repos.py`, `app/cli.py`, `app/repo_stats.py`, `frontend/src`, `frontend/src/pages/Repos.tsx` | — |
+| REQ-UI-002 | in-progress | [008](../../specs/008-rising-repos-page/spec.md) | TC-008-06 (pass), TC-008-09 (pass) | `app/api/collectors.py`, `frontend/src/components/CollectorStatus.tsx`, `frontend/src/pages/Today.tsx` | — |
 | REQ-NFR-001 | done | [000](../../specs/000-skeleton/spec.md) | TC-000-01 (pass) | `app/api/health.py` | — |
 | REQ-NFR-002 | done | [000](../../specs/000-skeleton/spec.md) | TC-000-06 (pass) | `.gitignore` | — |
 | REQ-NFR-003 | done | [000](../../specs/000-skeleton/spec.md) | — | — | — |
-| REQ-NFR-004 | in-progress | [001](../../specs/001-github-collectors/spec.md) | TC-001-07 (pass), TC-001-11 (blocked) | `app/cli.py`, `app/collectors/github_api.py` | — |
+| REQ-NFR-004 | in-progress | [001](../../specs/001-github-collectors/spec.md) | TC-001-07 (pass), TC-001-11 (pass) | `app/cli.py`, `app/collectors/github_api.py` | — |
 | REQ-NFR-005 | in-progress | 004 | — | — | — |
 | REQ-NFR-006 | done | [000](../../specs/000-skeleton/spec.md) | TC-000-02 (pass) | `app/config.py` | — |
 
@@ -38,13 +41,20 @@
 | Module | Test cases | Requirements |
 | --- | --- | --- |
 | `.gitignore` | TC-000-06 (pass) | REQ-NFR-002 |
-| `alembic/versions/0001_initial_schema.py` | TC-000-04 (blocked) | — |
+| `alembic/versions/0001_initial_schema.py` | TC-000-04 (pass) | — |
+| `app/api/collectors.py` | TC-008-06 (pass) | REQ-COL-007, REQ-UI-002 |
 | `app/api/health.py` | TC-000-01 (pass) | REQ-NFR-001 |
-| `app/cli.py` | TC-001-10 (blocked), TC-001-11 (blocked), TC-001-12 (not run) | REQ-COL-001, REQ-COL-002, REQ-NFR-004 |
+| `app/api/repos.py` | TC-008-03 (pass) | REQ-UI-001 |
+| `app/cli.py` | TC-001-10 (pass), TC-001-11 (pass), TC-001-12 (not run), TC-008-02 (pass) | REQ-COL-001, REQ-COL-002, REQ-NFR-004, REQ-UI-001 |
 | `app/collectors/__init__.py` | TC-001-05 (pass) | REQ-COL-002 |
-| `app/collectors/github_api.py` | TC-001-05 (pass), TC-001-06 (pass), TC-001-07 (pass), TC-001-11 (blocked) | REQ-COL-002, REQ-NFR-004 |
-| `app/collectors/github_trending.py` | TC-001-01 (pass), TC-001-02 (pass), TC-001-03 (pass), TC-001-10 (blocked) | REQ-COL-001 |
+| `app/collectors/github_api.py` | TC-001-05 (pass), TC-001-06 (pass), TC-001-07 (pass), TC-001-11 (pass) | REQ-COL-002, REQ-NFR-004 |
+| `app/collectors/github_trending.py` | TC-001-01 (pass), TC-001-02 (pass), TC-001-03 (pass), TC-001-10 (pass) | REQ-COL-001 |
 | `app/config.py` | TC-000-02 (pass), TC-000-03 (pass) | REQ-CRD-002, REQ-NFR-006 |
 | `app/momentum.py` | TC-001-04 (pass), TC-001-12 (not run) | REQ-COL-002 |
-| `app/scheduler.py` | TC-001-08 (pass), TC-001-09 (pass) | REQ-COL-005 |
-| `frontend/src/pages/Today.tsx` | TC-000-05 (not run) | — |
+| `app/repo_stats.py` | TC-008-01 (pass), TC-008-02 (pass) | REQ-UI-001 |
+| `app/runs.py` | TC-008-04 (pass), TC-008-05 (pass) | REQ-COL-007 |
+| `app/scheduler.py` | TC-001-08 (pass), TC-001-09 (pass), TC-008-04 (pass), TC-008-05 (pass) | REQ-COL-005, REQ-COL-007 |
+| `frontend/src` | TC-008-10 (pass) | REQ-UI-001 |
+| `frontend/src/components/CollectorStatus.tsx` | TC-008-09 (pass) | REQ-UI-002 |
+| `frontend/src/pages/Repos.tsx` | TC-008-07 (pass), TC-008-08 (pass) | REQ-UI-001 |
+| `frontend/src/pages/Today.tsx` | TC-000-05 (pass), TC-008-09 (pass) | REQ-UI-002 |

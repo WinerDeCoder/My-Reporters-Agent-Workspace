@@ -3,7 +3,7 @@
 import logging
 import time
 from collections.abc import Awaitable, Callable
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -12,24 +12,39 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.collectors.github_api import collect_github
 from app.collectors.github_trending import collect_trending
 from app.config import get_config
+from app.runs import Recorder, record_run
 
 log = logging.getLogger(__name__)
+
+JOBS = {"github_trending": collect_trending, "github_api": collect_github}
 
 # First runs shortly after startup (Q-003); the API job waits for Trending to add candidates.
 TRENDING_FIRST_RUN = timedelta(seconds=60)
 GITHUB_API_FIRST_RUN = timedelta(seconds=120)
 
 
-async def run_job(name: str, fn: Callable[[], Awaitable[Any]]) -> Any:
-    """Run one job, log its duration and result, and never let an exception escape."""
+async def run_job(
+    name: str, fn: Callable[[], Awaitable[Any]], recorder: Recorder = record_run
+) -> Any:
+    """Run one job, log and record it (REQ-COL-007), and never let an exception escape."""
+    started_at = datetime.now(UTC)
     start = time.monotonic()
     log.info("Job %s started", name)
+    result: Any = None
+    error: str | None = None
     try:
         result = await fn()
-    except Exception:
+    except Exception as exc:
+        error = f"{type(exc).__name__}: {exc}"
         log.exception("Job %s failed after %.1fs", name, time.monotonic() - start)
-        return None
-    log.info("Job %s finished in %.1fs (result: %s)", name, time.monotonic() - start, result)
+    else:
+        log.info("Job %s finished in %.1fs (result: %s)", name, time.monotonic() - start, result)
+
+    count = result if isinstance(result, int) and not isinstance(result, bool) else None
+    try:
+        await recorder(name, started_at, datetime.now(UTC), error is None, count, error)
+    except Exception:
+        log.exception("Recording run of job %s failed", name)
     return result
 
 

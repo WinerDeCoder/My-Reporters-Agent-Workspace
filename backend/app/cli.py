@@ -5,6 +5,7 @@ uv run python -m app.cli collect github
 uv run python -m app.cli collect hn
 uv run python -m app.cli prune
 uv run python -m app.cli momentum --top 20
+uv run python -m app.cli top
 """
 
 import argparse
@@ -15,8 +16,10 @@ from typing import Any
 
 from app.config import get_config
 from app.db import SessionLocal, engine
-from app.repo_stats import RepoRow, load_repo_rows
+from app.news_feed import NewsRow, load_news_rows
+from app.repo_stats import RepoRow, load_repo_rows, rank_by_score
 from app.scheduler import JOBS, run_job
+from app.scoring import boost
 
 # CLI name -> scheduler job name (CLI runs are recorded under the same job name)
 COLLECTORS = {"trending": "github_trending", "github": "github_api", "hn": "hacker_news"}
@@ -46,6 +49,45 @@ async def print_momentum(top: int) -> None:
         print(f"{i:>3}  {row.full_name:<45} {row.stars_per_day:>10.1f} {row.stars or 0:>9,}")
 
 
+async def print_top(n_repos: int, n_news: int) -> None:
+    """Today's top repos and stories by score, with the parts of each score (spec 003)."""
+
+    async def load() -> tuple[list[RepoRow], list[NewsRow]]:
+        async with SessionLocal() as session:
+            repos = await load_repo_rows(session, get_config().sources.github_api.track_days)
+            news = await load_news_rows(session)
+        return rank_by_score(repos), news
+
+    repos, news = await _run(load)
+    cfg = get_config().interests
+
+    def boost_of(topics: list[str]) -> float:
+        return boost(len(topics), cfg.topic_boost, cfg.max_boost)
+
+    scored = [r for r in repos if r.score is not None][:n_repos]
+    print(f"\nTOP REPOS  (score = stars/day x topic boost x penalties)  [{len(repos)} tracked]")
+    if not scored:
+        matched = [r for r in repos if r.matched_topics]
+        print("  No repo scores yet: stars/day needs two snapshots 6+ h apart.")
+        print(f"  {len(matched)} repos already match your topics, e.g.:")
+        for r in matched[:5]:
+            print(f"    {r.full_name:<42} topics: {', '.join(r.matched_topics)}")
+    for i, r in enumerate(scored, 1):
+        print(
+            f"{i:>3}. {r.full_name:<42} {r.score:>8.1f} = {r.stars_per_day:>7.1f}/day"
+            f" x {boost_of(r.matched_topics):.2f}  {', '.join(r.matched_topics) or '-'}"
+        )
+
+    eligible = [n for n in news if n.score is not None]
+    counts = f"[{len(eligible)}/{len(news)} AI/dev]"
+    print(f"\nTOP NEWS  (score = points/hour x topic boost x penalties)  {counts}")
+    for i, n in enumerate(eligible[:n_news], 1):
+        print(
+            f"{i:>3}. {n.title[:58]:<58} {n.score:>6.1f} = {n.points_per_hour:>5.1f}/h"
+            f" x {boost_of(n.matched_topics):.2f}  {', '.join(n.matched_topics) or '-'}"
+        )
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="python -m app.cli", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -56,6 +98,9 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("prune", help="delete old HN stories and untracked repos' snapshots now")
     mom = sub.add_parser("momentum", help="print top repos by stars/day")
     mom.add_argument("--top", type=int, default=20)
+    top = sub.add_parser("top", help="print today's top repos and stories by score")
+    top.add_argument("--repos", type=int, default=10)
+    top.add_argument("--news", type=int, default=10)
     args = parser.parse_args(argv)
 
     logging.basicConfig(
@@ -68,6 +113,8 @@ def main(argv: list[str] | None = None) -> None:
     elif args.command == "prune":
         result = asyncio.run(_run(lambda: run_job("prune", JOBS["prune"])))
         print(f"prune: {result} rows deleted")
+    elif args.command == "top":
+        asyncio.run(print_top(args.repos, args.news))
     else:
         asyncio.run(print_momentum(args.top))
 

@@ -10,14 +10,38 @@ brief:
   leaderboard_size: 10
   repeat_cooldown_days: 7     # lower score if already in a brief this recently
 
+# What I care about (Q-005, Q-015). Each topic lists match terms: case-insensitive, whole words,
+# "-", "/" and "_" count as spaces. A term starting with "~" is weak: it only counts when another
+# topic also matched (so "skills" alone doesn't match "improve your coding skills").
 interests:
-  keywords:
-    - agents
-    - mcp
-    - claude
-    - coding assistant
-    - small models
-    - llm
+  topic_boost: 1.5      # score × 1.5 per matched topic…
+  max_boost: 3.0        # …capped here
+  topics:
+    agents: [agent, agents, agentic, multi agent, ai agent, agent framework]
+    mcp: [mcp, model context protocol, mcp server]
+    claude: [claude, anthropic, claude code, opus, sonnet]
+    skills: [agent skills, claude skills, skill.md, ~skills, ~skill]
+    new llm models: [llm, llms, gpt, gemini, llama, qwen, mistral, deepseek, grok, gemma, phi,
+                     kimi, glm, open weights, open weight, new model, frontier model,
+                     foundation model, model release, reasoning model]
+  # News stories count as AI/dev (eligible for the brief) if the title matches one of these
+  # or any topic above (Q-016).
+  # (not plain "model": it matched "license model", "decision model")
+  ai_dev_terms: [ai, ml, machine learning, deep learning, neural, language model,
+                 language models, ai model, ai models, openai, nvidia, inference,
+                 transformer, rnn, gpu, cuda, programming, programmer, programmers, code,
+                 coding, debugger, compiler, llvm, kernel, unikernel, unikernels, container,
+                 containers, developer,
+                 developers, devtools, software, open source, github, git, compiler, python,
+                 rust, typescript, javascript, golang, kotlin, swift, zig, linux, database,
+                 postgres, sqlite, sql, api, kubernetes, docker, terminal, cli, wasm,
+                 webassembly, framework, library, repo, sdk]
+
+scoring:
+  repeat_penalty: 0.3   # × if the item was in a brief within brief.repeat_cooldown_days
+  dislike_penalty: 0.7  # × per topic shared with an item given 👎 in the last dislike_days…
+  dislike_floor: 0.2    # …but never below this
+  dislike_days: 30
 
 # Collectors run once a day at run_at (local timezone above), just before the brief (Q-014).
 # On startup, a job runs only if its last successful run is older than catch_up_after_hours.

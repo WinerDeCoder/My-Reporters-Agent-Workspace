@@ -44,13 +44,13 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 
 ### Q-005 — Starting interest keywords
 
-- **Status:** open
+- **Status:** answered
 - **Asked:** 2026-10-04
 - **Context:** spec 003 (scoring) · REQ-SCO-001, REQ-SCO-002 · `config.yaml` → `interests.keywords`
 - **Question:** Which keywords should boost scores at the start?
 - **Suggestion:** Current draft: agents, mcp, claude, coding assistant, small models, llm. Add anything you follow closely; keep it under ~15 so the boost stays meaningful.
-- **Answer:** —
-- **Recorded in:** —
+- **Answer:** agents, mcp, claude, skills, new llm models. (2026-10-11) How each is matched: Q-015.
+- **Recorded in:** `config.yaml` → `interests`; spec 003.
 
 ### Q-006 — Brief time
 
@@ -141,3 +141,33 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 - **Suggestion:** Daily at fixed times just before the brief rather than every 24 h from startup; on startup run a job only if its last successful run is older than ~20 h (replaces Q-003's run-on-every-start); widen HN's popular window to 26 h so daily runs overlap; weekly prune also only catches up if > 7 days old.
 - **Answer:** Daily at 07:00 (Hacker News), 07:10 (GitHub Trending), 07:20 (star snapshots), with the startup catch-up. (2026-10-11)
 - **Recorded in:** spec 001 v2.0, spec 002 v2.0 change logs; REQ-COL-001/002/003/005/006 notes; `config.yaml` `run_at`; supersedes Q-003; Q-006 suggestion moved to 07:30.
+
+### Q-015 — How interest topics are matched
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [003](../../specs/003-scoring/spec.md) · REQ-SCO-001, REQ-SCO-002 · `config.yaml` → `interests`, `app/scoring.py`
+- **Question:** "new llm models" never appears literally, and "skills" alone also matches posts like "improve your coding skills". How should the 5 interests be matched against repo name/description/topics and HN titles?
+- **Suggestion:** Each interest becomes a topic with a list of match terms, editable in `config.yaml`: agents (agent, agents, agentic, multi-agent), mcp (mcp, model context protocol), claude (claude, anthropic, claude code), skills (only with AI context: "agent skills", "claude skills", "skills" in a repo also tagged agents/claude/mcp), new llm models (model names and release words: gpt, gemini, llama, qwen, mistral, deepseek, grok, open weights, new model, release + llm). Whole-word, case-insensitive. Alternative: literal keyword match only.
+- **Answer:** Topics + editable term lists; generic terms like "skills" only count alongside another topic. (2026-10-11)
+- **Recorded in:** `config.yaml` → `interests.topics`; spec 003; REQ-SCO-001/002 notes.
+
+### Q-016 — Which HN stories count as AI/dev
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [003](../../specs/003-scoring/spec.md) · REQ-SCO-002 · `config.yaml` → `interests`, `app/scoring.py`
+- **Question:** REQ-SCO-002 keeps only AI/dev stories for the news section. Should that filter be just your 5 interests (strict, few stories), or a broader AI/dev topic list with your interests as a boost?
+- **Suggestion:** Broader: a configurable AI/dev list (ai, llm, ml, model, programming, open source, github, python, rust, typescript, database, compiler…) decides eligibility; your 5 interests boost ranking. Strict would often leave the news section empty.
+- **Answer:** Broad AI/dev term list decides eligibility; the 5 interests boost. (2026-10-11)
+- **Recorded in:** `config.yaml` → `interests.ai_dev_terms`; spec 003; REQ-SCO-002 note.
+
+### Q-017 — Show scores in the UI now
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [003](../../specs/003-scoring/spec.md) · REQ-SCO-001, REQ-SCO-002 · `frontend/src/pages/Repos.tsx`, `frontend/src/pages/News.tsx`, `app/api/`
+- **Question:** Spec 003 originally only adds a CLI to print today's top list. Should Rising repos and News also get a "For you" sort with the score and matched-topic badges?
+- **Suggestion:** Yes: default sort "For you" on both pages, topic badges on each item, and an "AI/dev only" toggle on News; it's the easiest way to judge the ranking before the brief uses it. Alternative: CLI only.
+- **Answer:** Yes: "For you" sort, topic badges, "AI/dev only" toggle on News. (2026-10-11)
+- **Recorded in:** spec 003; new REQ-UI-004.

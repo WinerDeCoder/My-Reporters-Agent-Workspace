@@ -25,6 +25,8 @@ class RepoOut(BaseModel):
     snapshots: int
     first_seen: datetime
     last_seen: datetime
+    score: float | None  # spec 003: stars/day x topic boost x penalties; null until stars/day
+    matched_topics: list[str]  # interest topics matched (config.yaml -> interests.topics)
 
 
 @router.get("/repos")

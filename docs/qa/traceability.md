@@ -12,9 +12,9 @@
 | REQ-COL-005 | changed | [001](../../specs/001-github-collectors/spec.md) | TC-001-08 (pass), TC-001-09 (pass), TC-001-13 (pass) | `app/main.py`, `app/runs.py`, `app/scheduler.py` | — |
 | REQ-COL-006 | changed | [002](../../specs/002-hn-collector/spec.md) | TC-002-06 (pass), TC-002-07 (pass), TC-002-10 (pass) | `app/cli.py`, `app/collectors/prune.py`, `app/scheduler.py` | — |
 | REQ-COL-007 | in-progress | [008](../../specs/008-rising-repos-page/spec.md) | TC-008-04 (pass), TC-008-05 (pass), TC-008-06 (pass) | `app/api/collectors.py`, `app/runs.py`, `app/scheduler.py` | — |
-| REQ-SCO-001 | planned | 003 | — | — | Q-005 |
-| REQ-SCO-002 | planned | 003 | — | — | Q-005 |
-| REQ-SCO-003 | planned | 003 | — | — | — |
+| REQ-SCO-001 | in-progress | [003](../../specs/003-scoring/spec.md) | TC-003-01 (pass), TC-003-02 (pass), TC-003-03 (pass), TC-003-06 (pass) | `app/cli.py`, `app/scoring.py` | — |
+| REQ-SCO-002 | in-progress | [003](../../specs/003-scoring/spec.md) | TC-003-01 (pass), TC-003-03 (pass), TC-003-05 (pass), TC-003-06 (pass) | `app/cli.py`, `app/scoring.py` | — |
+| REQ-SCO-003 | in-progress | [003](../../specs/003-scoring/spec.md) | TC-003-04 (pass) | `app/scoring.py` | — |
 | REQ-CRD-001 | planned | 004 | — | — | Q-007 |
 | REQ-CRD-002 | planned | 004 | TC-000-03 (pass) | `app/config.py` | Q-007 |
 | REQ-CRD-003 | planned | 004 | — | — | — |
@@ -29,6 +29,7 @@
 | REQ-FBK-002 | planned | 007 | — | — | — |
 | REQ-UI-001 | in-progress | [008](../../specs/008-rising-repos-page/spec.md) | TC-008-01 (pass), TC-008-02 (pass), TC-008-03 (pass), TC-008-07 (pass), TC-008-08 (pass), TC-008-10 (pass) | `app/api/repos.py`, `app/cli.py`, `app/repo_stats.py`, `frontend/src`, `frontend/src/pages/Repos.tsx` | — |
 | REQ-UI-003 | in-progress | [002](../../specs/002-hn-collector/spec.md) | TC-002-05 (pass), TC-002-11 (pass), TC-002-12 (pass), TC-002-13 (pass) | `app/api/news.py`, `app/news_stats.py`, `frontend/src`, `frontend/src/components/CollectorStatus.tsx`, `frontend/src/pages/News.tsx` | — |
+| REQ-UI-004 | in-progress | [003](../../specs/003-scoring/spec.md) | TC-003-07 (pass), TC-003-08 (pass), TC-003-09 (pass) | `app/api/news.py`, `app/api/repos.py`, `frontend/src`, `frontend/src/pages/News.tsx`, `frontend/src/pages/Repos.tsx` | — |
 | REQ-UI-002 | in-progress | [008](../../specs/008-rising-repos-page/spec.md) | TC-008-06 (pass), TC-008-09 (pass) | `app/api/collectors.py`, `frontend/src/components/CollectorStatus.tsx`, `frontend/src/pages/Today.tsx` | — |
 | REQ-NFR-001 | done | [000](../../specs/000-skeleton/spec.md) | TC-000-01 (pass) | `app/api/health.py` | — |
 | REQ-NFR-002 | done | [000](../../specs/000-skeleton/spec.md) | TC-000-06 (pass) | `.gitignore` | — |
@@ -45,9 +46,9 @@
 | `alembic/versions/0001_initial_schema.py` | TC-000-04 (pass) | — |
 | `app/api/collectors.py` | TC-008-06 (pass) | REQ-COL-007, REQ-UI-002 |
 | `app/api/health.py` | TC-000-01 (pass) | REQ-NFR-001 |
-| `app/api/news.py` | TC-002-11 (pass) | REQ-UI-003 |
-| `app/api/repos.py` | TC-008-03 (pass) | REQ-UI-001 |
-| `app/cli.py` | TC-001-10 (pass), TC-001-11 (pass), TC-001-12 (not run), TC-002-08 (pass), TC-002-10 (pass), TC-008-02 (pass) | REQ-COL-001, REQ-COL-002, REQ-COL-003, REQ-COL-006, REQ-NFR-004, REQ-UI-001 |
+| `app/api/news.py` | TC-002-11 (pass), TC-003-07 (pass) | REQ-UI-003, REQ-UI-004 |
+| `app/api/repos.py` | TC-003-07 (pass), TC-008-03 (pass) | REQ-UI-001, REQ-UI-004 |
+| `app/cli.py` | TC-001-10 (pass), TC-001-11 (pass), TC-001-12 (not run), TC-002-08 (pass), TC-002-10 (pass), TC-003-06 (pass), TC-008-02 (pass) | REQ-COL-001, REQ-COL-002, REQ-COL-003, REQ-COL-006, REQ-NFR-004, REQ-SCO-001, REQ-SCO-002, REQ-UI-001 |
 | `app/collectors/__init__.py` | TC-001-05 (pass) | REQ-COL-002 |
 | `app/collectors/github_api.py` | TC-001-05 (pass), TC-001-06 (pass), TC-001-07 (pass), TC-001-11 (pass) | REQ-COL-002, REQ-NFR-004 |
 | `app/collectors/github_trending.py` | TC-001-01 (pass), TC-001-02 (pass), TC-001-03 (pass), TC-001-10 (pass) | REQ-COL-001 |
@@ -60,8 +61,9 @@
 | `app/repo_stats.py` | TC-008-01 (pass), TC-008-02 (pass) | REQ-UI-001 |
 | `app/runs.py` | TC-001-13 (pass), TC-008-04 (pass), TC-008-05 (pass) | REQ-COL-005, REQ-COL-007 |
 | `app/scheduler.py` | TC-001-08 (pass), TC-001-09 (pass), TC-001-13 (pass), TC-002-07 (pass), TC-008-04 (pass), TC-008-05 (pass) | REQ-COL-003, REQ-COL-005, REQ-COL-006, REQ-COL-007 |
-| `frontend/src` | TC-002-13 (pass), TC-008-10 (pass) | REQ-UI-001, REQ-UI-003 |
+| `app/scoring.py` | TC-003-01 (pass), TC-003-02 (pass), TC-003-03 (pass), TC-003-04 (pass), TC-003-05 (pass) | REQ-SCO-001, REQ-SCO-002, REQ-SCO-003 |
+| `frontend/src` | TC-002-13 (pass), TC-003-09 (pass), TC-008-10 (pass) | REQ-UI-001, REQ-UI-003, REQ-UI-004 |
 | `frontend/src/components/CollectorStatus.tsx` | TC-002-12 (pass), TC-008-09 (pass) | REQ-UI-002, REQ-UI-003 |
-| `frontend/src/pages/News.tsx` | TC-002-12 (pass) | REQ-UI-003 |
-| `frontend/src/pages/Repos.tsx` | TC-008-07 (pass), TC-008-08 (pass) | REQ-UI-001 |
+| `frontend/src/pages/News.tsx` | TC-002-12 (pass), TC-003-08 (pass) | REQ-UI-003, REQ-UI-004 |
+| `frontend/src/pages/Repos.tsx` | TC-003-08 (pass), TC-008-07 (pass), TC-008-08 (pass) | REQ-UI-001, REQ-UI-004 |
 | `frontend/src/pages/Today.tsx` | TC-000-05 (pass), TC-008-09 (pass) | REQ-UI-002 |

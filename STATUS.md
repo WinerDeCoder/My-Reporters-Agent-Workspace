@@ -4,10 +4,10 @@
 > `docs/product/requirements.md`, the roadmap, `docs/qa/` and `CHANGELOG.md`.
 > Do not edit by hand, except inside the Notes section at the bottom.
 
-- **Released version:** 0.1.0 · 8 unreleased change(s) in CHANGELOG
+- **Released version:** 0.1.0 · 10 unreleased change(s) in CHANGELOG
 - **Milestone:** MVP
 - **Active spec:** [001 — GitHub collectors](specs/001-github-collectors/spec.md) · status **in-progress** · tasks 12/14 · tests 12/13 pass (1 not run)
-- **Open questions:** 3 (see below)
+- **Open questions:** 2 (see below)
 
 ## Features
 
@@ -17,7 +17,7 @@
 | [001](specs/001-github-collectors/spec.md) | GitHub collectors | in-progress | 2.0 | 12/14 | 12/13 pass (1 not run) | 0.2.0 | 2026-10-11 |
 | [008](specs/008-rising-repos-page/spec.md) | Rising repos page | in-progress | 1.0 | 10/11 | 10/10 pass | 0.2.0 | 2026-10-11 |
 | [002](specs/002-hn-collector/spec.md) | HN collector | in-progress | 2.0 | 12/13 | 13/13 pass | 0.3.0 | 2026-10-11 |
-| 003 | Scoring | not started | — | — | — | 0.4.0 | — |
+| [003](specs/003-scoring/spec.md) | Scoring | in-progress | 1.0 | 11/12 | 9/9 pass | 0.4.0 | 2026-10-11 |
 | 004 | Cards | not started | — | — | — | 0.5.0 | — |
 | 005 | Daily brief | not started | — | — | — | 0.6.0 | — |
 | 006 | Weekly leaderboard | not started | — | — | — | 0.7.0 | — |
@@ -25,24 +25,23 @@
 
 ## Requirements
 
-31 total: 4 done, 10 in-progress, 2 changed, 15 planned.
-In flight: REQ-COL-001 (in-progress), REQ-COL-002 (in-progress), REQ-COL-003 (in-progress), REQ-COL-004 (in-progress), REQ-COL-005 (changed), REQ-COL-006 (changed), REQ-COL-007 (in-progress), REQ-UI-001 (in-progress), REQ-UI-003 (in-progress), REQ-UI-002 (in-progress), REQ-NFR-004 (in-progress), REQ-NFR-005 (in-progress).
+32 total: 4 done, 14 in-progress, 2 changed, 12 planned.
+In flight: REQ-COL-001 (in-progress), REQ-COL-002 (in-progress), REQ-COL-003 (in-progress), REQ-COL-004 (in-progress), REQ-COL-005 (changed), REQ-COL-006 (changed), REQ-COL-007 (in-progress), REQ-SCO-001 (in-progress), REQ-SCO-002 (in-progress), REQ-SCO-003 (in-progress), REQ-UI-001 (in-progress), REQ-UI-003 (in-progress), REQ-UI-004 (in-progress), REQ-UI-002 (in-progress), REQ-NFR-004 (in-progress), REQ-NFR-005 (in-progress).
 
 ## Quality
 
-Test cases: 41/42 pass (1 not run). Details per spec in `docs/qa/test-cases/`; REQ → test → module map in [docs/qa/traceability.md](docs/qa/traceability.md).
+Test cases: 50/51 pass (1 not run). Details per spec in `docs/qa/test-cases/`; REQ → test → module map in [docs/qa/traceability.md](docs/qa/traceability.md).
 
 ### Open questions ([docs/qa/questions.md](docs/qa/questions.md))
 
-- **Q-005** Starting interest keywords (spec 003, REQ-SCO-001, REQ-SCO-002)
 - **Q-006** Brief time (spec 005, REQ-BRF-001)
 - **Q-007** OpenAI model for cards (spec 004, REQ-CRD-001, REQ-CRD-002)
 
 ## Notes and blockers
 
 <!-- NOTES:START (hand-written, kept by scripts/status.py) -->
-- **Restart the backend** to load the daily schedule (Q-014): stop it, then `cd backend; uv run fastapi run app/main.py`. Collectors now run daily: HN 07:00, Trending 07:10, snapshots 07:20 (prune Mondays 07:40); a restart only runs jobs whose last success is > 20 h old.
-- **Soak (TC-001-12):** stars/day appears after the next daily snapshot (07:20 tomorrow) has 6+ h of history behind it. Then `uv run python -m app.cli momentum --top 20` and compare a few repos with GitHub.
-- **Ready to close:** specs 008 and 002 (all test cases pass) → `/done 008`, `/done 002`. Spec 001 closes after the soak → `/done 001`. Then `/release 0.2.0` (001 + 008) and `/release 0.3.0` (002), or one combined release.
-- **Next feature:** spec 003 (scoring) needs Q-005 (interest keywords) answered.
+- **Restart the backend** to load scoring (spec 003) and the daily schedule (Q-014): stop it, then `cd backend; uv run fastapi run app/main.py`. Collectors run daily: HN 07:00, Trending 07:10, snapshots 07:20 (prune Mondays 07:40).
+- **Soak (TC-001-12):** stars/day already exists for 60 repos (snapshots 6+ h apart). Eyeball check: `uv run python -m app.cli momentum --top 20`, compare 3 repos with GitHub; worth a look at `morluto/rea` (+22,000/day).
+- **Ready to close:** specs 008, 002, 003 (all test cases pass) → `/done`. Spec 001 after the soak check. Then one release covering 001, 008, 002, 003.
+- **Next feature:** spec 004 (cards) needs Q-007 (OpenAI model) answered and `OPENAI_API_KEY` in `.env`.
 <!-- NOTES:END -->

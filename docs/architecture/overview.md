@@ -71,10 +71,12 @@ flowchart TB
 | `app/collectors/hacker_news.py` | HN front page + popular stories (Algolia) → `news_items`; GitHub-linked stories become repo candidates *(spec 002, built)* |
 | `app/collectors/prune.py` | Weekly prune: stories > 30 days, snapshots of untracked repos *(spec 002, built)* |
 | `app/news_stats.py` | Pure points/hour (age floored at 1 h) *(spec 002, built)* |
+| `app/scoring.py` | Interest-topic matching (`TopicMatcher`, weak `~terms`), boosts, `score_item()` with repeat and 👎 penalties, `load_signals()` *(spec 003, built)* |
+| `app/news_feed.py` | Recent stories + points/hour + topics + AI/dev flag + score, shared by API and CLI *(spec 003, built)* |
 | `app/momentum.py` | Pure stars/day and stars-gained functions over snapshots *(spec 001, built)* |
 | `app/cli.py` | Run a collector once (recorded like a scheduled run) / print momentum: `python -m app.cli ...` |
 | `app/runs.py` | Collector run log: `record_run()`, `last_runs()` *(spec 008, built)* |
-| `app/repo_stats.py` | Tracked repos + latest stars + stars/day, shared by API and CLI *(spec 008, built)* |
+| `app/repo_stats.py` | Tracked repos + latest stars + stars/day + topics + score, shared by API and CLI *(spec 008, 003)* |
 
 Frontend: `src/pages/` (Today, Repos, News, Leaderboard, Stats, Card), `src/components/CollectorStatus.tsx` (job status panel), `src/api/client.ts` (fetch helper + types).
 | `app/scoring.py` | Pure scoring functions *(spec 003)* |
@@ -124,6 +126,8 @@ sequenceDiagram
 ```
 
 **Hacker News (daily 07:00, spec 002):** two Algolia queries (front page; stories > 100 points from the last 26 h) → merged by HN id → GitHub-linked stories upsert repo candidates (`last_seen = now`, so the API job snapshots them) → stories upserted by `hn_id`. **Prune** (Mondays 07:40): deletes stories older than 30 days and snapshots of repos not seen for `track_days`.
+
+**Scoring (spec 003, on every read):** repo score = stars/day × topic boost × penalties; news score = points/hour × topic boost × penalties for AI/dev stories only. Topic boost = 1.5 per matched interest topic (cap 3.0); penalties: ×0.3 if briefed within the cooldown, ×0.7 per topic shared with a recent 👎 (floor 0.2); both read from `briefs`/`feedback` and are no-ops until spec 005. All weights and term lists live in `config.yaml` (`interests`, `scoring`).
 
 **Browsing news (spec 002):** News page → `GET /api/news?days=7` (stories + linked repo name, points/hour via `news_stats.py`).
 

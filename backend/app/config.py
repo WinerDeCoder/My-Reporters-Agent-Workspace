@@ -28,7 +28,19 @@ class BriefConfig(BaseModel):
 
 
 class InterestsConfig(BaseModel):
-    keywords: list[str] = []
+    """Interest topics and match terms (Q-005, Q-015); `~term` = weak, needs another topic."""
+
+    topic_boost: float = 1.5
+    max_boost: float = 3.0
+    topics: dict[str, list[str]] = {}
+    ai_dev_terms: list[str] = []  # news eligibility (Q-016)
+
+
+class ScoringConfig(BaseModel):
+    repeat_penalty: float = 0.3
+    dislike_penalty: float = 0.7
+    dislike_floor: float = 0.2
+    dislike_days: int = 30
 
 
 # "HH:MM", 24-hour, in the configured timezone (Q-014: collectors run daily).
@@ -80,6 +92,7 @@ class AppConfig(BaseModel):
     weekly_leaderboard_day: str = "mon"
     brief: BriefConfig = BriefConfig()
     interests: InterestsConfig = InterestsConfig()
+    scoring: ScoringConfig = ScoringConfig()
     sources: SourcesConfig = SourcesConfig()
     llm: LlmConfig = LlmConfig()
 

@@ -122,6 +122,7 @@ uv run python -m app.cli collect github          # snapshot tracked repos once (
 uv run python -m app.cli collect hn              # fetch Hacker News stories once
 uv run python -m app.cli prune                   # delete old stories / untracked snapshots now
 uv run python -m app.cli momentum --top 20       # top repos by stars/day
+uv run python -m app.cli top                     # today's top repos + stories by score (spec 003)
 uv run alembic revision --autogenerate -m "..."  # new migration after editing models.py
 uv add <package>                                 # add a dependency, then refresh requirements.txt:
 uv export --no-hashes --no-dev -o requirements.txt
@@ -134,7 +135,7 @@ npm run gen:api      # regenerate TS types from the backend's OpenAPI (backend m
 ## Configuration
 
 - **`.env`**: `DATABASE_URL`, `GITHUB_TOKEN`, `OPENAI_API_KEY` and the Postgres credentials used by Docker Compose.
-- **`config.yaml`**: interest keywords, brief time and timezone, top-N counts, collector intervals, and the `llm` section: OpenAI model, reasoning effort, max output tokens, timeout, optional `base_url`, card prompt file and monthly budget cap.
+- **`config.yaml`**: interest topics and their match terms (`interests.topics`, `~term` = needs another topic), the AI/dev word list, scoring weights, brief time and timezone, top-N counts, collector intervals, and the `llm` section: OpenAI model, reasoning effort, max output tokens, timeout, optional `base_url`, card prompt file and monthly budget cap.
 
 ## Workflow and progress tracking
 

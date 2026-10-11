@@ -23,6 +23,9 @@ export type RepoRow = {
   snapshots: number;
   first_seen: string;
   last_seen: string;
+  /** stars/day × topic boost × penalties; null until stars/day exists */
+  score: number | null;
+  matched_topics: string[];
 };
 
 export type NewsItem = {
@@ -39,6 +42,11 @@ export type NewsItem = {
   points_per_hour: number;
   /** owner/repo when the story links a GitHub repo */
   linked_repo: string | null;
+  matched_topics: string[];
+  /** AI/dev story, eligible for the brief */
+  ai_dev: boolean;
+  /** points/hour × topic boost × penalties; null when not AI/dev */
+  score: number | null;
 };
 
 export type LastRun = {

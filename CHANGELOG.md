@@ -15,10 +15,13 @@ Each entry names the spec it belongs to.
 
 - Hacker News collector (spec 002): front page + stories > 100 points from the last 26 h, daily at 07:00; GitHub-linked stories become tracked repos; weekly prune of old stories and untracked repos' snapshots; News page (search, sort by points/hour); `GET /api/news`; CLI `collect hn`, `prune`.
 
+- Scoring (spec 003): interest topics with editable term lists (agents, mcp, claude, skills, new llm models), repo score = stars/day × topic boost, news score = points/hour × topic boost for AI/dev stories only, repeat and 👎 penalties (active once briefs/feedback exist); "For you" sort and topic badges on Rising repos and News, "AI/dev only" toggle; CLI `top`.
+
 ### Changed
 
 - Collectors run once a day at fixed times from `config.yaml` (`run_at`: HN 07:00, Trending 07:10, snapshots 07:20; prune Mondays 07:40) instead of every 6 h / hourly; on startup a job runs only if its last success is older than 20 h (`catch_up_after_hours`), so restarts no longer trigger every collector (Q-014).
 - Scheduler jobs defined in one table (`JOBS`, `job_specs`, `CATCH_UP_DELAY`); status panel labels and units per job.
+- `config.yaml`: `interests.keywords` replaced by `interests.topics` + `ai_dev_terms`; new `scoring` section. Momentum looks back 72 h (was 48 h) so a missed daily snapshot doesn't hide stars/day.
 - CLI `collect` runs are now recorded in `collector_runs` like scheduled runs; `momentum` shares its query with the API (`app/repo_stats.py`).
 - `selectolax` pinned to `>=1.0` and switched to its `lexbor` backend (the old backend was removed in 1.0).
 

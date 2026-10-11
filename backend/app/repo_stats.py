@@ -2,17 +2,20 @@
 
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.collectors.github_api import tracked_repos
+from app.config import AppConfig, get_config
 from app.models import Repo, RepoSnapshot
 from app.momentum import Snapshot, stars_per_day
+from app.scoring import Signals, load_signals, repo_text, score_item, topic_matcher
 
-HISTORY = timedelta(hours=48)  # enough for the 24 h stars/day window
+# Daily snapshots (Q-014): 72 h keeps a previous snapshot even if one day was missed.
+HISTORY = timedelta(hours=72)
 
 
 @dataclass
@@ -29,6 +32,18 @@ class RepoRow:
     snapshots: int
     first_seen: datetime
     last_seen: datetime
+    score: float | None = None  # spec 003; None until stars/day exists
+    matched_topics: list[str] = field(default_factory=list)
+
+
+def apply_scores(rows: Iterable[RepoRow], signals: Signals, cfg: AppConfig) -> None:
+    """Set matched_topics and score on each row (REQ-SCO-001)."""
+    matcher = topic_matcher(cfg)
+    for row in rows:
+        topics = matcher.match(repo_text(row.full_name, row.description, row.topics))
+        row.matched_topics = sorted(topics)
+        scored = score_item(row.stars_per_day, topics, ("repo", row.id), signals, cfg)
+        row.score = scored.score if scored else None
 
 
 def build_repo_rows(
@@ -83,4 +98,20 @@ async def load_repo_rows(session: AsyncSession, track_days: int) -> list[RepoRow
             )
         )
         snaps = [(repo_id, Snapshot(taken_at, stars)) for repo_id, taken_at, stars in result]
-    return rank_by_momentum(build_repo_rows(repos, snaps))
+    rows = rank_by_momentum(build_repo_rows(repos, snaps))
+    cfg = get_config()
+    apply_scores(rows, await load_signals(session, cfg, now), cfg)
+    return rows
+
+
+def rank_by_score(rows: Sequence[RepoRow]) -> list[RepoRow]:
+    """ "For you" order: highest score first; unscored repos last, by stars/day then stars."""
+    return sorted(
+        rows,
+        key=lambda r: (
+            r.score is None,
+            -(r.score or 0),
+            -(r.stars_per_day or 0),
+            -(r.stars or 0),
+        ),
+    )

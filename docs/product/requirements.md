@@ -23,9 +23,9 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 
 | ID | Requirement | Acceptance criteria | Status | Spec | Notes |
 | --- | --- | --- | --- | --- | --- |
-| REQ-SCO-001 | Repo score = stars gained per day (from the two nearest snapshots ~24 h apart), boosted on interest-keyword match, lowered if the repo was in a brief in the last `repeat_cooldown_days`. | A CLI command prints today's top repos with their score components; values match a hand calculation on test data. | planned | 003 | |
-| REQ-SCO-002 | News score = HN points per hour since posting, boosted on keyword match; only AI/dev stories pass the keyword filter. | Off-topic stories never appear in the top list; ordering matches points/hour on test data. | planned | 003 | |
-| REQ-SCO-003 | A 👎 lowers future scores for items sharing its keywords (simple rule, tuned by hand). | After a 👎 on an item tagged "x", a new item tagged "x" scores lower than it would without the rating. | planned | 003 | |
+| REQ-SCO-001 | Repo score = stars gained per day (from the two nearest snapshots ~24 h apart), boosted on interest-keyword match, lowered if the repo was in a brief in the last `repeat_cooldown_days`. | A CLI command prints today's top repos with their score components; values match a hand calculation on test data. | in-progress | 003 | 2026-10-11: interests = topics with term lists, weak terms need another topic (Q-005, Q-015); boost 1.5/topic, cap 3.0. |
+| REQ-SCO-002 | News score = HN points per hour since posting, boosted on keyword match; only AI/dev stories pass the keyword filter. | Off-topic stories never appear in the top list; ordering matches points/hour on test data. | in-progress | 003 | 2026-10-11: AI/dev eligibility from a broad term list; interests boost (Q-016). |
+| REQ-SCO-003 | A 👎 lowers future scores for items sharing its keywords (simple rule, tuned by hand). | After a 👎 on an item tagged "x", a new item tagged "x" scores lower than it would without the rating. | in-progress | 003 | 2026-10-11: ×0.7 per shared topic, floor ×0.2, last 30 days; live once feedback exists (spec 005). |
 
 ## Cards (CRD)
 
@@ -65,6 +65,7 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 | --- | --- | --- | --- | --- | --- |
 | REQ-UI-001 | A Rising repos page lists every tracked repo with stars, stars/day (or "collecting" until 6 h of history), description, language, topics and a GitHub link; it can be searched, filtered by language and sorted by stars/day, stars or newest. | With the collectors' data loaded, the page shows every tracked repo; search, filter and each sort order change the list correctly. | in-progress | 008 | 2026-10-11: pulled forward from the v1 dashboard (Q-008). |
 | REQ-UI-003 | A News page lists collected HN stories with title (link), points, comments, age, points/hour, HN discussion link and a badge for linked tracked repos; searchable and sortable by points/hour, points or newest. | With the HN collector's data loaded, the page shows every stored story from the last 7 days; search and each sort order work. | in-progress | 002 | 2026-10-11: added (Q-012). |
+| REQ-UI-004 | Rising repos and News default to a "For you" order by score, show matched interest topics as badges, and News can hide non-AI/dev stories. | With scored data, both pages open sorted by score with badges; the AI/dev toggle changes the News list. | in-progress | 003 | 2026-10-11: added (Q-017). |
 | REQ-UI-002 | The UI shows collector status: per job, the last run time, outcome, count and next scheduled run. | After a run, Today and Rising repos show its time and count; a failed run shows as failed with its error. | in-progress | 008 | 2026-10-11: added (Q-009). |
 
 ## Non-functional (NFR)

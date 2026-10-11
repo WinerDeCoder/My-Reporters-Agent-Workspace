@@ -3,10 +3,20 @@ import { useMemo, useState } from "react";
 
 import { getJson, relativeTime, type RepoRow } from "../api/client";
 import CollectorStatus from "../components/CollectorStatus";
+import TopicBadges from "../components/TopicBadges";
 
-type Sort = "momentum" | "stars" | "newest";
+type Sort = "forYou" | "momentum" | "stars" | "newest";
 
 const SORTS: Record<Sort, { label: string; compare: (a: RepoRow, b: RepoRow) => number }> = {
+  forYou: {
+    label: "For you",
+    // score = stars/day × your-topic boost (spec 003); unscored repos last, by topics then stars
+    compare: (a, b) =>
+      Number(a.score === null) - Number(b.score === null) ||
+      (b.score ?? 0) - (a.score ?? 0) ||
+      b.matched_topics.length - a.matched_topics.length ||
+      (b.stars ?? 0) - (a.stars ?? 0),
+  },
   momentum: {
     label: "Stars / day",
     // repos still collecting history go last, then by total stars
@@ -23,7 +33,9 @@ const fmt = new Intl.NumberFormat();
 
 function matches(repo: RepoRow, query: string): boolean {
   if (!query) return true;
-  const haystack = [repo.full_name, repo.description ?? "", ...repo.topics].join(" ").toLowerCase();
+  const haystack = [repo.full_name, repo.description ?? "", ...repo.topics, ...repo.matched_topics]
+    .join(" ")
+    .toLowerCase();
   return query
     .toLowerCase()
     .split(/\s+/)
@@ -64,6 +76,7 @@ function RepoItem({ repo, rank }: { repo: RepoRow; rank: number }) {
             {name}
           </a>
           <Momentum value={repo.stars_per_day} />
+          <TopicBadges topics={repo.matched_topics} />
           <span className="text-xs text-stone-500 tabular-nums">
             ★ {repo.stars === null ? "—" : fmt.format(repo.stars)}
           </span>
@@ -94,7 +107,7 @@ export default function Repos() {
   });
   const [query, setQuery] = useState("");
   const [language, setLanguage] = useState("");
-  const [sort, setSort] = useState<Sort>("momentum");
+  const [sort, setSort] = useState<Sort>("forYou");
 
   const languages = useMemo(
     () => [...new Set((repos.data ?? []).map((r) => r.language).filter((l): l is string => !!l))].sort(),

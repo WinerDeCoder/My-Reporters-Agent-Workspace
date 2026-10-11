@@ -3,10 +3,19 @@ import { useMemo, useState } from "react";
 
 import { getJson, type NewsItem, relativeTime } from "../api/client";
 import CollectorStatus from "../components/CollectorStatus";
+import TopicBadges from "../components/TopicBadges";
 
-type Sort = "momentum" | "points" | "newest";
+type Sort = "forYou" | "momentum" | "points" | "newest";
 
 const SORTS: Record<Sort, { label: string; compare: (a: NewsItem, b: NewsItem) => number }> = {
+  forYou: {
+    label: "For you",
+    // score = points/hour × your-topic boost (spec 003); non-AI/dev stories have no score
+    compare: (a, b) =>
+      Number(a.score === null) - Number(b.score === null) ||
+      (b.score ?? 0) - (a.score ?? 0) ||
+      b.points_per_hour - a.points_per_hour,
+  },
   momentum: { label: "Points / hour", compare: (a, b) => b.points_per_hour - a.points_per_hour },
   points: { label: "Points", compare: (a, b) => b.points - a.points },
   newest: { label: "Newest", compare: (a, b) => b.posted_at.localeCompare(a.posted_at) },
@@ -16,7 +25,9 @@ const fmt = new Intl.NumberFormat();
 
 function matches(item: NewsItem, query: string): boolean {
   if (!query) return true;
-  const haystack = [item.title, item.domain ?? "", item.linked_repo ?? ""].join(" ").toLowerCase();
+  const haystack = [item.title, item.domain ?? "", item.linked_repo ?? "", ...item.matched_topics]
+    .join(" ")
+    .toLowerCase();
   return query
     .toLowerCase()
     .split(/\s+/)
@@ -50,6 +61,7 @@ function StoryItem({ item, rank }: { item: NewsItem; rank: number }) {
           </a>
           <span>·</span>
           <span title={new Date(item.posted_at).toLocaleString()}>{relativeTime(item.posted_at)}</span>
+          <TopicBadges topics={item.matched_topics} />
           {item.linked_repo && (
             <a
               href={`https://github.com/${item.linked_repo}`}
@@ -75,13 +87,18 @@ export default function News() {
     refetchInterval: 60_000,
   });
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState<Sort>("momentum");
+  const [sort, setSort] = useState<Sort>("forYou");
+  const [aiDevOnly, setAiDevOnly] = useState(true);
 
   const shown = useMemo(
-    () => (news.data ?? []).filter((n) => matches(n, query.trim())).sort(SORTS[sort].compare),
-    [news.data, query, sort],
+    () =>
+      (news.data ?? [])
+        .filter((n) => (!aiDevOnly || n.ai_dev) && matches(n, query.trim()))
+        .sort(SORTS[sort].compare),
+    [news.data, query, sort, aiDevOnly],
   );
   const linked = (news.data ?? []).filter((n) => n.linked_repo).length;
+  const aiDevCount = (news.data ?? []).filter((n) => n.ai_dev).length;
 
   return (
     <section className="space-y-5">
@@ -90,7 +107,7 @@ export default function News() {
           <h1 className="text-2xl font-semibold">News</h1>
           {news.data && (
             <p className="text-sm text-stone-500">
-              {news.data.length} stories from the last 7 days
+              {news.data.length} stories from the last 7 days · {aiDevCount} AI/dev
               {linked > 0 && ` · ${linked} link a GitHub repo`}
             </p>
           )}
@@ -121,10 +138,20 @@ export default function News() {
             </option>
           ))}
         </select>
+        <label className="flex items-center gap-1.5 rounded-md border border-stone-300 bg-white px-2 py-1.5">
+          <input
+            type="checkbox"
+            checked={aiDevOnly}
+            onChange={(e) => setAiDevOnly(e.target.checked)}
+            aria-label="AI/dev only"
+          />
+          AI/dev only
+        </label>
       </div>
 
       <p className="text-xs text-stone-500">
-        All front-page and popular stories are shown; filtering to AI/dev topics comes with scoring.
+        "For you" ranks AI/dev stories by points/hour, boosted for your interest topics. Topics and the
+        AI/dev word list live in <code>config.yaml</code> → <code>interests</code>.
       </p>
 
       {news.isPending && <p className="text-stone-500">Loading stories…</p>}
@@ -133,7 +160,7 @@ export default function News() {
         <p className="text-stone-500">
           {news.data.length === 0
             ? "No stories yet. The Hacker News collector runs daily at 07:00, or about a minute after the backend starts if it hasn't run in the last 20 hours."
-            : "No stories match this search."}
+            : "No stories match these filters."}
         </p>
       )}
       {shown.length > 0 && (

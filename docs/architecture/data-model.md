@@ -85,7 +85,7 @@ erDiagram
 | `repo_snapshots` | Stars and forks at one point in time | One row per tracked repo per GitHub API run. Momentum (stars/day, 7-day gain) is computed from these. Index on `(repo_id, taken_at)`. |
 | `news_items` | One Hacker News story | Upsert by `hn_id`; points/comments refreshed each run. |
 | `cards` | LLM-written card for an item | Reused while `source_hash` matches the current README/article hash. Index on `(item_type, item_id)`. |
-| `briefs` | A built daily brief or weekly leaderboard | Unique `(type, date)`. `items` holds the ordered item refs plus the signals shown. `opened_at` set once on first view. |
+| `briefs` | A built daily brief or weekly leaderboard | Unique `(type, date)`. `items` holds the ordered item refs plus the signals shown; each entry has `item_type` (`repo`/`news`) and `item_id` (read by scoring's repeat penalty, spec 003). `opened_at` set once on first view. |
 | `feedback` | A 👍/👎 on an item | `rating` is -1 or 1. |
 | `collector_runs` | One run of a background job, scheduled or from the CLI (REQ-COL-007, migration 0002) | Written by `run_job()` via `app/runs.py`; a failure to write is logged and never fails the job. Index on `(job, started_at)`; `/api/collectors/status` reads the latest per job. |
 

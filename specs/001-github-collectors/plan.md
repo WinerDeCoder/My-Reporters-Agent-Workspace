@@ -29,7 +29,7 @@ Two async collector functions in `app/collectors/`, each taking a DB session and
 
 **Tracked set:** repos with `last_seen >= now() - track_days` (window counted from last seen, Q-001).
 
-**Scheduling:** the API job's first run is one minute after the Trending job's, so a fresh install has candidates before the first snapshot run (Q-003).
+**Scheduling (v2.0, Q-014):** cron triggers at `run_at` (Trending 07:10, API 07:20); `misfire_grace_time` 12 h so a slot missed during sleep still runs on wake. At startup `schedule_catch_up()` reads each job's last success from `collector_runs` and adds one-off runs only for jobs older than `catch_up_after_hours`, ordered HN +60 s, Trending +90 s, API +150 s.
 
 **GitHub API, per repo (2 requests):**
 - `GET /repos/{full_name}`: `stargazers_count`, `forks_count`, `description`, `topics`, `language`, `license.spdx_id`. If `full_name` changed (redirect/rename), update the row's name when it doesn't collide.

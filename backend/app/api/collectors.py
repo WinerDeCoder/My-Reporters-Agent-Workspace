@@ -30,12 +30,19 @@ async def collectors_status(request: Request) -> list[CollectorStatus]:
     out = []
     for job in JOBS:
         run = runs.get(job)
-        sched_job = scheduler.get_job(job) if scheduler else None
+        # earliest of the daily slot and a pending startup catch-up run
+        upcoming = [
+            j.next_run_time
+            for j in (
+                (scheduler.get_job(job), scheduler.get_job(f"{job}:catch_up")) if scheduler else ()
+            )
+            if j is not None and j.next_run_time is not None
+        ]
         out.append(
             CollectorStatus(
                 job=job,
                 last_run=LastRun.model_validate(run, from_attributes=True) if run else None,
-                next_run=sched_job.next_run_time if sched_job else None,
+                next_run=min(upcoming) if upcoming else None,
             )
         )
     return out

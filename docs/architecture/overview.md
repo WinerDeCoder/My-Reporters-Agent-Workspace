@@ -85,7 +85,7 @@ Frontend: `src/pages/` (Today, Repos, News, Leaderboard, Stats, Card), `src/comp
 
 ## 5. Runtime flows
 
-**Collection (every few hours, per source):** job fetches → normalizes → upserts into Postgres → logs counts. Errors are retried with backoff and logged; other jobs are unaffected. Each job also runs shortly after startup (Trending at +60 s, GitHub API at +120 s) so a laptop that was off catches up.
+**Collection (daily, Q-014):** Hacker News 07:00 → GitHub Trending 07:10 → star snapshots 07:20 (last, so new candidates get a snapshot); the brief (spec 005) comes after. Each job fetches → normalizes → upserts into Postgres → logs counts; errors are retried with backoff and logged; other jobs are unaffected. A slot missed while the laptop slept still runs on wake (12 h grace). On startup, `schedule_catch_up()` runs a job once only if its last success in `collector_runs` is older than 20 h (prune: 7 days).
 
 ```mermaid
 sequenceDiagram
@@ -94,10 +94,10 @@ sequenceDiagram
     participant A as github_api
     participant GH as GitHub
     participant DB as Postgres
-    S->>T: every 6 h (first at +60 s)
+    S->>T: daily 07:10 (or startup catch-up if stale)
     T->>GH: GET /trending[/lang]?since=daily|weekly (6 pages)
     T->>DB: upsert repos, last_seen = now()
-    S->>A: every 6 h (first at +120 s)
+    S->>A: daily 07:20 (or startup catch-up if stale)
     A->>DB: repos with last_seen within track_days
     A->>GH: GET /repos/{name}, /repos/{name}/readme (5 in parallel, rate-limit aware)
     A->>DB: update repo metadata, insert repo_snapshots row
@@ -123,7 +123,7 @@ sequenceDiagram
     B->>DB: insert briefs row (items in order)
 ```
 
-**Hacker News (hourly, first at +90 s, spec 002):** two Algolia queries (front page; stories > 100 points from the last 24 h) → merged by HN id → GitHub-linked stories upsert repo candidates (`last_seen = now`, so the API job snapshots them) → stories upserted by `hn_id`. **Prune** (every 7 days, first at +5 min): deletes stories older than 30 days and snapshots of repos not seen for `track_days`.
+**Hacker News (daily 07:00, spec 002):** two Algolia queries (front page; stories > 100 points from the last 26 h) → merged by HN id → GitHub-linked stories upsert repo candidates (`last_seen = now`, so the API job snapshots them) → stories upserted by `hn_id`. **Prune** (Mondays 07:40): deletes stories older than 30 days and snapshots of repos not seen for `track_days`.
 
 **Browsing news (spec 002):** News page → `GET /api/news?days=7` (stories + linked repo name, points/hour via `news_stats.py`).
 

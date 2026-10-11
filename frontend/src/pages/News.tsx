@@ -132,7 +132,7 @@ export default function News() {
       {news.data && shown.length === 0 && (
         <p className="text-stone-500">
           {news.data.length === 0
-            ? "No stories yet. The Hacker News collector runs about 90 seconds after the backend starts, then hourly."
+            ? "No stories yet. The Hacker News collector runs daily at 07:00, or about a minute after the backend starts if it hasn't run in the last 20 hours."
             : "No stories match this search."}
         </p>
       )}

@@ -14,7 +14,7 @@ Same shape as spec 001: pure parsing functions + a thin async collector doing id
 | Backend | `app/collectors/hacker_news.py` | `algolia_queries()`, pure `parse_hits()`, `github_repo_from_url()`, `merge_stories()`; `collect_hacker_news()` |
 | Backend | `app/collectors/prune.py` | pure `prune_cutoffs()`; `prune_old_data()` deletes old stories + untracked snapshots, returns rows deleted |
 | Backend | `app/news_stats.py` | pure `points_per_hour(points, posted_at, now)` (age floored at 1 h) |
-| Backend | `app/scheduler.py` | Jobs `hacker_news` (hourly, +90 s) and `prune` (every 7 days, +5 min) |
+| Backend | `app/scheduler.py` | Jobs `hacker_news` (daily 07:00) and `prune` (Mondays 07:40); startup catch-up if stale (v2.0, Q-014) |
 | Backend | `app/api/news.py` | `GET /api/news?days=7` |
 | Backend | `app/cli.py` | `collect hn`, `prune` |
 | DB | — | No schema change (`news_items` exists) |
@@ -36,7 +36,7 @@ See test cases. Unit: fixtures `tests/fixtures/hn_front_page.json`, `hn_popular.
 
 ## Risks
 
-- Algolia's `front_page` tag lags the real front page by a few minutes: fine for an hourly job.
+- Algolia's `front_page` tag lags the real front page by a few minutes: fine for a daily job. With one run a day, stories that peak and fade between runs are caught by the 26 h popular query.
 - Pruning deletes data: the cutoffs are unit-tested, and the live check verifies tracked repos keep their snapshots.
 
 ## Docs to update when done

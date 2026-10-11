@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api import router as api_router
 from app.config import ROOT_DIR
 from app.db import engine
-from app.scheduler import create_scheduler
+from app.scheduler import create_scheduler, schedule_catch_up
 
 logging.basicConfig(
     level=logging.INFO,
@@ -25,6 +25,7 @@ async def lifespan(app: FastAPI):
     scheduler.start()
     app.state.scheduler = scheduler  # read by /api/collectors/status for next run times
     log.info("Scheduler started with %d job(s)", len(scheduler.get_jobs()))
+    await schedule_catch_up(scheduler)
     yield
     scheduler.shutdown(wait=False)
     await engine.dispose()

@@ -24,7 +24,7 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 
 ### Q-003 — First collector run after startup
 
-- **Status:** answered
+- **Status:** superseded (by Q-014, 2026-10-11)
 - **Asked:** 2026-10-10
 - **Context:** spec [001](../../specs/001-github-collectors/spec.md) · REQ-COL-005 · `app/scheduler.py`
 - **Question:** Should collectors first run shortly after the app starts, or only once the interval has passed?
@@ -58,7 +58,7 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 - **Asked:** 2026-10-04
 - **Context:** spec 005 (daily brief) · REQ-BRF-001 · `config.yaml` → `brief_time`
 - **Question:** Build the daily brief at 07:00 UTC+7, or another time?
-- **Suggestion:** 07:00, before a typical start of day; the startup catch-up covers mornings when the laptop was off.
+- **Suggestion:** 07:30, right after the daily collection (07:00–07:20, Q-014) so the brief uses fresh data; the startup catch-up covers mornings when the laptop was off. (Updated 2026-10-11; was 07:00.)
 - **Answer:** —
 - **Recorded in:** —
 
@@ -131,3 +131,13 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 - **Suggestion:** Weekly prune of HN items older than 30 days now; for snapshots, only delete those of repos no longer tracked (`last_seen` older than `track_days`), and add the "never in a brief" condition in spec 005. Alternative: defer all pruning to spec 005.
 - **Answer:** HN items older than 30 days + snapshots of untracked repos only; brief rule in spec 005. (2026-10-11)
 - **Recorded in:** spec 002 v1.0; REQ-COL-006 changed.
+
+### Q-014 — How often collectors run
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** specs [001](../../specs/001-github-collectors/spec.md), [002](../../specs/002-hn-collector/spec.md) · REQ-COL-001, REQ-COL-002, REQ-COL-003, REQ-COL-005, REQ-COL-006 · `app/scheduler.py`, `config.yaml`, `app/runs.py`
+- **Question:** Raised by the user: Trending and snapshots every 6 h and HN hourly is more than needed; run them daily instead?
+- **Suggestion:** Daily at fixed times just before the brief rather than every 24 h from startup; on startup run a job only if its last successful run is older than ~20 h (replaces Q-003's run-on-every-start); widen HN's popular window to 26 h so daily runs overlap; weekly prune also only catches up if > 7 days old.
+- **Answer:** Daily at 07:00 (Hacker News), 07:10 (GitHub Trending), 07:20 (star snapshots), with the startup catch-up. (2026-10-11)
+- **Recorded in:** spec 001 v2.0, spec 002 v2.0 change logs; REQ-COL-001/002/003/005/006 notes; `config.yaml` `run_at`; supersedes Q-003; Q-006 suggestion moved to 07:30.

@@ -9,15 +9,16 @@ Each entry names the spec it belongs to.
 ### Added
 
 - QA area `docs/qa/`: Q&A log (`Q-NNN`, linked to specs, REQ-IDs and modules), test strategy, per-feature test cases with last results (`TC-NNN-NN`), generated traceability matrix; `STATUS.md` gains Tests and Quality sections; new `/qa` command.
-- GitHub collectors (spec 001, in progress): Trending scraper and GitHub API star snapshots, scheduled every 6 h and ~1 min after startup, rate-limit aware; `app/momentum.py` (stars/day); CLI `python -m app.cli collect trending|github` and `momentum --top N`.
+- GitHub collectors (spec 001, in progress): Trending scraper and GitHub API star snapshots, scheduled daily (Trending 07:10, snapshots 07:20), rate-limit aware; `app/momentum.py` (stars/day); CLI `python -m app.cli collect trending|github` and `momentum --top N`.
 
 - Rising repos page (spec 008): every tracked repo with stars and stars/day, search, language filter and sort; collector status panel on Today and Rising repos; `collector_runs` table (migration 0002) recording every job run; `GET /api/repos`, `GET /api/collectors/status`; favicon.
 
-- Hacker News collector (spec 002): front page + stories > 100 points from the last 24 h, hourly; GitHub-linked stories become tracked repos; weekly prune of old stories and untracked repos' snapshots; News page (search, sort by points/hour); `GET /api/news`; CLI `collect hn`, `prune`.
+- Hacker News collector (spec 002): front page + stories > 100 points from the last 26 h, daily at 07:00; GitHub-linked stories become tracked repos; weekly prune of old stories and untracked repos' snapshots; News page (search, sort by points/hour); `GET /api/news`; CLI `collect hn`, `prune`.
 
 ### Changed
 
-- Scheduler jobs defined in one table (`JOBS`, `FIRST_RUN`, `job_intervals`); status panel labels and units per job.
+- Collectors run once a day at fixed times from `config.yaml` (`run_at`: HN 07:00, Trending 07:10, snapshots 07:20; prune Mondays 07:40) instead of every 6 h / hourly; on startup a job runs only if its last success is older than 20 h (`catch_up_after_hours`), so restarts no longer trigger every collector (Q-014).
+- Scheduler jobs defined in one table (`JOBS`, `job_specs`, `CATCH_UP_DELAY`); status panel labels and units per job.
 - CLI `collect` runs are now recorded in `collector_runs` like scheduled runs; `momentum` shares its query with the API (`app/repo_stats.py`).
 - `selectolax` pinned to `>=1.0` and switched to its `lexbor` backend (the old backend was removed in 1.0).
 

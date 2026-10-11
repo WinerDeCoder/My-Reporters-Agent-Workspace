@@ -167,7 +167,7 @@ export default function Repos() {
       {repos.data && shown.length === 0 && (
         <p className="text-stone-500">
           {repos.data.length === 0
-            ? "No repos tracked yet. The Trending collector runs about a minute after the backend starts."
+            ? "No repos tracked yet. The Trending collector runs daily at 07:10, or shortly after the backend starts if it hasn't run in the last 20 hours."
             : "No repos match these filters."}
         </p>
       )}

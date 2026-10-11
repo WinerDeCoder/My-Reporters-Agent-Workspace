@@ -19,19 +19,22 @@ interests:
     - small models
     - llm
 
+# Collectors run once a day at run_at (local timezone above), just before the brief (Q-014).
+# On startup, a job runs only if its last successful run is older than catch_up_after_hours.
 sources:
+  catch_up_after_hours: 20
+  hacker_news:
+    run_at: "07:00"
+    popular_min_points: 100   # besides the front page, stories above this many points…
+    popular_window_hours: 26  # …posted within the last N hours (> 24 so daily runs overlap)
+    retention_days: 30        # weekly prune deletes older stories
   github_trending:
-    every_hours: 6
+    run_at: "07:10"
     languages: ["", python, typescript]   # "" = all languages
     ranges: [daily, weekly]
   github_api:
-    every_hours: 6
+    run_at: "07:20"           # after Trending and HN, so new candidates get a snapshot
     track_days: 30            # snapshot candidates for this long
-  hacker_news:
-    every_hours: 1
-    popular_min_points: 100   # besides the front page, stories above this many points…
-    popular_window_hours: 24  # …posted within the last N hours
-    retention_days: 30        # weekly prune deletes older stories
 
 # LLM used to write cards (OpenAI Responses API). The API key lives in .env (OPENAI_API_KEY).
 llm:

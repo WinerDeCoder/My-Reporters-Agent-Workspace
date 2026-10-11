@@ -2,9 +2,10 @@
 
 import logging
 from datetime import UTC, datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from app.config import get_config
-from app.scheduler import create_scheduler, run_job
+from app.scheduler import create_scheduler, jobs_to_catch_up, run_job, schedule_catch_up
 
 
 class FakeRecorder:
@@ -68,19 +69,79 @@ async def test_recorder_failure_does_not_break_job(caplog):
     assert "Recording run of job github_api failed" in caplog.text
 
 
-def test_jobs_registered():
-    cfg = get_config().sources
-    now = datetime(2026, 10, 10, 8, 0, tzinfo=UTC)
-    jobs = {job.id: job for job in create_scheduler(now=now).get_jobs()}
+TZ = ZoneInfo(get_config().timezone)
 
-    assert set(jobs) == {"github_trending", "github_api", "hacker_news", "prune"}
+
+def test_jobs_registered_daily_at_run_at():
+    """Q-014: HN 07:00, Trending 07:10, snapshots 07:20 daily; prune Mondays 07:40."""
+    src = get_config().sources
+    assert (src.hacker_news.run_at, src.github_trending.run_at, src.github_api.run_at) == (
+        "07:00",
+        "07:10",
+        "07:20",
+    )
+    jobs = {job.id: job for job in create_scheduler().get_jobs()}
+    assert set(jobs) == {"hacker_news", "github_trending", "github_api", "prune"}
+
+    sunday_6am = datetime(2026, 10, 11, 6, 0, tzinfo=TZ)
     expected = {
-        "github_trending": (timedelta(hours=cfg.github_trending.every_hours), 60),
-        "github_api": (timedelta(hours=cfg.github_api.every_hours), 120),
-        "hacker_news": (timedelta(hours=cfg.hacker_news.every_hours), 90),
-        "prune": (timedelta(days=7), 300),
+        "hacker_news": datetime(2026, 10, 11, 7, 0, tzinfo=TZ),
+        "github_trending": datetime(2026, 10, 11, 7, 10, tzinfo=TZ),
+        "github_api": datetime(2026, 10, 11, 7, 20, tzinfo=TZ),
+        "prune": datetime(2026, 10, 12, 7, 40, tzinfo=TZ),  # next Monday
     }
-    for name, (interval, first_run_s) in expected.items():
-        assert jobs[name].trigger.interval == interval, name
-        assert jobs[name].next_run_time == now + timedelta(seconds=first_run_s), name
+    for name, first in expected.items():
+        trigger = jobs[name].trigger
+        assert trigger.get_next_fire_time(None, sunday_6am) == first, name
+        # and again a day (or a week) later, at the same time
+        step = timedelta(days=7 if name == "prune" else 1)
+        assert trigger.get_next_fire_time(first, first + timedelta(minutes=1)) == first + step
         assert jobs[name].max_instances == 1 and jobs[name].coalesce, name
+        assert jobs[name].misfire_grace_time >= 12 * 3600, name  # laptop asleep at 07:00
+
+
+def test_jobs_to_catch_up():
+    now = datetime(2026, 10, 11, 9, 0, tzinfo=UTC)
+    max_age = {
+        "daily": timedelta(hours=20),
+        "weekly": timedelta(days=7),
+        "never": timedelta(hours=20),
+    }
+    last = {
+        "daily": now - timedelta(hours=21),  # stale -> catch up
+        "weekly": now - timedelta(days=3),  # fresh -> skip
+    }
+    assert jobs_to_catch_up(max_age, last, now) == ["daily", "never"]
+    assert jobs_to_catch_up(max_age, {**last, "daily": now - timedelta(hours=2)}, now) == ["never"]
+
+
+async def test_schedule_catch_up_adds_ordered_one_off_runs():
+    now = datetime(2026, 10, 11, 9, 0, tzinfo=TZ)
+    scheduler = create_scheduler()
+
+    async def last_success():
+        return {
+            "hacker_news": now - timedelta(hours=26),  # stale
+            "github_trending": now - timedelta(hours=1),  # fresh
+            # github_api never ran, prune never ran
+        }
+
+    due = await schedule_catch_up(scheduler, now=now, load_last_success=last_success)
+    assert due == ["hacker_news", "github_api", "prune"]
+    runs = {
+        job.id: job.trigger.run_date for job in scheduler.get_jobs() if job.id.endswith(":catch_up")
+    }
+    assert runs == {
+        "hacker_news:catch_up": now + timedelta(seconds=60),
+        "github_api:catch_up": now + timedelta(seconds=150),
+        "prune:catch_up": now + timedelta(minutes=5),
+    }
+
+
+async def test_schedule_catch_up_skips_when_db_unreadable():
+    async def broken():
+        raise RuntimeError("db down")
+
+    scheduler = create_scheduler()
+    assert await schedule_catch_up(scheduler, load_last_success=broken) == []
+    assert not [j for j in scheduler.get_jobs() if j.id.endswith(":catch_up")]

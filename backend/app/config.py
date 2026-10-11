@@ -2,10 +2,10 @@
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -31,25 +31,30 @@ class InterestsConfig(BaseModel):
     keywords: list[str] = []
 
 
+# "HH:MM", 24-hour, in the configured timezone (Q-014: collectors run daily).
+RunAt = Annotated[str, Field(pattern=r"^([01]\d|2[0-3]):[0-5]\d$")]
+
+
 class TrendingConfig(BaseModel):
-    every_hours: int = 6
+    run_at: RunAt = "07:10"
     languages: list[str] = [""]
     ranges: list[str] = ["daily", "weekly"]
 
 
 class GithubApiConfig(BaseModel):
-    every_hours: int = 6
+    run_at: RunAt = "07:20"
     track_days: int = 30
 
 
 class HackerNewsConfig(BaseModel):
-    every_hours: int = 1
+    run_at: RunAt = "07:00"
     popular_min_points: int = 100  # also fetch stories above this many points…
-    popular_window_hours: int = 24  # …posted within this window (Q-010)
+    popular_window_hours: int = 26  # …posted within this window (Q-010, Q-014)
     retention_days: int = 30  # prune stories older than this (REQ-COL-006)
 
 
 class SourcesConfig(BaseModel):
+    catch_up_after_hours: int = 20  # on startup, run a job if its last success is older
     github_trending: TrendingConfig = TrendingConfig()
     github_api: GithubApiConfig = GithubApiConfig()
     hacker_news: HackerNewsConfig = HackerNewsConfig()

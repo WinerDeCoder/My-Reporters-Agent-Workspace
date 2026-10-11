@@ -39,6 +39,17 @@ async def record_run(
         log.exception("Could not record run of job %s", job)
 
 
+async def last_successes() -> dict[str, datetime]:
+    """Finish time of the latest successful run per job (for the startup catch-up, Q-014)."""
+    async with SessionLocal() as session:
+        rows = await session.execute(
+            select(CollectorRun.job, func.max(CollectorRun.finished_at))
+            .where(CollectorRun.ok)
+            .group_by(CollectorRun.job)
+        )
+        return dict(rows.all())
+
+
 async def last_runs() -> dict[str, CollectorRun]:
     """Latest run per job."""
     async with SessionLocal() as session:

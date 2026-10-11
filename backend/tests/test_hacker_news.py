@@ -67,11 +67,11 @@ def test_github_repo_from_url(url, expected):
 
 
 def test_algolia_queries():
-    cfg = HackerNewsConfig(popular_min_points=100, popular_window_hours=24)
+    cfg = HackerNewsConfig()  # defaults: > 100 points within 26 h (daily runs overlap, Q-014)
     now = datetime(2026, 10, 11, 12, 0, tzinfo=UTC)
     q = algolia_queries(cfg, now)
     assert q["front_page"]["tags"] == "front_page"
-    since = int(now.timestamp()) - 24 * 3600
+    since = int(now.timestamp()) - 26 * 3600
     assert q["popular"]["tags"] == "story"
     assert q["popular"]["numericFilters"] == f"points>100,created_at_i>{since}"
 

@@ -125,6 +125,7 @@ uv run python -m app.cli momentum --top 20       # top repos by stars/day
 uv run python -m app.cli top                     # today's top repos + stories by score (spec 003)
 uv run python -m app.cli cards                   # write today's cards now (LLM; cached by source)
 uv run python -m app.cli usage                   # LLM tokens used this month vs the cap
+uv run python -m app.cli brief                   # build today's brief now (once per day)
 uv run alembic revision --autogenerate -m "..."  # new migration after editing models.py
 uv add <package>                                 # add a dependency, then refresh requirements.txt:
 uv export --no-hashes --no-dev -o requirements.txt

@@ -10,22 +10,22 @@
 | REQ-COL-003 | in-progress | [002](../../specs/002-hn-collector/spec.md) | TC-002-01 (pass), TC-002-03 (pass), TC-002-04 (pass), TC-002-07 (pass), TC-002-08 (pass) | `app/cli.py`, `app/collectors/hacker_news.py`, `app/scheduler.py` | — |
 | REQ-COL-004 | in-progress | [002](../../specs/002-hn-collector/spec.md) | TC-002-02 (pass), TC-002-09 (pass) | `app/collectors/hacker_news.py` | — |
 | REQ-COL-005 | changed | [001](../../specs/001-github-collectors/spec.md) | TC-001-08 (pass), TC-001-09 (pass), TC-001-13 (pass) | `app/main.py`, `app/runs.py`, `app/scheduler.py` | — |
-| REQ-COL-006 | changed | [002](../../specs/002-hn-collector/spec.md) | TC-002-06 (pass), TC-002-07 (pass), TC-002-10 (pass) | `app/cli.py`, `app/collectors/prune.py`, `app/scheduler.py` | — |
+| REQ-COL-006 | changed | [002](../../specs/002-hn-collector/spec.md) | TC-002-06 (pass), TC-002-07 (pass), TC-002-10 (pass), TC-005-07 (pass) | `app/cli.py`, `app/collectors/prune.py`, `app/scheduler.py` | — |
 | REQ-COL-007 | in-progress | [008](../../specs/008-rising-repos-page/spec.md) | TC-008-04 (pass), TC-008-05 (pass), TC-008-06 (pass) | `app/api/collectors.py`, `app/runs.py`, `app/scheduler.py` | — |
 | REQ-SCO-001 | in-progress | [003](../../specs/003-scoring/spec.md) | TC-003-01 (pass), TC-003-02 (pass), TC-003-03 (pass), TC-003-06 (pass) | `app/cli.py`, `app/scoring.py` | — |
 | REQ-SCO-002 | in-progress | [003](../../specs/003-scoring/spec.md) | TC-003-01 (pass), TC-003-03 (pass), TC-003-05 (pass), TC-003-06 (pass) | `app/cli.py`, `app/scoring.py` | — |
-| REQ-SCO-003 | in-progress | [003](../../specs/003-scoring/spec.md) | TC-003-04 (pass) | `app/scoring.py` | — |
+| REQ-SCO-003 | in-progress | [003](../../specs/003-scoring/spec.md) | TC-003-04 (pass), TC-005-06 (pass) | `app/api/briefs.py`, `app/scoring.py` | — |
 | REQ-CRD-001 | in-progress | [004](../../specs/004-cards/spec.md) | TC-004-02 (pass), TC-004-05 (pass), TC-004-06 (pass) | `app/cards.py`, `app/cli.py`, `app/llm.py`, `app/scheduler.py` | — |
 | REQ-CRD-002 | in-progress | [004](../../specs/004-cards/spec.md) | TC-000-03 (pass) | `app/config.py` | — |
 | REQ-CRD-003 | in-progress | [004](../../specs/004-cards/spec.md) | TC-004-01 (pass), TC-004-03 (pass), TC-004-06 (pass) | `app/cards.py`, `app/cli.py`, `app/llm.py` | — |
 | REQ-CRD-004 | changed | [004](../../specs/004-cards/spec.md) | TC-004-04 (pass), TC-004-07 (pass) | `app/api/cards.py`, `app/cards.py` | — |
 | REQ-CRD-005 | in-progress | [004](../../specs/004-cards/spec.md) | TC-004-08 (pass), TC-004-09 (pass) | `app/api/cards.py`, `frontend/src/pages/Card.tsx`, `frontend/src/pages/News.tsx`, `frontend/src/pages/Repos.tsx` | — |
-| REQ-BRF-001 | planned | 005 | — | — | Q-006 |
-| REQ-BRF-002 | planned | 005 | — | — | — |
-| REQ-BRF-003 | planned | 005 | — | — | — |
-| REQ-BRF-004 | planned | 005 | — | — | — |
+| REQ-BRF-001 | in-progress | [005](../../specs/005-daily-brief/spec.md) | TC-005-01 (pass), TC-005-03 (pass), TC-005-04 (pass) | `app/brief.py`, `app/cli.py`, `app/scheduler.py` | — |
+| REQ-BRF-002 | changed | [005](../../specs/005-daily-brief/spec.md) | TC-005-02 (pass), TC-005-03 (pass) | `app/brief.py`, `app/scheduler.py` | — |
+| REQ-BRF-003 | in-progress | [005](../../specs/005-daily-brief/spec.md) | TC-005-05 (pass), TC-005-08 (pass), TC-005-09 (pass) | `app/api/briefs.py`, `frontend/src`, `frontend/src/components/Rating.tsx`, `frontend/src/pages/Today.tsx` | — |
+| REQ-BRF-004 | in-progress | [005](../../specs/005-daily-brief/spec.md) | TC-005-05 (pass) | `app/api/briefs.py` | — |
 | REQ-LDB-001 | planned | 006 | — | — | — |
-| REQ-FBK-001 | planned | 005 | — | — | — |
+| REQ-FBK-001 | in-progress | [005](../../specs/005-daily-brief/spec.md) | TC-005-06 (pass), TC-005-08 (pass) | `app/api/briefs.py`, `app/scoring.py`, `frontend/src/components/Rating.tsx`, `frontend/src/pages/Today.tsx` | — |
 | REQ-FBK-002 | planned | 007 | — | — | — |
 | REQ-UI-001 | in-progress | [008](../../specs/008-rising-repos-page/spec.md) | TC-008-01 (pass), TC-008-02 (pass), TC-008-03 (pass), TC-008-07 (pass), TC-008-08 (pass), TC-008-10 (pass) | `app/api/repos.py`, `app/cli.py`, `app/repo_stats.py`, `frontend/src`, `frontend/src/pages/Repos.tsx` | — |
 | REQ-UI-003 | in-progress | [002](../../specs/002-hn-collector/spec.md) | TC-002-05 (pass), TC-002-11 (pass), TC-002-12 (pass), TC-002-13 (pass) | `app/api/news.py`, `app/news_stats.py`, `frontend/src`, `frontend/src/components/CollectorStatus.tsx`, `frontend/src/pages/News.tsx` | — |
@@ -45,18 +45,20 @@
 | --- | --- | --- |
 | `.gitignore` | TC-000-06 (pass) | REQ-NFR-002 |
 | `alembic/versions/0001_initial_schema.py` | TC-000-04 (pass) | — |
+| `app/api/briefs.py` | TC-005-05 (pass), TC-005-06 (pass) | REQ-BRF-003, REQ-BRF-004, REQ-FBK-001, REQ-SCO-003 |
 | `app/api/cards.py` | TC-004-07 (pass), TC-004-08 (pass) | REQ-CRD-004, REQ-CRD-005, REQ-UI-005 |
 | `app/api/collectors.py` | TC-008-06 (pass) | REQ-COL-007, REQ-UI-002 |
 | `app/api/health.py` | TC-000-01 (pass) | REQ-NFR-001 |
 | `app/api/news.py` | TC-002-11 (pass), TC-003-07 (pass) | REQ-UI-003, REQ-UI-004 |
 | `app/api/repos.py` | TC-003-07 (pass), TC-008-03 (pass) | REQ-UI-001, REQ-UI-004 |
+| `app/brief.py` | TC-005-01 (pass), TC-005-02 (pass), TC-005-04 (pass) | REQ-BRF-001, REQ-BRF-002 |
 | `app/cards.py` | TC-004-01 (pass), TC-004-02 (pass), TC-004-03 (pass), TC-004-04 (pass), TC-004-06 (pass), TC-004-07 (pass) | REQ-CRD-001, REQ-CRD-003, REQ-CRD-004, REQ-NFR-005 |
-| `app/cli.py` | TC-001-10 (pass), TC-001-11 (pass), TC-001-12 (not run), TC-002-08 (pass), TC-002-10 (pass), TC-003-06 (pass), TC-004-06 (pass), TC-008-02 (pass) | REQ-COL-001, REQ-COL-002, REQ-COL-003, REQ-COL-006, REQ-CRD-001, REQ-CRD-003, REQ-NFR-004, REQ-NFR-005, REQ-SCO-001, REQ-SCO-002, REQ-UI-001 |
+| `app/cli.py` | TC-001-10 (pass), TC-001-11 (pass), TC-001-12 (not run), TC-002-08 (pass), TC-002-10 (pass), TC-003-06 (pass), TC-004-06 (pass), TC-005-04 (pass), TC-008-02 (pass) | REQ-BRF-001, REQ-COL-001, REQ-COL-002, REQ-COL-003, REQ-COL-006, REQ-CRD-001, REQ-CRD-003, REQ-NFR-004, REQ-NFR-005, REQ-SCO-001, REQ-SCO-002, REQ-UI-001 |
 | `app/collectors/__init__.py` | TC-001-05 (pass) | REQ-COL-002 |
 | `app/collectors/github_api.py` | TC-001-05 (pass), TC-001-06 (pass), TC-001-07 (pass), TC-001-11 (pass) | REQ-COL-002, REQ-NFR-004 |
 | `app/collectors/github_trending.py` | TC-001-01 (pass), TC-001-02 (pass), TC-001-03 (pass), TC-001-10 (pass) | REQ-COL-001 |
 | `app/collectors/hacker_news.py` | TC-002-01 (pass), TC-002-02 (pass), TC-002-03 (pass), TC-002-04 (pass), TC-002-08 (pass), TC-002-09 (pass) | REQ-COL-003, REQ-COL-004 |
-| `app/collectors/prune.py` | TC-002-06 (pass), TC-002-10 (pass) | REQ-COL-006 |
+| `app/collectors/prune.py` | TC-002-06 (pass), TC-002-10 (pass), TC-005-07 (pass) | REQ-COL-006 |
 | `app/config.py` | TC-000-02 (pass), TC-000-03 (pass) | REQ-CRD-002, REQ-NFR-006 |
 | `app/llm.py` | TC-004-06 (pass) | REQ-CRD-001, REQ-CRD-003, REQ-NFR-005 |
 | `app/main.py` | TC-001-13 (pass) | REQ-COL-005 |
@@ -64,11 +66,12 @@
 | `app/news_stats.py` | TC-002-05 (pass) | REQ-UI-003 |
 | `app/repo_stats.py` | TC-008-01 (pass), TC-008-02 (pass) | REQ-UI-001 |
 | `app/runs.py` | TC-001-13 (pass), TC-008-04 (pass), TC-008-05 (pass) | REQ-COL-005, REQ-COL-007 |
-| `app/scheduler.py` | TC-001-08 (pass), TC-001-09 (pass), TC-001-13 (pass), TC-002-07 (pass), TC-004-05 (pass), TC-008-04 (pass), TC-008-05 (pass) | REQ-COL-003, REQ-COL-005, REQ-COL-006, REQ-COL-007, REQ-CRD-001 |
-| `app/scoring.py` | TC-003-01 (pass), TC-003-02 (pass), TC-003-03 (pass), TC-003-04 (pass), TC-003-05 (pass) | REQ-SCO-001, REQ-SCO-002, REQ-SCO-003 |
-| `frontend/src` | TC-002-13 (pass), TC-003-09 (pass), TC-004-10 (pass), TC-008-10 (pass) | REQ-UI-001, REQ-UI-003, REQ-UI-004, REQ-UI-005 |
+| `app/scheduler.py` | TC-001-08 (pass), TC-001-09 (pass), TC-001-13 (pass), TC-002-07 (pass), TC-004-05 (pass), TC-005-03 (pass), TC-008-04 (pass), TC-008-05 (pass) | REQ-BRF-001, REQ-BRF-002, REQ-COL-003, REQ-COL-005, REQ-COL-006, REQ-COL-007, REQ-CRD-001 |
+| `app/scoring.py` | TC-003-01 (pass), TC-003-02 (pass), TC-003-03 (pass), TC-003-04 (pass), TC-003-05 (pass), TC-005-06 (pass) | REQ-FBK-001, REQ-SCO-001, REQ-SCO-002, REQ-SCO-003 |
+| `frontend/src` | TC-002-13 (pass), TC-003-09 (pass), TC-004-10 (pass), TC-005-09 (pass), TC-008-10 (pass) | REQ-BRF-003, REQ-UI-001, REQ-UI-003, REQ-UI-004, REQ-UI-005 |
 | `frontend/src/components/CollectorStatus.tsx` | TC-002-12 (pass), TC-008-09 (pass) | REQ-UI-002, REQ-UI-003 |
+| `frontend/src/components/Rating.tsx` | TC-005-08 (pass) | REQ-BRF-003, REQ-FBK-001 |
 | `frontend/src/pages/Card.tsx` | TC-004-09 (pass) | REQ-CRD-005, REQ-UI-005 |
 | `frontend/src/pages/News.tsx` | TC-002-12 (pass), TC-003-08 (pass), TC-004-09 (pass) | REQ-CRD-005, REQ-UI-003, REQ-UI-004, REQ-UI-005 |
 | `frontend/src/pages/Repos.tsx` | TC-003-08 (pass), TC-004-09 (pass), TC-008-07 (pass), TC-008-08 (pass) | REQ-CRD-005, REQ-UI-001, REQ-UI-004, REQ-UI-005 |
-| `frontend/src/pages/Today.tsx` | TC-000-05 (pass), TC-008-09 (pass) | REQ-UI-002 |
+| `frontend/src/pages/Today.tsx` | TC-000-05 (pass), TC-005-08 (pass), TC-008-09 (pass) | REQ-BRF-003, REQ-FBK-001, REQ-UI-002 |

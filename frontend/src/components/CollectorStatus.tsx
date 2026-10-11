@@ -7,6 +7,7 @@ const JOBS: Record<string, { label: string; unit: string }> = {
   github_api: { label: "GitHub star snapshots", unit: "repos" },
   hacker_news: { label: "Hacker News", unit: "stories" },
   cards: { label: "Cards (LLM)", unit: "new cards" },
+  brief: { label: "Daily brief", unit: "items" },
   prune: { label: "Weekly cleanup", unit: "rows deleted" },
 };
 

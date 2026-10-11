@@ -1,7 +1,7 @@
 # Tech Radar settings. Secrets go in .env, not here.
 
 timezone: Asia/Ho_Chi_Minh   # UTC+7
-brief_time: "07:00"
+brief_time: "07:30"          # daily brief, after collection + cards (Q-006)
 weekly_leaderboard_day: mon
 
 brief:

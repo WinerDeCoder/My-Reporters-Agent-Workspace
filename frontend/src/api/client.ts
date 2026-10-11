@@ -17,11 +17,50 @@ export async function getJson<T>(path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function postJson<T>(path: string): Promise<T> {
-  const res = await fetch(`/api${path}`, { method: "POST" });
+export async function postJson<T>(path: string, body?: unknown): Promise<T> {
+  const res = await fetch(`/api${path}`, {
+    method: "POST",
+    headers: body === undefined ? undefined : { "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
   if (!res.ok) throw new Error(await errorMessage(res, path));
   return res.json() as Promise<T>;
 }
+
+export type BriefItem = {
+  section: "top" | "repos" | "news";
+  item_type: ItemType;
+  item_id: number;
+  title: string;
+  url: string | null;
+  hn_url: string | null;
+  domain: string | null;
+  description: string | null;
+  language: string | null;
+  stars: number | null;
+  stars_per_day: number | null;
+  points: number | null;
+  comments: number | null;
+  points_per_hour: number | null;
+  linked_repo: string | null;
+  matched_topics: string[];
+  score: number | null;
+  /** from the item's latest card */
+  what_it_is: string | null;
+  has_card: boolean;
+  /** 1 = 👍, -1 = 👎, null = not rated */
+  rating: number | null;
+};
+
+export type Brief = {
+  id: number;
+  date: string;
+  created_at: string;
+  opened_at: string | null;
+  items: BriefItem[];
+};
+
+export type Today = { brief: Brief | null; brief_time: string };
 
 export type ItemType = "repo" | "news";
 

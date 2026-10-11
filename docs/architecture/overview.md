@@ -80,7 +80,7 @@ Frontend: `src/pages/` (Today, Repos, News, Leaderboard, Stats, Card), `src/comp
 | `app/scoring.py` | Pure scoring functions *(spec 003)* |
 | `app/llm.py` | The only place that calls the LLM; returns parsed output + token usage |
 | `app/cards.py` | Card sources (README / article via trafilatura / title fallback), cache by source hash, monthly token cap, `get_or_write_card()`, daily `write_daily_cards()` *(spec 004, built)* |
-| `app/brief.py` | Builds daily brief and weekly leaderboard *(spec 005, 006)* |
+| `app/brief.py` | Daily brief: item selection (top story = #1 repo, repos #2–#5, top 3 AI/dev stories), once-a-day build at 07:30, `opened_at`, 👍/👎 ratings *(spec 005, built; leaderboard: spec 006)* |
 | `app/api/` | Route modules under `/api` |
 
 ## 5. Runtime flows
@@ -103,7 +103,7 @@ sequenceDiagram
     A->>DB: update repo metadata, insert repo_snapshots row
 ```
 
-**Morning brief (07:00, or on startup if missed):**
+**Morning brief (07:30 after cards; on startup if it's past 07:30 and today's is missing):**
 
 ```mermaid
 sequenceDiagram

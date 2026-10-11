@@ -19,6 +19,8 @@ Each entry names the spec it belongs to.
 
 - Cards (spec 004): gpt-6-luna writes what it is / problem / what's special / worth trying for the top 5 repos and top 3 AI/dev stories daily at 07:25, from the README or article text (title fallback marked limited); cached by source hash; "Write card" on any item; `llm_usage` table (migration 0003) with a 3M-token monthly cap; usage line in the status panel; CLI `cards`, `usage`; `GET/POST /api/cards/{type}/{id}`, `GET /api/llm/usage`.
 
+- Daily brief (spec 005): built at 07:30 (Q-006) with a top story (#1 repo, Q-025), rising repos #2–#5 and the top 3 AI/dev stories, each with its card line; Today page with 👍/👎 (save, switch, clear) and `opened_at` on first view; "Build today's brief now"; repeat and 👎 penalties now live; prune keeps items referenced by a brief; `GET /api/briefs/today`, `POST /api/briefs/today/build`, `POST /api/feedback`; CLI `brief`.
+
 ### Changed
 
 - `llm.generate()` returns token usage with the parsed result; `monthly_budget_usd` replaced by `monthly_token_cap` (Q-023).

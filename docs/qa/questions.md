@@ -54,13 +54,13 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 
 ### Q-006 — Brief time
 
-- **Status:** open
+- **Status:** answered
 - **Asked:** 2026-10-04
 - **Context:** spec 005 (daily brief) · REQ-BRF-001 · `config.yaml` → `brief_time`
 - **Question:** Build the daily brief at 07:00 UTC+7, or another time?
 - **Suggestion:** 07:30, right after the daily collection (07:00–07:20, Q-014) so the brief uses fresh data; the startup catch-up covers mornings when the laptop was off. (Updated 2026-10-11; was 07:00.)
-- **Answer:** —
-- **Recorded in:** —
+- **Answer:** 07:30 (accepted suggestion, 2026-10-11).
+- **Recorded in:** `config.yaml` → `brief_time`; spec 005.
 
 ### Q-007 — OpenAI model for cards
 
@@ -245,3 +245,14 @@ Questions asked to the user, with the suggestion given, the answer, and where th
 - **Suggestion:** Move the Docker Postgres to 5433. (Applied, then found to be the wrong premise: `.env` points to the database `Reporters` on the Windows PostgreSQL, which holds all the data; the Docker Postgres was never used. `.env` was pointed at 5433 for a few minutes and reverted.)
 - **Answer:** The project's database is **Reporters**, on the user's own PostgreSQL. (2026-10-11) Keep using it; the Docker Postgres stays optional (host port 5433, stopped).
 - **Recorded in:** ADR-0005 (supersedes ADR-0002); `.env` unchanged in the end (5432 / Reporters); `docker-compose.yml` + `.env.example` default 5433; README, CLAUDE.md, overview; REQ-NFR-001 note. The Windows PostgreSQL listens on 0.0.0.0:5432; the user accepts this (private network, 2026-10-11), no change.
+
+### Q-025 — How the brief's top story is chosen
+
+- **Status:** answered
+- **Asked:** 2026-10-11
+- **Context:** spec [005](../../specs/005-daily-brief/spec.md) · REQ-BRF-001 · `app/brief.py`
+- **Question:** The brief opens with one top story, but repo scores (stars/day, thousands) and news scores (points/hour, tens) aren't comparable. Which item becomes the top story?
+- **Suggestion:** Compare the #1 repo and the #1 AI/dev story: the one matching more of your interest topics wins; on a tie, the story (news is what's new today). The other stays in its own section. Alternatives: always the #1 repo; always the #1 story.
+- **Answer:** Always the #1 repo. (2026-10-11)
+- **Recorded in:** spec 005; REQ-BRF-001 note.
+

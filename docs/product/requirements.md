@@ -16,7 +16,7 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 | REQ-COL-003 | Collect Hacker News top stories (title, URL, points, comments, posted time) daily at 07:00 from the Algolia HN API: the current front page plus stories above 100 points from the last 26 h. Store every story; topic filtering happens in scoring. | Stories are upserted by `hn_id`; points and comments update on later runs. | in-progress | 002 | 2026-10-11: sources = front page + >100 pts/24 h (Q-010); store all, filter in scoring (Q-011). 2026-10-11: daily instead of hourly, window 26 h (Q-014). |
 | REQ-COL-004 | GitHub repo links in HN stories become repo candidates. | A story linking `github.com/owner/repo` creates or updates that repo and sets `news_items.linked_repo_id`. | in-progress | 002 | |
 | REQ-COL-005 | Each collector runs on its own daily schedule and retries transient errors; one failing never stops the others. On startup, a collector runs only if its last successful run is older than `catch_up_after_hours`. | Simulated failure in one collector is logged and the others still complete their runs; a restart soon after a successful run starts no collector. | changed | 001 | 2026-10-10: collectors also run ~1 min after startup (Q-003). 2026-10-11: replaced by daily runs + catch-up only when stale (Q-014). |
-| REQ-COL-006 | Prune weekly: HN items older than 30 days (unless a brief references them), and snapshots of repos no longer tracked (`last_seen` older than `track_days`). Spec 005 adds "and never reached a brief" for snapshots. | After the prune job, no HN item older than 30 days and no snapshot of an untracked repo remains; tracked repos keep all snapshots. | changed | 002 | 2026-10-11: snapshot rule narrowed to untracked repos until briefs exist (Q-013). |
+| REQ-COL-006 | Prune weekly: HN items older than 30 days (unless a brief references them), and snapshots of repos no longer tracked (`last_seen` older than `track_days`). Spec 005 adds "and never reached a brief" for snapshots. | After the prune job, no HN item older than 30 days and no snapshot of an untracked repo remains; tracked repos keep all snapshots. | changed | 002 | 2026-10-11: snapshot rule narrowed to untracked repos until briefs exist (Q-013). 2026-10-11: brief rules added in spec 005 (keep stories referenced by a brief; prune snapshots only of untracked repos that never reached a brief). |
 | REQ-COL-007 | Every collector run (scheduled or CLI) is recorded: job name, start, end, success, result count, error message. | A failed and a successful run each leave one `collector_runs` row with the right outcome; a DB error while recording never breaks the job. | in-progress | 008 | 2026-10-11: added (Q-009). |
 
 ## Scoring (SCO)
@@ -41,10 +41,10 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 
 | ID | Requirement | Acceptance criteria | Status | Spec | Notes |
 | --- | --- | --- | --- | --- | --- |
-| REQ-BRF-001 | Build a daily brief at `brief_time`: a top story, 3–5 rising repos, 2–3 news items. | One `briefs` row of type `daily` per day with the items in order. | planned | 005 | |
-| REQ-BRF-002 | If the machine was off or asleep at `brief_time`, build the missed brief on next startup. | Starting the app after `brief_time` with no brief for today builds one within a minute. | planned | 005 | |
-| REQ-BRF-003 | The Today page shows the latest brief; each item links to its card. | Page renders the latest brief; readable in about two minutes. | planned | 005 | |
-| REQ-BRF-004 | Opening the Today page records `opened_at` the first time a brief is viewed. | `briefs.opened_at` is set once and never overwritten. | planned | 005 | |
+| REQ-BRF-001 | Build a daily brief at `brief_time`: a top story, 3–5 rising repos, 2–3 news items. | One `briefs` row of type `daily` per day with the items in order. | in-progress | 005 | 2026-10-11: at 07:30 (Q-006); top story = #1 repo, rising repos #2–#5, news = top 3 AI/dev stories (Q-025). |
+| REQ-BRF-002 | If the machine was off or asleep at `brief_time`, build the missed brief on next startup. | Starting the app after `brief_time` with no brief for today builds one within ~6 minutes (after the collector/card catch-ups); starting before `brief_time` builds nothing early. | changed | 005 | 2026-10-11: caught up ~5 min after startup (after the collector and card catch-ups), only if it's past brief_time and today's brief is missing. |
+| REQ-BRF-003 | The Today page shows the latest brief; each item links to its card. | Page renders the latest brief; readable in about two minutes. | in-progress | 005 | |
+| REQ-BRF-004 | Opening the Today page records `opened_at` the first time a brief is viewed. | `briefs.opened_at` is set once and never overwritten. | in-progress | 005 | |
 
 ## Leaderboard (LDB)
 
@@ -56,7 +56,7 @@ When a requirement changes, edit it in place, set its status, and add a dated li
 
 | ID | Requirement | Acceptance criteria | Status | Spec | Notes |
 | --- | --- | --- | --- | --- | --- |
-| REQ-FBK-001 | Every brief item has 👍 and 👎 buttons; a click is saved with the item, brief and time. | Clicking stores a `feedback` row; the button shows the saved state. | planned | 005 | |
+| REQ-FBK-001 | Every brief item has 👍 and 👎 buttons; a click is saved with the item, brief and time. | Clicking stores a `feedback` row; the button shows the saved state. | in-progress | 005 | 2026-10-11: a click can change or clear a rating; the latest one counts. |
 | REQ-FBK-002 | A Stats page shows the last 14 days: briefs built, briefs opened, items rated, share of thumbs up. | Numbers match a direct SQL count. | planned | 007 | |
 
 ## Interface (UI)

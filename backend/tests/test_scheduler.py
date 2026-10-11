@@ -81,9 +81,9 @@ def test_jobs_registered_daily_at_run_at():
         "07:10",
         "07:20",
     )
-    assert cfg.cards.run_at == "07:25"
+    assert (cfg.cards.run_at, cfg.brief_time) == ("07:25", "07:30")
     jobs = {job.id: job for job in create_scheduler().get_jobs()}
-    assert set(jobs) == {"hacker_news", "github_trending", "github_api", "cards", "prune"}
+    assert set(jobs) == {"hacker_news", "github_trending", "github_api", "cards", "brief", "prune"}
 
     sunday_6am = datetime(2026, 10, 11, 6, 0, tzinfo=TZ)
     expected = {
@@ -91,6 +91,7 @@ def test_jobs_registered_daily_at_run_at():
         "github_trending": datetime(2026, 10, 11, 7, 10, tzinfo=TZ),
         "github_api": datetime(2026, 10, 11, 7, 20, tzinfo=TZ),
         "cards": datetime(2026, 10, 11, 7, 25, tzinfo=TZ),
+        "brief": datetime(2026, 10, 11, 7, 30, tzinfo=TZ),
         "prune": datetime(2026, 10, 12, 7, 40, tzinfo=TZ),  # next Monday
     }
     for name, first in expected.items():
@@ -127,18 +128,20 @@ async def test_schedule_catch_up_adds_ordered_one_off_runs():
             "hacker_news": now - timedelta(hours=26),  # stale
             "github_trending": now - timedelta(hours=1),  # fresh
             "cards": now - timedelta(hours=2),  # fresh
+            "brief": now - timedelta(minutes=30),  # brief is always caught up (build is idempotent)
             # github_api never ran, prune never ran
         }
 
     due = await schedule_catch_up(scheduler, now=now, load_last_success=last_success)
-    assert due == ["hacker_news", "github_api", "prune"]
+    assert due == ["hacker_news", "github_api", "brief", "prune"]
     runs = {
         job.id: job.trigger.run_date for job in scheduler.get_jobs() if job.id.endswith(":catch_up")
     }
     assert runs == {
         "hacker_news:catch_up": now + timedelta(seconds=60),
         "github_api:catch_up": now + timedelta(seconds=150),
-        "prune:catch_up": now + timedelta(minutes=5),
+        "brief:catch_up": now + timedelta(minutes=5),
+        "prune:catch_up": now + timedelta(minutes=6),
     }
 
 
@@ -151,7 +154,13 @@ async def test_cards_catch_up_runs_after_collectors():
 
     await schedule_catch_up(scheduler, now=now, load_last_success=nothing_ran)
     runs = {j.id: j.trigger.run_date for j in scheduler.get_jobs() if j.id.endswith(":catch_up")}
-    assert runs["cards:catch_up"] > runs["github_api:catch_up"] > runs["github_trending:catch_up"]
+    assert (
+        runs["prune:catch_up"]
+        > runs["brief:catch_up"]
+        > runs["cards:catch_up"]
+        > runs["github_api:catch_up"]
+        > runs["github_trending:catch_up"]
+    )
 
 
 async def test_schedule_catch_up_skips_when_db_unreadable():

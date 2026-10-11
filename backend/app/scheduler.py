@@ -16,6 +16,7 @@ from zoneinfo import ZoneInfo
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from app.brief import build_daily_brief
 from app.cards import write_daily_cards
 from app.collectors.github_api import collect_github
 from app.collectors.github_trending import collect_trending
@@ -31,17 +32,19 @@ JOBS = {
     "github_trending": collect_trending,
     "github_api": collect_github,
     "cards": write_daily_cards,
+    "brief": build_daily_brief,
     "prune": prune_old_data,
 }
 
 # Startup catch-up order: HN and Trending add candidates before the snapshot job runs;
-# cards come after the snapshots (they need fresh scores).
+# cards come after the snapshots (they need fresh scores); the brief after the cards.
 CATCH_UP_DELAY = {
     "hacker_news": timedelta(seconds=60),
     "github_trending": timedelta(seconds=90),
     "github_api": timedelta(seconds=150),
     "cards": timedelta(minutes=4),
-    "prune": timedelta(minutes=5),
+    "brief": timedelta(minutes=5),
+    "prune": timedelta(minutes=6),
 }
 
 PRUNE_AT = {"day_of_week": "mon", "hour": 7, "minute": 40}  # after Monday's collection
@@ -67,6 +70,9 @@ def job_specs(cfg: AppConfig, tz: ZoneInfo) -> dict[str, JobSpec]:
         "github_trending": JobSpec(daily(src.github_trending.run_at), stale, grace),
         "github_api": JobSpec(daily(src.github_api.run_at), stale, grace),
         "cards": JobSpec(daily(cfg.cards.run_at), stale, grace),
+        # Always caught up on startup (max_age 0): the build itself does nothing before
+        # brief_time or when today's brief exists, so an age rule could only miss a day.
+        "brief": JobSpec(daily(cfg.brief_time), timedelta(0), grace),
         "prune": JobSpec(
             CronTrigger(**PRUNE_AT, timezone=tz), timedelta(days=7), timedelta(days=3)
         ),
